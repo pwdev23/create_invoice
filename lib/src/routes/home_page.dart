@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils.dart';
+
 class HomePage extends StatelessWidget {
   static const String routeName = '/';
 
@@ -11,14 +13,10 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: Center(
-        child: FilledButton(
-          onPressed: onCreatePdf,
-          child: Text('Create PDF'),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onCreatePdf,
+        child: Icon(Icons.save),
       ),
     );
   }
-
-  Future<void> onCreatePdf() async {}
 }
