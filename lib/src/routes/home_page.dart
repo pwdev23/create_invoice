@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
         title: Text('Home'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: onCreatePdf,
+        onPressed: onDownloadAsPdf,
         child: Icon(Icons.save),
       ),
     );
