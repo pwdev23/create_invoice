@@ -36,8 +36,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
   permission_handler: ^11.3.1
+  printing: ^5.14.0
+  path_provider: ^2.1.5
   pdf: ^3.11.2
   open_file: ^3.5.10
+  isar:
+    hosted: https://pub.isar-community.dev
+    version: ^3.1.8
+  isar_flutter_libs:
+    hosted: https://pub.isar-community.dev
+    version: ^3.1.8
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +57,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  isar_generator:
+    hosted: https://pub.isar-community.dev
+    version: ^3.1.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -60,6 +72,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:
