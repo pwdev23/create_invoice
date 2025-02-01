@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -20,48 +21,25 @@ class PreviewPage extends StatefulWidget {
 }
 
 class _PreviewPageState extends State<PreviewPage> {
+  bool _loading = true;
+  late List<PurchaseItem> _items;
   final doc = pw.Document();
 
-  void _initializeDocument() {
-    return doc.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        header: (context) => _buildHeader(context),
-        footer: (context) => _buildFooter(context),
-        build: (context) => [
-          pw.Container(
-            padding: pw.EdgeInsets.all(30),
-            decoration: pw.BoxDecoration(
-              border: pw.Border(
-                left: pw.BorderSide(),
-                right: pw.BorderSide(),
-              ),
-            ),
-            child: pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.Text('To: ${widget.invoice.to}',
-                    style: pw.TextStyle(lineSpacing: 8)),
-                pw.Text(
-                  'Invoice number: ${widget.invoice.id}\nDate:${widget.invoice.createdAt}',
-                  style: pw.TextStyle(lineSpacing: 12),
-                )
-              ],
-            ),
-          ),
-          _buildItemTable(context),
-          _buildSummary(context)
-        ],
-      ),
-    );
+  Future<void> _getPurchaseItems() async {
+    _items = await widget.invoice.purchaseItems.filter().findAll();
+  }
+
+  Future<void> _onInit() async {
+    await _getPurchaseItems();
+    double gT = _items.fold(0.0, (sum, e) => sum + e.item.value!.price!);
+    _buildPages(_items, gT);
   }
 
   @override
   void initState() {
     super.initState();
 
-    _initializeDocument();
+    _onInit().then((_) => setState(() => _loading = false));
   }
 
   @override
@@ -70,14 +48,31 @@ class _PreviewPageState extends State<PreviewPage> {
       appBar: AppBar(
         title: Text('Preview'),
       ),
-      body: PdfPreview(
-        pdfPreviewPageDecoration: null,
-        build: (format) => doc.save(),
+      body: _loading
+          ? Center(child: CircularProgressIndicator.adaptive())
+          : PdfPreview(
+              pdfPreviewPageDecoration: null,
+              build: (format) => doc.save(),
+            ),
+    );
+  }
+
+  void _buildPages(List<PurchaseItem> items, double grandTotal) {
+    return doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        header: (context) => _buildHeader(context, grandTotal),
+        footer: (context) => _buildFooter(context),
+        build: (context) => [
+          _buildSubheader(context),
+          _buildItemTable(context, items),
+          _buildSummary(context, grandTotal)
+        ],
       ),
     );
   }
 
-  pw.Widget _buildHeader(pw.Context context) {
+  pw.Widget _buildHeader(pw.Context context, double grandTotal) {
     return pw.TableHelper.fromTextArray(
       cellHeight: 100,
       columnWidths: {
@@ -102,7 +97,10 @@ class _PreviewPageState extends State<PreviewPage> {
             crossAxisAlignment: pw.CrossAxisAlignment.end,
             children: [
               pw.Text('Amount:'),
-              pw.Text('\$450', style: pw.TextStyle(fontSize: 20)),
+              pw.Text(
+                '$grandTotal',
+                style: pw.TextStyle(fontSize: 20),
+              ),
             ],
           ),
         ]
@@ -110,7 +108,33 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildSummary(pw.Context context) {
+  pw.Widget _buildSubheader(pw.Context context) {
+    return pw.Container(
+      padding: pw.EdgeInsets.all(30),
+      decoration: pw.BoxDecoration(
+        border: pw.Border(
+          left: pw.BorderSide(),
+          right: pw.BorderSide(),
+        ),
+      ),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Text(
+            'To: ${widget.invoice.to}',
+            style: pw.TextStyle(lineSpacing: 8),
+          ),
+          pw.Text(
+            'Invoice number: ${widget.invoice.id}\nDate:${widget.invoice.createdAt}',
+            style: pw.TextStyle(lineSpacing: 12),
+          )
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _buildSummary(pw.Context context, double grandTotal) {
     return pw.TableHelper.fromTextArray(
       cellHeight: 40,
       border: null,
@@ -123,7 +147,7 @@ class _PreviewPageState extends State<PreviewPage> {
         1: pw.Alignment.centerRight,
       },
       data: <List<dynamic>>[
-        ['Grand total:', '99.99']
+        ['Grand total:', '$grandTotal']
       ],
     );
   }
@@ -133,7 +157,7 @@ class _PreviewPageState extends State<PreviewPage> {
       alignment: pw.Alignment.centerRight,
       margin: const pw.EdgeInsets.only(top: 20.0),
       child: pw.Text(
-        '800 Interchange Blvd.\nSuite 2501, Austin, TX 78721\nsupport@adventure-works.com',
+        '${widget.invoice.storeName}\n${widget.invoice.storeEmail}',
         style: pw.TextStyle(lineSpacing: 8),
       ),
     );
@@ -176,7 +200,7 @@ class _PreviewPageState extends State<PreviewPage> {
     }
   }
 
-  pw.Widget _buildItemTable(pw.Context context) {
+  pw.Widget _buildItemTable(pw.Context context, List<PurchaseItem> items) {
     return pw.TableHelper.fromTextArray(
       cellAlignment: pw.Alignment.centerLeft,
       headerDecoration: pw.BoxDecoration(
@@ -220,12 +244,7 @@ class _PreviewPageState extends State<PreviewPage> {
           headers.length,
           (col) => col == 0
               ? '${row + 1}'
-              : _buildItem(
-                  context,
-                  row,
-                  col,
-                  (widget.invoice.purchaseItems.iterator as List)[row].item,
-                ),
+              : _buildItem(context, row, col, items[row]),
         ),
       ),
     );
