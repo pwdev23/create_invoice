@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -12,34 +12,33 @@ const headers = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
 class PreviewPage extends StatefulWidget {
   static const String routeName = '/preview';
 
-  const PreviewPage({super.key, required this.invoice});
+  const PreviewPage(
+      {super.key,
+      required this.store,
+      required this.recipient,
+      required this.items});
 
-  final Invoice invoice;
+  final Store store;
+  final Recipient recipient;
+  final List<PurchaseItem> items;
 
   @override
   State<PreviewPage> createState() => _PreviewPageState();
 }
 
 class _PreviewPageState extends State<PreviewPage> {
-  bool _loading = true;
-  late List<PurchaseItem> _items;
-  final doc = pw.Document();
-
-  Future<void> _getPurchaseItems() async {
-    _items = await widget.invoice.purchaseItems.filter().findAll();
-  }
+  final _doc = pw.Document();
+  final _now = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
 
   Future<void> _onInit() async {
-    await _getPurchaseItems();
-    double gT = _items.fold(0.0, (sum, e) => sum + e.item.value!.price!);
-    _buildPages(_items, gT);
+    double gT = widget.items.fold(0.0, (sum, e) => sum + e.item.value!.price!);
+    _buildPages(widget.items, gT);
   }
 
   @override
   void initState() {
     super.initState();
-
-    _onInit().then((_) => setState(() => _loading = false));
+    _onInit();
   }
 
   @override
@@ -48,17 +47,15 @@ class _PreviewPageState extends State<PreviewPage> {
       appBar: AppBar(
         title: Text('Preview'),
       ),
-      body: _loading
-          ? Center(child: CircularProgressIndicator.adaptive())
-          : PdfPreview(
-              pdfPreviewPageDecoration: null,
-              build: (format) => doc.save(),
-            ),
+      body: PdfPreview(
+        pdfPreviewPageDecoration: null,
+        build: (format) => _doc.save(),
+      ),
     );
   }
 
   void _buildPages(List<PurchaseItem> items, double grandTotal) {
-    return doc.addPage(
+    return _doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         header: (context) => _buildHeader(context, grandTotal),
@@ -122,11 +119,11 @@ class _PreviewPageState extends State<PreviewPage> {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            'To: ${widget.invoice.to}',
+            'To: ${widget.recipient.name}\n${widget.recipient.address}',
             style: pw.TextStyle(lineSpacing: 8),
           ),
           pw.Text(
-            'Invoice number: ${widget.invoice.id}\nDate:${widget.invoice.createdAt}',
+            'Invoice number: 0\nDate:$_now',
             style: pw.TextStyle(lineSpacing: 12),
           )
         ],
@@ -157,7 +154,7 @@ class _PreviewPageState extends State<PreviewPage> {
       alignment: pw.Alignment.centerRight,
       margin: const pw.EdgeInsets.only(top: 20.0),
       child: pw.Text(
-        '${widget.invoice.storeName}\n${widget.invoice.storeEmail}',
+        '${widget.store.name}\n${widget.store.name}',
         style: pw.TextStyle(lineSpacing: 8),
       ),
     );
@@ -188,8 +185,9 @@ class _PreviewPageState extends State<PreviewPage> {
                   pw.Text(
                     '${item.item.value!.price! * item.qty!}',
                     style: pw.TextStyle(
-                        fontSize: 10,
-                        decoration: pw.TextDecoration.lineThrough),
+                      fontSize: 10,
+                      decoration: pw.TextDecoration.lineThrough,
+                    ),
                   ),
                   pw.Text(
                     '${(count * item.qty!)}',
@@ -239,7 +237,7 @@ class _PreviewPageState extends State<PreviewPage> {
         (col) => headers[col],
       ),
       data: List<List<dynamic>>.generate(
-        widget.invoice.purchaseItems.length,
+        widget.items.length,
         (row) => List<dynamic>.generate(
           headers.length,
           (col) => col == 0
@@ -252,7 +250,9 @@ class _PreviewPageState extends State<PreviewPage> {
 }
 
 class PreviewArgs {
-  const PreviewArgs(this.invoice);
+  const PreviewArgs(this.store, this.recipient, this.items);
 
-  final Invoice invoice;
+  final Store store;
+  final Recipient recipient;
+  final List<PurchaseItem> items;
 }

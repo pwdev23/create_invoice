@@ -35,3 +35,10 @@ class Invoice {
   final purchaseItems = IsarLinks<PurchaseItem>();
   DateTime? createdAt;
 }
+
+@collection
+class Recipient {
+  Id id = Isar.autoIncrement;
+  String? name;
+  String? address;
+}

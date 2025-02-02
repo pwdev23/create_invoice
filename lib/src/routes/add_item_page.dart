@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../isar_collection/isar_collections.dart';
-import '../isar_collection/isar_service.dart';
+import '../isar_service.dart';
 
 class AddItemPage extends StatefulWidget {
   static const routeName = '/add-item';

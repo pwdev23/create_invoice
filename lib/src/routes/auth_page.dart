@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../isar_collection/isar_collections.dart';
-import '../isar_collection/isar_service.dart';
+import '../isar_service.dart';
 
 class AuthPage extends StatefulWidget {
   static const String routeName = '/';
@@ -48,6 +48,6 @@ class _AuthPageState extends State<AuthPage> {
 
   void _toHome() {
     final nav = Navigator.of(context);
-    nav.pushReplacementNamed('/home');
+    nav.pushReplacementNamed('/invoice');
   }
 }

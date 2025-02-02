@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'isar_collections.dart';
+import 'isar_collection/isar_collections.dart';
 
 class IsarService {
   late Future<Isar> isarDb;
@@ -21,9 +21,15 @@ class IsarService {
     return stores;
   }
 
-  Future<void> updateStore(Store editedStore) async {
-    final id = editedStore.id;
+  Future<Store?> findFirstStore() async {
     final db = await isarDb;
+    final store = db.stores.where().findFirst();
+    return store;
+  }
+
+  Future<void> updateStore(Store editedStore) async {
+    final db = await isarDb;
+    final id = editedStore.id;
     final store = await db.stores.get(id);
     store!.email = editedStore.email;
     store.name = editedStore.name;
@@ -41,8 +47,8 @@ class IsarService {
   }
 
   Future<void> updateItem(Item editedItem) async {
-    final id = editedItem.id;
     final db = await isarDb;
+    final id = editedItem.id;
     final item = await db.items.get(id);
     item!.sku = editedItem.sku!;
     item.name = editedItem.name!;
@@ -68,8 +74,8 @@ class IsarService {
   }
 
   Future<void> updatePurchaseItem(PurchaseItem editedPurchaseItem) async {
-    final id = editedPurchaseItem.id;
     final db = await isarDb;
+    final id = editedPurchaseItem.id;
     final purchaseItem = await db.purchaseItems.get(id);
     purchaseItem!.qty = editedPurchaseItem.qty;
     await db.purchaseItems.put(purchaseItem);
@@ -78,6 +84,11 @@ class IsarService {
   Stream<List<PurchaseItem>> streamPurchaseItems() async* {
     final db = await isarDb;
     yield* db.purchaseItems.where().watch(fireImmediately: true);
+  }
+
+  Future<List<PurchaseItem>> findAllPurchaseItems() async {
+    final db = await isarDb;
+    return db.purchaseItems.where().findAll();
   }
 
   Future<Isar> openDb() async {
