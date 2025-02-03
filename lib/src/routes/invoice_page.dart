@@ -17,6 +17,7 @@ class InvoicePage extends StatefulWidget {
 class _InvoicePageState extends State<InvoicePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   final _db = IsarService();
+  final _ids = <int>[];
   Store? _store = Store()
     ..name = ''
     ..email = '';
@@ -59,11 +60,18 @@ class _InvoicePageState extends State<InvoicePage> {
           onPressed: () {},
         ),
         actions: [
-          TextButton.icon(
-            onPressed: () => _openStore(),
-            icon: Icon(Icons.add),
-            label: Text('Add item'),
-          ),
+          _ids.isEmpty
+              ? TextButton.icon(
+                  onPressed: () => _openStore(),
+                  icon: Icon(Icons.add),
+                  label: Text('Add item'),
+                )
+              : TextButton.icon(
+                  onPressed: () => _onDelete(_db, _ids)
+                      .then((_) => setState(() => _ids.clear())),
+                  icon: Icon(Icons.delete),
+                  label: Text('Delete'),
+                ),
         ],
       ),
       drawer: Drawer(
@@ -96,7 +104,9 @@ class _InvoicePageState extends State<InvoicePage> {
       body: StreamBuilder<List<PurchaseItem>>(
         stream: _db.streamPurchaseItems(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          // Use `_store!.name == ''` as a workaround for the UI stutter
+          if (_store!.name == '' &&
+              snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator.adaptive());
           }
 
@@ -104,25 +114,30 @@ class _InvoicePageState extends State<InvoicePage> {
             return Center(child: Text('Failed to load'));
           }
 
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return Center(child: Text('No data'));
+          } else {
             return ListView.separated(
               itemBuilder: (context, i) {
                 final title = snapshot.data![i].item.value!.name!;
                 final qty = snapshot.data![i].qty;
                 final id = snapshot.data![i].id;
+
                 return ListTile(
-                  onTap: () => _openQtyControl(),
+                  onTap: () => _openQtyControl(snapshot.data![i]),
+                  onLongPress: () => setState(() => _ids.add(id)),
                   title: Text(title),
                   subtitle: Text('Purchase item ID: $id'),
                   trailing: _Qty(qty: qty!),
+                  tileColor: _ids.contains(id)
+                      ? colors.primaryContainer
+                      : colors.surface,
                 );
               },
               separatorBuilder: (context, _) => Divider(height: 0),
               itemCount: snapshot.data!.length,
             );
           }
-
-          return Center(child: Text('No data'));
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -190,8 +205,18 @@ class _InvoicePageState extends State<InvoicePage> {
     nav.pushNamed('/preview', arguments: arguments);
   }
 
-  void _openQtyControl() {
-    // TODO: implement qty control
+  void _openQtyControl(PurchaseItem purchaseItem) {
+    if (_ids.contains(purchaseItem.id)) {
+      setState(() => _ids.remove(purchaseItem.id));
+    } else if (_ids.isNotEmpty) {
+      setState(() => _ids.add(purchaseItem.id));
+    } else {
+      // TODO: implement qty control
+    }
+  }
+
+  Future<void> _onDelete(IsarService isar, List<int> ids) async {
+    await isar.deletePurchaseItems(ids);
   }
 }
 

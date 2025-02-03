@@ -63,9 +63,11 @@ class IsarService {
     yield* db.items.where().watch(fireImmediately: true);
   }
 
-  Future<void> deletePurchaseItem(List<int> ids) async {
+  Future<void> deletePurchaseItems(List<int> ids) async {
     final db = await isarDb;
-    await db.purchaseItems.deleteAll(ids);
+    await db.writeTxn(() async {
+      await db.purchaseItems.deleteAll(ids);
+    });
   }
 
   Future<void> updatePurchaseItem(PurchaseItem editedPurchaseItem) async {
