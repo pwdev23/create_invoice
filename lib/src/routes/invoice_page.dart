@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
@@ -16,8 +15,11 @@ class InvoicePage extends StatefulWidget {
 }
 
 class _InvoicePageState extends State<InvoicePage> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   final _db = IsarService();
-  late Store? _store;
+  Store? _store = Store()
+    ..name = ''
+    ..email = '';
   final _recipient = Recipient()
     ..name = 'My customer'
     ..address = 'Padalarang';
@@ -29,20 +31,67 @@ class _InvoicePageState extends State<InvoicePage> {
   @override
   void initState() {
     super.initState();
-    _findFirstStore();
+    _findFirstStore().then((_) => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
+    final avatar = _store!.name!.isNotEmpty ? _store!.name![0] : '';
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
+      key: _key,
       appBar: AppBar(
-        title: Text('To: ${_recipient.name}'),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: colors.primaryContainer,
+              foregroundColor: colors.onPrimaryContainer,
+              shape: CircleBorder(),
+            ),
+            onPressed: () => _key.currentState!.openDrawer(),
+            child: Text(avatar.toUpperCase()),
+          ),
+        ),
+        title: _RecipientButton(
+          leadingText: 'To:',
+          recipientName: 'My customer',
+          onPressed: () {},
+        ),
         actions: [
-          TextButton(
-            onPressed: () => onManageStore(context),
-            child: Text('Manage store'),
-          )
+          TextButton.icon(
+            onPressed: () => _openStore(),
+            icon: Icon(Icons.add),
+            label: Text('Add item'),
+          ),
         ],
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              height: 180.0,
+              color: colors.primaryContainer,
+              alignment: Alignment.bottomLeft,
+              child: Text.rich(
+                style: TextStyle(color: colors.onPrimaryContainer),
+                TextSpan(
+                  text: '${_store!.name}\n',
+                  children: [
+                    TextSpan(text: _store!.email),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              style: ListTileStyle.drawer,
+              onTap: () => onManageStore(context),
+              title: Text('Manage store'),
+              leading: Icon(Icons.inbox),
+            )
+          ],
+        ),
       ),
       body: StreamBuilder<List<PurchaseItem>>(
         stream: _db.streamPurchaseItems(),
@@ -59,7 +108,14 @@ class _InvoicePageState extends State<InvoicePage> {
             return ListView.separated(
               itemBuilder: (context, i) {
                 final title = snapshot.data![i].item.value!.name!;
-                return ListTile(title: Text(title));
+                final qty = snapshot.data![i].qty;
+                final id = snapshot.data![i].id;
+                return ListTile(
+                  onTap: () => _openQtyControl(),
+                  title: Text(title),
+                  subtitle: Text('Purchase item ID: $id'),
+                  trailing: _Qty(qty: qty!),
+                );
               },
               separatorBuilder: (context, _) => Divider(height: 0),
               itemCount: snapshot.data!.length,
@@ -69,20 +125,10 @@ class _InvoicePageState extends State<InvoicePage> {
           return Center(child: Text('No data'));
         },
       ),
-      floatingActionButton: SpeedDial(
-        children: [
-          SpeedDialChild(
-            label: 'Add item',
-            onTap: () => _openStore(),
-            child: Icon(Icons.add),
-          ),
-          SpeedDialChild(
-            label: 'Create invoice',
-            child: Icon(Icons.upload_file),
-            onTap: () => _onCreateInvoice(),
-          )
-        ],
-        child: Icon(Icons.edit),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _onCreateInvoice(),
+        icon: Icon(Icons.upload_file),
+        label: Text('Create invoice'),
       ),
     );
   }
@@ -142,5 +188,67 @@ class _InvoicePageState extends State<InvoicePage> {
     final items = await _db.findAllPurchaseItems();
     final arguments = PreviewArgs(_store!, _recipient, items);
     nav.pushNamed('/preview', arguments: arguments);
+  }
+
+  void _openQtyControl() {
+    // TODO: implement qty control
+  }
+}
+
+class _RecipientButton extends StatelessWidget {
+  const _RecipientButton({
+    required this.onPressed,
+    this.leadingText = 'To:',
+    this.recipientName = 'Recipient',
+  });
+
+  final VoidCallback onPressed;
+  final String leadingText;
+  final String recipientName;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
+    return RawMaterialButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      onPressed: onPressed,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(leadingText, style: textTheme.bodySmall),
+          Text(
+            recipientName,
+            style: TextStyle(color: colors.onPrimaryContainer),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Qty extends StatelessWidget {
+  const _Qty({required this.qty});
+
+  final int qty;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Material(
+      color: colors.primaryContainer,
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12.0,
+          vertical: 2.0,
+        ),
+        child: Text('$qty'),
+      ),
+    );
   }
 }
