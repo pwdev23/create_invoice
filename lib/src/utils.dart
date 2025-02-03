@@ -6,6 +6,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+// Shorten of pushNamed without arguments
+void push(BuildContext context, String routeName) {
+  final nav = Navigator.of(context);
+  nav.pushNamed(routeName);
+}
+
 Future<void> onDownloadAsPdf() async {
   // Check and request storage permission
   if (await Permission.manageExternalStorage.request().isGranted) {

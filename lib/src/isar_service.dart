@@ -63,11 +63,6 @@ class IsarService {
     yield* db.items.where().watch(fireImmediately: true);
   }
 
-  Future<void> savePurchaseItem(PurchaseItem purchaseItem) async {
-    final db = await isarDb;
-    db.writeTxnSync<int>(() => db.purchaseItems.putSync(purchaseItem));
-  }
-
   Future<void> deletePurchaseItem(List<int> ids) async {
     final db = await isarDb;
     await db.purchaseItems.deleteAll(ids);
@@ -75,10 +70,30 @@ class IsarService {
 
   Future<void> updatePurchaseItem(PurchaseItem editedPurchaseItem) async {
     final db = await isarDb;
-    final id = editedPurchaseItem.id;
-    final purchaseItem = await db.purchaseItems.get(id);
-    purchaseItem!.qty = editedPurchaseItem.qty;
-    await db.purchaseItems.put(purchaseItem);
+    await db.writeTxn(() async {
+      final purchaseItem = await db.purchaseItems.get(editedPurchaseItem.id);
+      purchaseItem!.qty = editedPurchaseItem.qty;
+      await db.purchaseItems.put(purchaseItem);
+    });
+  }
+
+  Future<void> savePurchaseItem(PurchaseItem purchaseItem) async {
+    final db = await isarDb;
+
+    final itemsToCompare = await db.purchaseItems
+        .filter()
+        .item((v) => v.idEqualTo(purchaseItem.item.value!.id))
+        .findAll();
+
+    final count = itemsToCompare.length;
+
+    if (count == 0) {
+      db.writeTxnSync<int>(() => db.purchaseItems.putSync(purchaseItem));
+    } else {
+      final qtyAddedItem = itemsToCompare[0];
+      qtyAddedItem.qty = qtyAddedItem.qty! + 1;
+      await db.writeTxn(() async => await db.purchaseItems.put(qtyAddedItem));
+    }
   }
 
   Stream<List<PurchaseItem>> streamPurchaseItems() async* {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
-import 'invoice_state.dart';
+import '../utils.dart';
 import 'preview_page.dart' show PreviewArgs;
 
 class InvoicePage extends StatefulWidget {
@@ -54,7 +54,7 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
         ),
         title: _RecipientButton(
-          leadingText: 'To:',
+          leadingText: 'To',
           recipientName: 'My customer',
           onPressed: () {},
         ),
@@ -86,7 +86,7 @@ class _InvoicePageState extends State<InvoicePage> {
             ),
             ListTile(
               style: ListTileStyle.drawer,
-              onTap: () => onManageStore(context),
+              onTap: () => push(context, '/store'),
               title: Text('Manage store'),
               leading: Icon(Icons.inbox),
             )
@@ -198,7 +198,7 @@ class _InvoicePageState extends State<InvoicePage> {
 class _RecipientButton extends StatelessWidget {
   const _RecipientButton({
     required this.onPressed,
-    this.leadingText = 'To:',
+    this.leadingText = 'To',
     this.recipientName = 'Recipient',
   });
 
@@ -214,15 +214,35 @@ class _RecipientButton extends StatelessWidget {
     return RawMaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       onPressed: onPressed,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(leadingText, style: textTheme.bodySmall),
-          Text(
-            recipientName,
-            style: TextStyle(color: colors.onPrimaryContainer),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 2.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 4.0,
+              children: [
+                Text(
+                  leadingText,
+                  style: textTheme.bodySmall,
+                ),
+                Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 16,
+                  color: colors.surfaceTint,
+                ),
+              ],
+            ),
+            Text(
+              recipientName,
+              style: TextStyle(color: colors.onPrimaryContainer),
+            ),
+          ],
+        ),
       ),
     );
   }
