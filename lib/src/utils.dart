@@ -1,10 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 // Shorten of pushNamed without arguments
 void push(BuildContext context, String routeName) {
@@ -12,22 +11,9 @@ void push(BuildContext context, String routeName) {
   nav.pushNamed(routeName);
 }
 
-Future<void> onDownloadAsPdf() async {
+Future<void> downloadPdf(Uint8List pdfBytes) async {
   // Check and request storage permission
   if (await Permission.manageExternalStorage.request().isGranted) {
-    final pdf = pw.Document();
-
-    // Add content to the PDF
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text("Hello World"), // PDF content
-          );
-        },
-      ),
-    );
     // Get the public Downloads directory (or app's document directory)
     final directory = Directory('/storage/emulated/0/Download');
     if (!await directory.exists()) {
@@ -48,7 +34,6 @@ Future<void> onDownloadAsPdf() async {
 
     try {
       // Write the PDF
-      final pdfBytes = await pdf.save();
       await file.writeAsBytes(pdfBytes);
       debugPrint("PDF saved at $filePath");
     } catch (e) {

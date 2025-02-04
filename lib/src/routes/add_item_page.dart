@@ -22,6 +22,15 @@ class _AddItemPageState extends State<AddItemPage> {
   bool _isPercent = false;
 
   @override
+  void dispose() {
+    _skuCon.dispose();
+    _nameCon.dispose();
+    _priceCon.dispose();
+    _discCon.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final disabledColor = Theme.of(context).disabledColor;
     final colors = Theme.of(context).colorScheme;

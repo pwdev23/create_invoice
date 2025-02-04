@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -5,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../isar_collection/isar_collections.dart';
+import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_state.dart';
 
@@ -28,18 +31,26 @@ class PreviewPage extends StatefulWidget {
 }
 
 class _PreviewPageState extends State<PreviewPage> {
+  bool _downloaded = false;
+  late Uint8List _pdfBytes;
   final _doc = pw.Document();
   final _now = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
 
   Future<void> _onInit() async {
     double gT = calcGrandTotal(widget.items);
-    _buildPages(widget.items, gT);
+    await _buildPages(widget.items, gT);
   }
 
   @override
   void initState() {
     super.initState();
     _onInit();
+  }
+
+  @override
+  void dispose() {
+    _pdfBytes = Uint8List(0);
+    super.dispose();
   }
 
   @override
@@ -58,13 +69,19 @@ class _PreviewPageState extends State<PreviewPage> {
           color: colors.surface,
           boxShadow: null,
         ),
-        build: (format) => _doc.save(),
+        actions: [
+          IconButton(
+            onPressed: _downloaded ? null : () => _onDownload(_pdfBytes),
+            icon: Icon(Icons.save_alt),
+          ),
+        ],
+        build: (_) => _doc.save(),
       ),
     );
   }
 
-  void _buildPages(List<PurchaseItem> items, double grandTotal) {
-    return _doc.addPage(
+  Future<void> _buildPages(List<PurchaseItem> items, double grandTotal) async {
+    _doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         header: (context) => _buildHeader(context, grandTotal),
@@ -76,6 +93,8 @@ class _PreviewPageState extends State<PreviewPage> {
         ],
       ),
     );
+
+    _pdfBytes = await _doc.save();
   }
 
   pw.Widget _buildHeader(pw.Context context, double grandTotal) {
@@ -267,6 +286,14 @@ class _PreviewPageState extends State<PreviewPage> {
               ),
             ],
           );
+  }
+
+  Future<void> _onDownload(Uint8List pdfBytes) async {
+    final msg = ScaffoldMessenger.of(context);
+    await downloadPdf(pdfBytes);
+    const str = 'File successfully downloaded';
+    msg.showSnackBar(SnackBar(content: Text(str)));
+    setState(() => _downloaded = true);
   }
 }
 
