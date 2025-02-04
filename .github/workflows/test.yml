@@ -1,0 +1,17 @@
+name: flutter-test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter test
