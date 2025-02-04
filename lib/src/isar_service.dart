@@ -105,7 +105,17 @@ class IsarService {
 
   Future<List<PurchaseItem>> findAllPurchaseItems() async {
     final db = await isarDb;
-    return db.purchaseItems.where().findAll();
+    return await db.purchaseItems.where().findAll();
+  }
+
+  Future<List<Recipient>> findAllRecipients() async {
+    final db = await isarDb;
+    return await db.recipients.where().findAll();
+  }
+
+  Future<void> saveRecipient(Recipient recipient) async {
+    final db = await isarDb;
+    await db.writeTxn(() async => db.recipients.put(recipient));
   }
 
   Future<Isar> openDb() async {
@@ -116,7 +126,8 @@ class IsarService {
         StoreSchema,
         InvoiceSchema,
         ItemSchema,
-        PurchaseItemSchema
+        PurchaseItemSchema,
+        RecipientSchema
       ];
 
       return await Isar.open(schemas, directory: dir.path, inspector: true);

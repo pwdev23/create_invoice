@@ -9,7 +9,13 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case '/add-item':
       return MaterialPageRoute(builder: (_) => const AddItemPage());
     case '/invoice':
-      return MaterialPageRoute(builder: (_) => const InvoicePage());
+      final args = settings.arguments as InvoiceArgs;
+      return MaterialPageRoute(
+        builder: (_) => InvoicePage(
+          store: args.store,
+          recipient: args.recipient,
+        ),
+      );
     case '/preview':
       final args = settings.arguments as PreviewArgs;
       return MaterialPageRoute(

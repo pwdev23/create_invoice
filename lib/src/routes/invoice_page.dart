@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
+import '../shared/shared.dart';
 import '../utils.dart';
 import 'preview_page.dart' show PreviewArgs;
 
 class InvoicePage extends StatefulWidget {
   static const String routeName = '/invoice';
 
-  const InvoicePage({super.key});
+  const InvoicePage({super.key, required this.store, required this.recipient});
+
+  final Store store;
+  final Recipient recipient;
 
   @override
   State<InvoicePage> createState() => _InvoicePageState();
@@ -16,29 +20,16 @@ class InvoicePage extends StatefulWidget {
 
 class _InvoicePageState extends State<InvoicePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  bool _skipLoading = false;
   final _db = IsarService();
   final _ids = <int>[];
-  Store? _store = Store()
-    ..name = ''
-    ..email = '';
-  final _recipient = Recipient()
-    ..name = 'My customer'
-    ..address = 'Padalarang';
-
-  Future<void> _findFirstStore() async {
-    _store = await _db.findFirstStore();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _findFirstStore().then((_) => setState(() {}));
-  }
+  int _qty = 0;
 
   @override
   Widget build(BuildContext context) {
-    final avatar = _store!.name!.isNotEmpty ? _store!.name![0] : '';
+    final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -85,9 +76,9 @@ class _InvoicePageState extends State<InvoicePage> {
               child: Text.rich(
                 style: TextStyle(color: colors.onPrimaryContainer),
                 TextSpan(
-                  text: '${_store!.name}\n',
+                  text: '${widget.store.name}\n',
                   children: [
-                    TextSpan(text: _store!.email),
+                    TextSpan(text: widget.store.email),
                   ],
                 ),
               ),
@@ -104,21 +95,17 @@ class _InvoicePageState extends State<InvoicePage> {
       body: StreamBuilder<List<PurchaseItem>>(
         stream: _db.streamPurchaseItems(),
         builder: (context, snapshot) {
-          // Use `_store!.name == ''` as a workaround for the UI stutter
-          if (_store!.name == '' &&
-              snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator.adaptive());
-          }
+          final waiting = snapshot.connectionState == ConnectionState.waiting;
+          if (!_skipLoading && waiting) return CenterCircular();
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Failed to load'));
-          }
+          if (snapshot.hasError) return CenterText(text: 'Failed to load');
 
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return Center(child: Text('No data'));
+            return CenterText(text: 'No data');
           } else {
             return ListView.separated(
               itemBuilder: (context, i) {
+                if (!_skipLoading) _skipLoading = true;
                 final title = snapshot.data![i].item.value!.name!;
                 final qty = snapshot.data![i].qty;
                 final id = snapshot.data![i].id;
@@ -201,22 +188,86 @@ class _InvoicePageState extends State<InvoicePage> {
   Future<void> _onCreateInvoice() async {
     final nav = Navigator.of(context);
     final items = await _db.findAllPurchaseItems();
-    final arguments = PreviewArgs(_store!, _recipient, items);
+    final arguments = PreviewArgs(widget.store, widget.recipient, items);
     nav.pushNamed('/preview', arguments: arguments);
   }
 
   void _openQtyControl(PurchaseItem purchaseItem) {
+    setState(() => _qty = purchaseItem.qty!);
     if (_ids.contains(purchaseItem.id)) {
       setState(() => _ids.remove(purchaseItem.id));
     } else if (_ids.isNotEmpty) {
       setState(() => _ids.add(purchaseItem.id));
     } else {
-      // TODO: implement qty control
+      showModalBottomSheet(
+        isDismissible: false,
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            final textTheme = Theme.of(context).textTheme;
+            final colors = Theme.of(context).colorScheme;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12.0, right: 16.0),
+                      child: TextButton(
+                        onPressed: () => _onSaveQty(purchaseItem),
+                        child: Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+                Text('$_qty', style: textTheme.displayMedium),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      style: IconButton.styleFrom(
+                        backgroundColor: colors.primaryContainer,
+                        foregroundColor: colors.onPrimaryContainer,
+                      ),
+                      onPressed: _qty > 1
+                          ? () => setState(() => _qty = _qty - 1)
+                          : () {},
+                      icon: Icon(Icons.remove),
+                    ),
+                    IconButton(
+                      style: IconButton.styleFrom(
+                        backgroundColor: colors.primaryContainer,
+                        foregroundColor: colors.onPrimaryContainer,
+                      ),
+                      onPressed: () => setState(() => _qty = _qty + 1),
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
+                ),
+                SizedBox(height: kToolbarHeight),
+              ],
+            );
+          },
+        ),
+      );
     }
   }
 
   Future<void> _onDelete(IsarService isar, List<int> ids) async {
     await isar.deletePurchaseItems(ids);
+  }
+
+  Future<void> _onSaveQty(PurchaseItem purchaseItem) async {
+    purchaseItem.qty = _qty;
+    await _db.updatePurchaseItem(purchaseItem);
+    _closeQtyControl();
+  }
+
+  void _closeQtyControl() {
+    final nav = Navigator.of(context);
+    nav.pop();
   }
 }
 
@@ -296,4 +347,11 @@ class _Qty extends StatelessWidget {
       ),
     );
   }
+}
+
+class InvoiceArgs {
+  const InvoiceArgs(this.store, this.recipient);
+
+  final Store store;
+  final Recipient recipient;
 }
