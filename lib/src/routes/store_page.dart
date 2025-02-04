@@ -16,9 +16,10 @@ class StorePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Store'),
         actions: [
-          TextButton(
+          TextButton.icon(
             onPressed: () => onAddItem(context),
-            child: Text('Add item'),
+            label: Text('Add item'),
+            icon: Icon(Icons.add),
           ),
         ],
       ),

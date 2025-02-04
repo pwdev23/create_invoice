@@ -59,7 +59,11 @@ class _AuthPageState extends State<AuthPage> {
     await _initStore();
     await _initRecipient();
     await Future.delayed(const Duration(seconds: 2));
-    _toHome();
+    if (_stores.isEmpty || _recipients.isEmpty) {
+      _auth();
+    } else {
+      _toHome();
+    }
   }
 
   void _toHome() {
