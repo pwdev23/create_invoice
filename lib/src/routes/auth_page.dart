@@ -21,7 +21,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
-    _auth().then((_) => _toHome());
+    _auth();
   }
 
   @override
@@ -59,6 +59,7 @@ class _AuthPageState extends State<AuthPage> {
     await _initStore();
     await _initRecipient();
     await Future.delayed(const Duration(seconds: 2));
+    _toHome();
   }
 
   void _toHome() {

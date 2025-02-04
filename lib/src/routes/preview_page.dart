@@ -5,6 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../isar_collection/isar_collections.dart';
+import 'invoice_state.dart';
 import 'preview_state.dart';
 
 const headers = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
@@ -31,7 +32,7 @@ class _PreviewPageState extends State<PreviewPage> {
   final _now = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
 
   Future<void> _onInit() async {
-    double gT = widget.items.fold(0.0, (sum, e) => sum + e.item.value!.price!);
+    double gT = calcGrandTotal(widget.items);
     _buildPages(widget.items, gT);
   }
 
@@ -43,12 +44,20 @@ class _PreviewPageState extends State<PreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Preview'),
       ),
       body: PdfPreview(
-        pdfPreviewPageDecoration: null,
+        canChangeOrientation: false,
+        canChangePageFormat: false,
+        canDebug: false,
+        pdfPreviewPageDecoration: BoxDecoration(
+          color: colors.surface,
+          boxShadow: null,
+        ),
         build: (format) => _doc.save(),
       ),
     );
@@ -70,6 +79,8 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildHeader(pw.Context context, double grandTotal) {
+    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+
     return pw.TableHelper.fromTextArray(
       cellHeight: 100,
       columnWidths: {
@@ -91,11 +102,12 @@ class _PreviewPageState extends State<PreviewPage> {
           ),
           pw.Column(
             mainAxisAlignment: pw.MainAxisAlignment.center,
-            crossAxisAlignment: pw.CrossAxisAlignment.end,
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
               pw.Text('Amount:'),
+              pw.SizedBox(height: 4.0),
               pw.Text(
-                '$grandTotal',
+                formatted.format(grandTotal),
                 style: pw.TextStyle(fontSize: 20),
               ),
             ],
@@ -123,7 +135,7 @@ class _PreviewPageState extends State<PreviewPage> {
             style: pw.TextStyle(lineSpacing: 8),
           ),
           pw.Text(
-            'Invoice number: 0\nDate:$_now',
+            'Invoice number: 0\nDate: $_now',
             style: pw.TextStyle(lineSpacing: 12),
           )
         ],
@@ -132,6 +144,8 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildSummary(pw.Context context, double grandTotal) {
+    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+
     return pw.TableHelper.fromTextArray(
       cellHeight: 40,
       border: null,
@@ -144,7 +158,7 @@ class _PreviewPageState extends State<PreviewPage> {
         1: pw.Alignment.centerRight,
       },
       data: <List<dynamic>>[
-        ['Grand total:', '$grandTotal']
+        ['Grand total:', formatted.format(grandTotal)]
       ],
     );
   }
@@ -154,47 +168,28 @@ class _PreviewPageState extends State<PreviewPage> {
       alignment: pw.Alignment.centerRight,
       margin: const pw.EdgeInsets.only(top: 20.0),
       child: pw.Text(
-        '${widget.store.name}\n${widget.store.name}',
+        '${widget.store.name}\n${widget.store.email}',
         style: pw.TextStyle(lineSpacing: 8),
+        textAlign: pw.TextAlign.end,
       ),
     );
   }
 
   dynamic _buildItem(pw.Context context, int row, int col, PurchaseItem item) {
     final i = col - 1;
+    final t = item.item.value;
+
     switch (i) {
       case 0:
-        return item.item.value!.sku;
+        return t!.sku;
       case 1:
-        return item.item.value!.name;
+        return t!.name;
       case 2:
-        return '${item.item.value!.price}';
+        return _buildPriceTexts(item, true);
       case 3:
         return item.qty;
       default:
-        final p = item.item.value!.price!;
-        final d = item.item.value!.discount!;
-        final percent = item.item.value!.isPercentage!;
-        final count = calcDiscount(p, d, percent);
-
-        return item.item.value!.discount! == 0
-            ? '${item.item.value!.price! * item.qty!}'
-            : pw.Column(
-                mainAxisAlignment: pw.MainAxisAlignment.center,
-                children: [
-                  pw.Text(
-                    '${item.item.value!.price! * item.qty!}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      decoration: pw.TextDecoration.lineThrough,
-                    ),
-                  ),
-                  pw.Text(
-                    '${(count * item.qty!)}',
-                    style: pw.TextStyle(fontSize: 10),
-                  ),
-                ],
-              );
+        return _buildPriceTexts(item, false);
     }
   }
 
@@ -246,6 +241,32 @@ class _PreviewPageState extends State<PreviewPage> {
         ),
       ),
     );
+  }
+
+  dynamic _buildPriceTexts(PurchaseItem item, bool single) {
+    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final t = item.item.value;
+    final c = calcDiscount(t!.price!, t.discount!, t.isPercentage!);
+    final qty = single ? 1 : item.qty!;
+
+    return t.discount == 0
+        ? formatted.format(t.price)
+        : pw.Column(
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text(
+                formatted.format(t.price! * qty),
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  decoration: pw.TextDecoration.lineThrough,
+                ),
+              ),
+              pw.Text(
+                formatted.format(c * qty),
+                style: pw.TextStyle(fontSize: 10),
+              ),
+            ],
+          );
   }
 }
 

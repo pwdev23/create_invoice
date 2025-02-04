@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
 import '../shared/shared.dart';
 import '../utils.dart';
+import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
+import 'preview_state.dart';
 
 class InvoicePage extends StatefulWidget {
   static const String routeName = '/invoice';
@@ -24,6 +27,7 @@ class _InvoicePageState extends State<InvoicePage> {
   final _db = IsarService();
   final _ids = <int>[];
   int _qty = 0;
+  final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
 
   @override
   Widget build(BuildContext context) {
@@ -109,16 +113,20 @@ class _InvoicePageState extends State<InvoicePage> {
                 final title = snapshot.data![i].item.value!.name!;
                 final qty = snapshot.data![i].qty;
                 final id = snapshot.data![i].id;
+                final item = snapshot.data![i].item.value;
 
                 return ListTile(
                   onTap: () => _openQtyControl(snapshot.data![i]),
                   onLongPress: () => setState(() => _ids.add(id)),
                   title: Text(title),
-                  subtitle: Text('Purchase item ID: $id'),
                   trailing: _Qty(qty: qty!),
                   tileColor: _ids.contains(id)
                       ? colors.primaryContainer
                       : colors.surface,
+                  isThreeLine: item!.discount! > 0,
+                  subtitle: item.discount == 0
+                      ? Text(formatted.format(item.price))
+                      : _PriceTexts(item: item),
                 );
               },
               separatorBuilder: (context, _) => Divider(height: 0),
@@ -188,8 +196,18 @@ class _InvoicePageState extends State<InvoicePage> {
   Future<void> _onCreateInvoice() async {
     final nav = Navigator.of(context);
     final items = await _db.findAllPurchaseItems();
-    final arguments = PreviewArgs(widget.store, widget.recipient, items);
-    nav.pushNamed('/preview', arguments: arguments);
+    if (items.isEmpty) {
+      _onEmpty();
+    } else {
+      final arguments = PreviewArgs(widget.store, widget.recipient, items);
+      nav.pushNamed('/preview', arguments: arguments);
+    }
+  }
+
+  void _onEmpty() {
+    final msg = ScaffoldMessenger.of(context);
+    const str = 'Can\'t proceed, there\'s no purchase item.';
+    msg.showSnackBar(SnackBar(content: Text(str)));
   }
 
   void _openQtyControl(PurchaseItem purchaseItem) {
@@ -333,17 +351,51 @@ class _Qty extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return Material(
-      color: colors.primaryContainer,
-      shape: ContinuousRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 2.0,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Material(
+          color: colors.primaryContainer,
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 2.0,
+            ),
+            child: Text('$qty'),
+          ),
         ),
-        child: Text('$qty'),
+      ],
+    );
+  }
+}
+
+class _PriceTexts extends StatelessWidget {
+  const _PriceTexts({required this.item});
+
+  final Item item;
+
+  @override
+  Widget build(BuildContext context) {
+    final calc = calcDiscount(item.price!, item.discount!, item.isPercentage!);
+    final colors = Theme.of(context).colorScheme;
+    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+
+    return Text.rich(
+      TextSpan(
+        text: '${formatted.format(item.price)}\n',
+        style: TextStyle(decoration: TextDecoration.lineThrough),
+        children: [
+          TextSpan(
+            text: formatted.format(calc),
+            style: TextStyle(
+              color: colors.onSurface,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ],
       ),
     );
   }
