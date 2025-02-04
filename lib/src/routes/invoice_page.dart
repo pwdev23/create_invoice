@@ -136,6 +136,8 @@ class _InvoicePageState extends State<InvoicePage> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: colors.primary,
+        foregroundColor: colors.onPrimary,
         onPressed: () => _onCreateInvoice(),
         icon: Icon(Icons.upload_file),
         label: Text('Create invoice'),
@@ -195,18 +197,25 @@ class _InvoicePageState extends State<InvoicePage> {
 
   Future<void> _onCreateInvoice() async {
     final nav = Navigator.of(context);
-    final items = await _db.findAllPurchaseItems();
-    if (items.isEmpty) {
-      _onEmpty();
+    final msg = ScaffoldMessenger.of(context);
+    final granted = await requestPermission();
+    if (granted) {
+      final items = await _db.findAllPurchaseItems();
+      if (items.isEmpty) {
+        _onEmpty();
+      } else {
+        final arguments = PreviewArgs(widget.store, widget.recipient, items);
+        nav.pushNamed('/preview', arguments: arguments);
+      }
     } else {
-      final arguments = PreviewArgs(widget.store, widget.recipient, items);
-      nav.pushNamed('/preview', arguments: arguments);
+      const str = 'Permission denied';
+      msg.showSnackBar(SnackBar(content: Text(str)));
     }
   }
 
   void _onEmpty() {
     final msg = ScaffoldMessenger.of(context);
-    const str = 'Can\'t proceed, there\'s no purchase item.';
+    const str = 'Can\'t proceed, there\'s no purchase item';
     msg.showSnackBar(SnackBar(content: Text(str)));
   }
 

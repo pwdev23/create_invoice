@@ -43,3 +43,7 @@ Future<void> downloadPdf(Uint8List pdfBytes) async {
     debugPrint("Permission denied.");
   }
 }
+
+Future<bool> requestPermission() async {
+  return await Permission.manageExternalStorage.request().isGranted;
+}

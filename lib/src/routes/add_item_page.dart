@@ -59,6 +59,7 @@ class _AddItemPageState extends State<AddItemPage> {
               padding: hP,
               child: TextFormField(
                 controller: _nameCon,
+                keyboardType: TextInputType.name,
                 decoration: InputDecoration(
                   labelText: 'Item name',
                   hintText: 'Item name',

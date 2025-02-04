@@ -1,0 +1,25 @@
+dev_dependencies:
+  flutter_launcher_icons: "^0.14.3"
+
+flutter_launcher_icons:
+  image_path_android: "img/circle_icon_1024x1024.png"
+  image_path_ios: "img/icon_1024x1024.png"
+  android: true
+  ios: false
+  adaptive_icon_background: "img/background.png"
+  adaptive_icon_foreground: "img/icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  background_color_ios: "#3789C4"
+  web:
+    generate: false
+    image_path: "img/icon_circle_1024x1024.png"
+    background_color: "#3789C4"
+    theme_color: "#3789C4"
+  windows:
+    generate: false
+    image_path: "img/icon_circle_1024x1024.png"
+    icon_size: 48
+  macos:
+    generate: false
+    image_path: "img/icon_circle_1024x1024.png"

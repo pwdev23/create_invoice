@@ -65,9 +65,9 @@ class _PreviewPageState extends State<PreviewPage> {
         canChangeOrientation: false,
         canChangePageFormat: false,
         canDebug: false,
-        pdfPreviewPageDecoration: BoxDecoration(
-          color: colors.surface,
-          boxShadow: null,
+        actionBarTheme: PdfActionBarTheme(
+          backgroundColor: colors.primary,
+          iconColor: colors.onPrimary,
         ),
         actions: [
           IconButton(
