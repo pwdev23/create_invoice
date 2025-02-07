@@ -8,6 +8,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const AuthPage());
     case '/add-item':
       return MaterialPageRoute(builder: (_) => const AddItemPage());
+    case '/add-recipient':
+      return MaterialPageRoute(builder: (_) => const AddRecipientPage());
     case '/invoice':
       final args = settings.arguments as InvoiceArgs;
       return MaterialPageRoute(
@@ -25,8 +27,21 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
           items: args.items,
         ),
       );
+    case '/edit-recipient':
+      final args = settings.arguments as EditRecipientArgs;
+      return MaterialPageRoute(
+          builder: (_) => EditRecipient(recipient: args.recipient));
+    case '/edit-item':
+      final args = settings.arguments as EditItemArgs;
+      return MaterialPageRoute(builder: (_) => EditItemPage(item: args.item));
+    case '/edit-store':
+      final args = settings.arguments as EditStoreArgs;
+      return MaterialPageRoute(
+          builder: (_) => EditStorePage(store: args.store));
     case '/store':
       return MaterialPageRoute(builder: (_) => const StorePage());
+    case '/recipient':
+      return MaterialPageRoute(builder: (_) => const RecipientPage());
     default:
       return MaterialPageRoute(
         builder: (_) => ErrorPage(route: settings.name!),

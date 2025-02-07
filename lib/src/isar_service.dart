@@ -30,10 +30,17 @@ class IsarService {
   Future<void> updateStore(Store editedStore) async {
     final db = await isarDb;
     final id = editedStore.id;
-    final store = await db.stores.get(id);
-    store!.email = editedStore.email;
-    store.name = editedStore.name;
-    await db.stores.put(store);
+    await db.writeTxn(() async {
+      final store = await db.stores.get(id);
+      store!.email = editedStore.email;
+      store.name = editedStore.name;
+      await db.stores.put(store);
+    });
+  }
+
+  Stream<List<Store>> streamStores() async* {
+    final db = await isarDb;
+    yield* db.stores.where().watch(fireImmediately: true);
   }
 
   Future<void> saveItem(Item item) async {
@@ -41,21 +48,25 @@ class IsarService {
     await db.writeTxn(() async => db.items.put(item));
   }
 
-  Future<void> deleteItem(List<int> ids) async {
+  Future<void> deleteItems(List<int> ids) async {
     final db = await isarDb;
-    await db.items.deleteAll(ids);
+    await db.writeTxn(() async {
+      await db.items.deleteAll(ids);
+    });
   }
 
   Future<void> updateItem(Item editedItem) async {
     final db = await isarDb;
     final id = editedItem.id;
-    final item = await db.items.get(id);
-    item!.sku = editedItem.sku!;
-    item.name = editedItem.name!;
-    item.price = editedItem.price!;
-    item.discount = editedItem.discount!;
-    item.isPercentage = editedItem.isPercentage!;
-    await db.items.put(item);
+    await db.writeTxn(() async {
+      final item = await db.items.get(id);
+      item!.sku = editedItem.sku!;
+      item.name = editedItem.name!;
+      item.price = editedItem.price!;
+      item.discount = editedItem.discount!;
+      item.isPercentage = editedItem.isPercentage!;
+      await db.items.put(item);
+    });
   }
 
   Stream<List<Item>> streamItems() async* {
@@ -116,6 +127,28 @@ class IsarService {
   Future<void> saveRecipient(Recipient recipient) async {
     final db = await isarDb;
     await db.writeTxn(() async => db.recipients.put(recipient));
+  }
+
+  Stream<List<Recipient>> streamRecipients() async* {
+    final db = await isarDb;
+    yield* db.recipients.where().watch(fireImmediately: true);
+  }
+
+  Future<void> updateRecipient(Recipient editedRecipient) async {
+    final db = await isarDb;
+    await db.writeTxn(() async {
+      final recipient = await db.recipients.get(editedRecipient.id);
+      recipient!.name = editedRecipient.name;
+      recipient.address = editedRecipient.address;
+      await db.recipients.put(recipient);
+    });
+  }
+
+  Future<void> deleteRecipients(List<int> ids) async {
+    final db = await isarDb;
+    await db.writeTxn(() async {
+      await db.recipients.deleteAll(ids);
+    });
   }
 
   Future<Isar> openDb() async {
