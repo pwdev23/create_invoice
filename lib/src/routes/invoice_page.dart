@@ -7,7 +7,6 @@ import '../shared/shared.dart';
 import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
-import 'preview_state.dart';
 
 class InvoicePage extends StatefulWidget {
   static const String routeName = '/invoice';
@@ -23,16 +22,23 @@ class InvoicePage extends StatefulWidget {
 
 class _InvoicePageState extends State<InvoicePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  late Recipient _to;
   bool _skipLoading = false;
   final _db = IsarService();
   final _ids = <int>[];
   int _qty = 0;
-  final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+
+  @override
+  void initState() {
+    super.initState();
+    _to = widget.recipient;
+  }
 
   @override
   Widget build(BuildContext context) {
     final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
+    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
 
     return Scaffold(
       key: _key,
@@ -51,8 +57,8 @@ class _InvoicePageState extends State<InvoicePage> {
         ),
         title: _RecipientButton(
           leadingText: 'To',
-          recipientName: 'My customer',
-          onPressed: () {},
+          recipientName: _to.name!,
+          onPressed: () => _onOpenRecipient(),
         ),
         actions: [
           _ids.isEmpty
@@ -64,34 +70,28 @@ class _InvoicePageState extends State<InvoicePage> {
               : TextButton.icon(
                   onPressed: () => _onDelete(_db, _ids)
                       .then((_) => setState(() => _ids.clear())),
-                  icon: Icon(Icons.delete),
+                  icon: Icon(Icons.delete, color: colors.error),
                   label: Text('Delete'),
+                  style: TextButton.styleFrom(foregroundColor: colors.error),
                 ),
         ],
       ),
       drawer: Drawer(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              height: 180.0,
-              color: colors.primaryContainer,
-              alignment: Alignment.bottomLeft,
-              child: Text.rich(
-                style: TextStyle(color: colors.onPrimaryContainer),
-                TextSpan(
-                  text: '${widget.store.name}\n',
-                  children: [
-                    TextSpan(text: widget.store.email),
-                  ],
-                ),
-              ),
-            ),
+            _StoreInfo(name: widget.store.name!, email: widget.store.email!),
             ListTile(
               style: ListTileStyle.drawer,
               onTap: () => push(context, '/store'),
               title: Text('Manage store'),
               leading: Icon(Icons.inbox),
+            ),
+            Divider(height: 0.0),
+            ListTile(
+              style: ListTileStyle.drawer,
+              onTap: () => push(context, '/recipient'),
+              title: Text('Recipient'),
+              leading: Icon(Icons.people),
             )
           ],
         ),
@@ -126,10 +126,10 @@ class _InvoicePageState extends State<InvoicePage> {
                   isThreeLine: item!.discount! > 0,
                   subtitle: item.discount == 0
                       ? Text(formatted.format(item.price))
-                      : _PriceTexts(item: item),
+                      : PriceTexts(item: item),
                 );
               },
-              separatorBuilder: (context, _) => Divider(height: 0),
+              separatorBuilder: (_, __) => Divider(height: 0),
               itemCount: snapshot.data!.length,
             );
           }
@@ -146,12 +146,11 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   void _openStore() {
-    final db = IsarService();
     showModalBottomSheet(
       context: context,
       builder: (context) {
         return StreamBuilder<List<Item>>(
-          stream: db.streamItems(),
+          stream: _db.streamItems(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator.adaptive());
@@ -173,7 +172,7 @@ class _InvoicePageState extends State<InvoicePage> {
                         Icons.arrow_outward,
                       ),
                     ),
-                    onTap: () => _onAddPurchaseItem(db, snapshot.data![i]),
+                    onTap: () => _onAddPurchaseItem(_db, snapshot.data![i]),
                   );
                 },
                 separatorBuilder: (context, _) => Divider(height: 0),
@@ -296,6 +295,53 @@ class _InvoicePageState extends State<InvoicePage> {
     final nav = Navigator.of(context);
     nav.pop();
   }
+
+  Future<void> _onOpenRecipient() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StreamBuilder<List<Recipient>>(
+          stream: _db.streamRecipients(),
+          builder: (context, snapshot) {
+            final waiting = snapshot.connectionState == ConnectionState.waiting;
+            if (waiting) return CenterCircular();
+
+            if (snapshot.hasError) return CenterText(text: 'Failed to load');
+
+            if (snapshot.hasData && snapshot.data!.isEmpty) {
+              return CenterText(text: 'No data');
+            } else {
+              return ListView.separated(
+                itemBuilder: (context, i) {
+                  final r = snapshot.data![i];
+
+                  return ListTile(
+                    title: Text(r.name!),
+                    onTap: () => _onChooseRecipient(r),
+                  );
+                },
+                separatorBuilder: (_, __) => const Divider(height: 0.0),
+                itemCount: snapshot.data!.length,
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _onChooseRecipient(Recipient recipient) {
+    final nav = Navigator.of(context);
+    if (_to.id != recipient.id) setState(() => _to = recipient);
+    nav.pop();
+  }
+}
+
+class InvoiceArgs {
+  const InvoiceArgs(this.store, this.recipient);
+
+  final Store store;
+  final Recipient recipient;
 }
 
 class _RecipientButton extends StatelessWidget {
@@ -313,6 +359,7 @@ class _RecipientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
+    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: double.infinity);
 
     return RawMaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -322,29 +369,32 @@ class _RecipientButton extends StatelessWidget {
           horizontal: 8.0,
           vertical: 2.0,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 4.0,
-              children: [
-                Text(
-                  leadingText,
-                  style: textTheme.bodySmall,
-                ),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  size: 16,
-                  color: colors.surfaceTint,
-                ),
-              ],
-            ),
-            Text(
-              recipientName,
-              style: TextStyle(color: colors.onPrimaryContainer),
-            ),
-          ],
+        child: ConstrainedBox(
+          constraints: minMax,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 4.0,
+                children: [
+                  Text(
+                    leadingText,
+                    style: textTheme.bodySmall,
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: colors.surfaceTint,
+                  ),
+                ],
+              ),
+              Text(
+                recipientName,
+                style: TextStyle(color: colors.onPrimaryContainer),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -381,38 +431,30 @@ class _Qty extends StatelessWidget {
   }
 }
 
-class _PriceTexts extends StatelessWidget {
-  const _PriceTexts({required this.item});
+class _StoreInfo extends StatelessWidget {
+  const _StoreInfo({required this.name, required this.email});
 
-  final Item item;
+  final String name;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
-    final calc = calcDiscount(item.price!, item.discount!, item.isPercentage!);
     final colors = Theme.of(context).colorScheme;
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
 
-    return Text.rich(
-      TextSpan(
-        text: '${formatted.format(item.price)}\n',
-        style: TextStyle(decoration: TextDecoration.lineThrough),
-        children: [
-          TextSpan(
-            text: formatted.format(calc),
-            style: TextStyle(
-              color: colors.onSurface,
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ],
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      height: 180.0,
+      color: colors.primaryContainer,
+      alignment: Alignment.bottomLeft,
+      child: Text.rich(
+        style: TextStyle(color: colors.onPrimaryContainer),
+        TextSpan(
+          text: '$name\n',
+          children: [
+            TextSpan(text: email),
+          ],
+        ),
       ),
     );
   }
-}
-
-class InvoiceArgs {
-  const InvoiceArgs(this.store, this.recipient);
-
-  final Store store;
-  final Recipient recipient;
 }
