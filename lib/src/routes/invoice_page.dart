@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../constants.dart';
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
 import '../shared/shared.dart';
@@ -27,11 +28,18 @@ class _InvoicePageState extends State<InvoicePage> {
   final _db = IsarService();
   final _ids = <int>[];
   int _qty = 0;
+  final _paid = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _to = widget.recipient;
+  }
+
+  @override
+  void dispose() {
+    _paid.dispose();
+    super.dispose();
   }
 
   @override
@@ -138,9 +146,8 @@ class _InvoicePageState extends State<InvoicePage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
-        onPressed: () => _onCreateInvoice(),
-        icon: Icon(Icons.upload_file),
-        label: Text('Create invoice'),
+        onPressed: () => _onOpenPaidForm(),
+        label: Text('Proceed'),
       ),
     );
   }
@@ -210,6 +217,52 @@ class _InvoicePageState extends State<InvoicePage> {
       const str = 'Permission denied';
       msg.showSnackBar(SnackBar(content: Text(str)));
     }
+  }
+
+  void _onOpenPaidForm() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Form(
+              child: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Column(
+                  spacing: 0,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Header(title: 'Paid'),
+                    Padding(
+                      padding: kPx,
+                      child: TextFormField(
+                        controller: _paid,
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: '0',
+                          label: Text('Paid'),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: FilledButton.icon(
+                        onPressed: () => _onCreateInvoice(),
+                        label: Text('Create invoice'),
+                        icon: Icon(Icons.upload_file),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _onEmpty() {

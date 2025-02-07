@@ -14,7 +14,7 @@ class Header extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: kPx,
-      height: kToolbarHeight,
+      height: kToolbarHeight * 1.5,
       child: Text(title, style: textTheme.titleLarge),
     );
   }
