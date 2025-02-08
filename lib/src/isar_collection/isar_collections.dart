@@ -7,6 +7,13 @@ class Store {
   Id id = Isar.autoIncrement;
   String? name;
   String? email;
+  String? bankName;
+  String? accountNumber;
+  String? swiftCode;
+  double? tax;
+  String? thankNote;
+  String? locale;
+  String? symbol;
 }
 
 @collection

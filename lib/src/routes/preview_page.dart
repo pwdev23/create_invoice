@@ -8,7 +8,6 @@ import 'package:printing/printing.dart';
 
 import '../isar_collection/isar_collections.dart';
 import '../utils.dart';
-import 'invoice_state.dart';
 import 'preview_state.dart';
 
 const headers = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
@@ -16,15 +15,18 @@ const headers = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
 class PreviewPage extends StatefulWidget {
   static const String routeName = '/preview';
 
-  const PreviewPage(
-      {super.key,
-      required this.store,
-      required this.recipient,
-      required this.items});
+  const PreviewPage({
+    super.key,
+    required this.store,
+    required this.recipient,
+    required this.items,
+    required this.paid,
+  });
 
   final Store store;
   final Recipient recipient;
   final List<PurchaseItem> items;
+  final double paid;
 
   @override
   State<PreviewPage> createState() => _PreviewPageState();
@@ -34,7 +36,7 @@ class _PreviewPageState extends State<PreviewPage> {
   bool _downloaded = false;
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
-  final _now = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
+  final _now = DateFormat.yMMM().format(DateTime.now());
 
   Future<void> _onInit() async {
     double gT = calcGrandTotal(widget.items);
@@ -98,7 +100,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildHeader(pw.Context context, double grandTotal) {
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(
+      locale: widget.store.locale,
+      symbol: widget.store.symbol,
+    );
 
     return pw.TableHelper.fromTextArray(
       cellHeight: 100,
@@ -150,7 +155,7 @@ class _PreviewPageState extends State<PreviewPage> {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            'To: ${widget.recipient.name}\n${widget.recipient.address}',
+            'Billed to: ${widget.recipient.name}\n${widget.recipient.address}',
             style: pw.TextStyle(lineSpacing: 8),
           ),
           pw.Text(
@@ -163,7 +168,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildSummary(pw.Context context, double grandTotal) {
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(
+      locale: widget.store.locale,
+      symbol: widget.store.symbol,
+    );
 
     return pw.TableHelper.fromTextArray(
       cellHeight: 40,
@@ -177,7 +185,10 @@ class _PreviewPageState extends State<PreviewPage> {
         1: pw.Alignment.centerRight,
       },
       data: <List<dynamic>>[
-        ['Grand total:', formatted.format(grandTotal)]
+        ['Subtotal:', 'n'],
+        ['Total discount:', 'n'],
+        ['TAX:', 'n'],
+        ['Grand total:', formatted.format(grandTotal)],
       ],
     );
   }
@@ -263,7 +274,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   dynamic _buildPriceTexts(PurchaseItem item, bool single) {
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(
+      locale: widget.store.locale,
+      symbol: widget.store.symbol,
+    );
     final t = item.item.value;
     final c = calcDiscount(t!.price!, t.discount!, t.isPercentage!);
     final qty = single ? 1 : item.qty!;
@@ -298,9 +312,10 @@ class _PreviewPageState extends State<PreviewPage> {
 }
 
 class PreviewArgs {
-  const PreviewArgs(this.store, this.recipient, this.items);
+  const PreviewArgs(this.store, this.recipient, this.items, this.paid);
 
   final Store store;
   final Recipient recipient;
   final List<PurchaseItem> items;
+  final double paid;
 }

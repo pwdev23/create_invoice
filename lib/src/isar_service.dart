@@ -34,6 +34,13 @@ class IsarService {
       final store = await db.stores.get(id);
       store!.email = editedStore.email;
       store.name = editedStore.name;
+      store.bankName = editedStore.bankName;
+      store.accountNumber = editedStore.accountNumber;
+      store.swiftCode = editedStore.swiftCode;
+      store.tax = editedStore.tax;
+      store.thankNote = editedStore.thankNote;
+      store.locale = editedStore.locale;
+      store.symbol = editedStore.symbol;
       await db.stores.put(store);
     });
   }
@@ -72,6 +79,12 @@ class IsarService {
   Stream<List<Item>> streamItems() async* {
     final db = await isarDb;
     yield* db.items.where().watch(fireImmediately: true);
+  }
+
+  Future<List<Item>> findAllItems() async {
+    final db = await isarDb;
+    final items = db.items.where().findAll();
+    return items;
   }
 
   Future<void> deletePurchaseItems(List<int> ids) async {

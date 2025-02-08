@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../isar_collection/isar_collections.dart';
+import '../isar_collection/isar_collections.dart' show Store, Item;
 import '../isar_service.dart';
 import '../shared/shared.dart';
 import 'edit_item_page.dart' show EditItemArgs;
 import 'edit_store_page.dart' show EditStoreArgs;
-import 'invoice_state.dart';
 
 class StorePage extends StatefulWidget {
   static const routeName = '/store';
 
-  const StorePage({super.key});
+  const StorePage({super.key, required this.locale, required this.symbol});
+
+  final String locale;
+  final String symbol;
 
   @override
   State<StorePage> createState() => _StorePageState();
@@ -25,11 +27,14 @@ class _StorePageState extends State<StorePage> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(
+      locale: widget.locale,
+      symbol: widget.symbol,
+    );
 
     return Scaffold(
       appBar: AppBar(
-        // title: Text('Store items'),
+        centerTitle: false,
         title: StreamBuilder<List<Store>>(
           stream: _db.streamStores(),
           builder: (context, snapshot) {
@@ -88,7 +93,11 @@ class _StorePageState extends State<StorePage> {
                   isThreeLine: t.discount! > 0,
                   subtitle: t.discount == 0
                       ? Text(formatted.format(t.price))
-                      : PriceTexts(item: t),
+                      : PriceTexts(
+                          item: t,
+                          locale: widget.locale,
+                          symbol: widget.symbol,
+                        ),
                   trailing: _TrailingIcon(),
                   onTap: () => _onTap(t),
                   onLongPress: () => _onLongPressed(id),
@@ -203,4 +212,11 @@ class _StoreInfoButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class StoreArgs {
+  const StoreArgs(this.locale, this.symbol);
+
+  final String locale;
+  final String symbol;
 }
