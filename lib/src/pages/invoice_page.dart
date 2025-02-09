@@ -31,7 +31,8 @@ class _InvoicePageState extends State<InvoicePage> {
   int _qty = 0;
   final _paid = TextEditingController();
   final _bank = TextEditingController();
-  final _acc = TextEditingController();
+  final _accNum = TextEditingController();
+  final _accName = TextEditingController();
   final _code = TextEditingController();
   final _tax = TextEditingController();
 
@@ -46,7 +47,8 @@ class _InvoicePageState extends State<InvoicePage> {
   void dispose() {
     _paid.dispose();
     _bank.dispose();
-    _acc.dispose();
+    _accNum.dispose();
+    _accName.dispose();
     _code.dispose();
     _tax.dispose();
     super.dispose();
@@ -68,8 +70,8 @@ class _InvoicePageState extends State<InvoicePage> {
           padding: const EdgeInsets.only(left: 16.0),
           child: TextButton(
             style: TextButton.styleFrom(
-              backgroundColor: colors.primaryContainer,
-              foregroundColor: colors.onPrimaryContainer,
+              backgroundColor: colors.surfaceTint,
+              foregroundColor: colors.surface,
               shape: CircleBorder(),
             ),
             onPressed: () => _key.currentState!.openDrawer(),
@@ -77,9 +79,9 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
         ),
         title: _RecipientButton(
-          leadingText: 'To',
+          leadingText: 'Billed to',
           recipientName: _to.name!,
-          onPressed: () => _onOpenRecipient(),
+          onPressed: () => _onRecipient(),
         ),
         actions: [
           _ids.isEmpty
@@ -236,23 +238,25 @@ class _InvoicePageState extends State<InvoicePage> {
 
   Future<void> _onCreateInvoice(List<PurchaseItem> items) async {
     final nav = Navigator.of(context);
-    final n = double.parse(_paid.text);
+    final n = _paid.text.isEmpty ? 0.0 : double.parse(_paid.text);
     _editedStore.bankName = _bank.text.trim();
-    _editedStore.accountNumber = _acc.text.trim();
+    _editedStore.accountNumber = _accNum.text.trim();
+    _editedStore.accountHolderName = _accName.text.trim();
     _editedStore.swiftCode = _code.text.isEmpty ? '' : _code.text.trim();
     final tax = _tax.text.isEmpty ? 0 : double.parse(_tax.text);
     _editedStore.tax = tax.toDouble();
     await _db.updateStore(_editedStore);
-    final args = PreviewArgs(_editedStore, widget.recipient, items, n);
+    final args = PreviewArgs(_editedStore, _to, items, n);
     nav.pushNamed('/preview', arguments: args);
   }
 
   void _onOpenDetailsForm(List<PurchaseItem> items) {
     final textTheme = Theme.of(context).textTheme;
     _bank.text = widget.store.bankName!;
-    _acc.text = widget.store.accountNumber!;
+    _accNum.text = widget.store.accountNumber!;
+    _accName.text = widget.store.accountHolderName!;
     _code.text = widget.store.swiftCode!;
-    _tax.text = widget.store.tax! == 0.0 ? '0' : '${widget.store.tax!}';
+    _tax.text = widget.store.tax! == 0.0 ? '' : '${widget.store.tax!}';
 
     showModalBottomSheet(
       isScrollControlled: true,
@@ -273,6 +277,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       label: Text('Paid'),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 Padding(
@@ -291,18 +296,33 @@ class _InvoicePageState extends State<InvoicePage> {
                       label: Text('Bank name'),
                     ),
                     keyboardType: TextInputType.text,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 const SizedBox(height: 16.0),
                 Padding(
                   padding: kPx,
                   child: TextFormField(
-                    controller: _acc,
+                    controller: _accNum,
                     decoration: InputDecoration(
                       hintText: '1231231231',
                       label: Text('Account number'),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _accName,
+                    decoration: InputDecoration(
+                      hintText: 'Joe Taslim',
+                      label: Text('Account holder name'),
+                    ),
+                    keyboardType: TextInputType.name,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -315,6 +335,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       label: Text('Swift code'),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -330,10 +351,12 @@ class _InvoicePageState extends State<InvoicePage> {
                   child: TextFormField(
                     controller: _tax,
                     decoration: InputDecoration(
-                      hintText: '11',
+                      hintText: '0',
                       label: Text('Tax'),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 Padding(
@@ -346,7 +369,11 @@ class _InvoicePageState extends State<InvoicePage> {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: FilledButton.icon(
-                    onPressed: () => _onCreateInvoice(items),
+                    onPressed: _bank.text.isEmpty ||
+                            _accNum.text.isEmpty ||
+                            _accName.text.isEmpty
+                        ? null
+                        : () => _onCreateInvoice(items),
                     label: Text('Create invoice'),
                     icon: Icon(Icons.upload_file),
                   ),
@@ -443,43 +470,56 @@ class _InvoicePageState extends State<InvoicePage> {
     nav.pop();
   }
 
-  Future<void> _onOpenRecipient() async {
+  Future<void> _onRecipient() async {
+    final nav = Navigator.of(context);
+    final recipients = await _db.findAllRecipients();
+    if (recipients.length < 2) {
+      nav.pushNamed('/recipient');
+    } else {
+      _onOpenRecipients(recipients);
+    }
+  }
+
+  void _onOpenRecipients(List<Recipient> recipients) {
+    final colors = Theme.of(context).colorScheme;
+
     showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: colors.surface,
       builder: (context) {
-        return StreamBuilder<List<Recipient>>(
-          stream: _db.streamRecipients(),
-          builder: (context, snapshot) {
-            final waiting = snapshot.connectionState == ConnectionState.waiting;
-            if (waiting) return CenterCircular();
-
-            if (snapshot.hasError) return CenterText(text: 'Failed to load');
-
-            if (snapshot.hasData && snapshot.data!.isEmpty) {
-              return CenterText(text: 'No data');
-            } else {
-              return ListView.separated(
-                itemBuilder: (context, i) {
-                  final r = snapshot.data![i];
-
-                  return ListTile(
-                    title: Text(r.name!),
-                    onTap: () => _onChooseRecipient(r),
-                  );
-                },
-                separatorBuilder: (_, __) => const Divider(height: 0.0),
-                itemCount: snapshot.data!.length,
-              );
-            }
-          },
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            ListView.separated(
+              padding: EdgeInsets.only(top: kToolbarHeight),
+              itemBuilder: (context, i) {
+                final title = recipients[i].name!;
+                return ListTile(
+                  title: Text(title),
+                  trailing: _TrailingIcon(),
+                  onTap: () => _onChooseRecipient(recipients[i]),
+                );
+              },
+              separatorBuilder: (context, _) => Divider(height: 0),
+              itemCount: recipients.length,
+            ),
+            BottomSheetScrollHeader(),
+          ],
         );
       },
     );
   }
 
-  void _onChooseRecipient(Recipient recipient) {
+  Future<void> _onChooseRecipient(Recipient recipient) async {
     final nav = Navigator.of(context);
-    if (_to.id != recipient.id) setState(() => _to = recipient);
+    if (_to.id != recipient.id) {
+      _to.pinned = false;
+      await _db.updateRecipient(_to);
+      recipient.pinned = true;
+      await _db.updateRecipient(recipient);
+      setState(() => _to = recipient);
+    }
     nav.pop();
   }
 

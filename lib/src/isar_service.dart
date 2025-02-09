@@ -36,6 +36,7 @@ class IsarService {
       store.name = editedStore.name;
       store.bankName = editedStore.bankName;
       store.accountNumber = editedStore.accountNumber;
+      store.accountHolderName = editedStore.accountHolderName;
       store.swiftCode = editedStore.swiftCode;
       store.tax = editedStore.tax;
       store.thankNote = editedStore.thankNote;
@@ -137,6 +138,16 @@ class IsarService {
     return await db.recipients.where().findAll();
   }
 
+  Future<Recipient?> findPinnedRecipients() async {
+    final db = await isarDb;
+    return await db.recipients.filter().pinnedEqualTo(true).findFirst();
+  }
+
+  Future<int> countRecipients() async {
+    final db = await isarDb;
+    return await db.recipients.count();
+  }
+
   Future<void> saveRecipient(Recipient recipient) async {
     final db = await isarDb;
     await db.writeTxn(() async => db.recipients.put(recipient));
@@ -153,6 +164,7 @@ class IsarService {
       final recipient = await db.recipients.get(editedRecipient.id);
       recipient!.name = editedRecipient.name;
       recipient.address = editedRecipient.address;
+      recipient.pinned = editedRecipient.pinned;
       await db.recipients.put(recipient);
     });
   }

@@ -17,48 +17,53 @@ const StoreSchema = CollectionSchema(
   name: r'Store',
   id: 6037299533961794238,
   properties: {
-    r'accountNumber': PropertySchema(
+    r'accountHolderName': PropertySchema(
       id: 0,
+      name: r'accountHolderName',
+      type: IsarType.string,
+    ),
+    r'accountNumber': PropertySchema(
+      id: 1,
       name: r'accountNumber',
       type: IsarType.string,
     ),
     r'bankName': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'bankName',
       type: IsarType.string,
     ),
     r'email': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'email',
       type: IsarType.string,
     ),
     r'locale': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'locale',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'name',
       type: IsarType.string,
     ),
     r'swiftCode': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'swiftCode',
       type: IsarType.string,
     ),
     r'symbol': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'tax': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'tax',
       type: IsarType.double,
     ),
     r'thankNote': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'thankNote',
       type: IsarType.string,
     )
@@ -83,6 +88,12 @@ int _storeEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.accountHolderName;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final value = object.accountNumber;
     if (value != null) {
@@ -140,15 +151,16 @@ void _storeSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.accountNumber);
-  writer.writeString(offsets[1], object.bankName);
-  writer.writeString(offsets[2], object.email);
-  writer.writeString(offsets[3], object.locale);
-  writer.writeString(offsets[4], object.name);
-  writer.writeString(offsets[5], object.swiftCode);
-  writer.writeString(offsets[6], object.symbol);
-  writer.writeDouble(offsets[7], object.tax);
-  writer.writeString(offsets[8], object.thankNote);
+  writer.writeString(offsets[0], object.accountHolderName);
+  writer.writeString(offsets[1], object.accountNumber);
+  writer.writeString(offsets[2], object.bankName);
+  writer.writeString(offsets[3], object.email);
+  writer.writeString(offsets[4], object.locale);
+  writer.writeString(offsets[5], object.name);
+  writer.writeString(offsets[6], object.swiftCode);
+  writer.writeString(offsets[7], object.symbol);
+  writer.writeDouble(offsets[8], object.tax);
+  writer.writeString(offsets[9], object.thankNote);
 }
 
 Store _storeDeserialize(
@@ -158,16 +170,17 @@ Store _storeDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Store();
-  object.accountNumber = reader.readStringOrNull(offsets[0]);
-  object.bankName = reader.readStringOrNull(offsets[1]);
-  object.email = reader.readStringOrNull(offsets[2]);
+  object.accountHolderName = reader.readStringOrNull(offsets[0]);
+  object.accountNumber = reader.readStringOrNull(offsets[1]);
+  object.bankName = reader.readStringOrNull(offsets[2]);
+  object.email = reader.readStringOrNull(offsets[3]);
   object.id = id;
-  object.locale = reader.readStringOrNull(offsets[3]);
-  object.name = reader.readStringOrNull(offsets[4]);
-  object.swiftCode = reader.readStringOrNull(offsets[5]);
-  object.symbol = reader.readStringOrNull(offsets[6]);
-  object.tax = reader.readDoubleOrNull(offsets[7]);
-  object.thankNote = reader.readStringOrNull(offsets[8]);
+  object.locale = reader.readStringOrNull(offsets[4]);
+  object.name = reader.readStringOrNull(offsets[5]);
+  object.swiftCode = reader.readStringOrNull(offsets[6]);
+  object.symbol = reader.readStringOrNull(offsets[7]);
+  object.tax = reader.readDoubleOrNull(offsets[8]);
+  object.thankNote = reader.readStringOrNull(offsets[9]);
   return object;
 }
 
@@ -193,8 +206,10 @@ P _storeDeserializeProp<P>(
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -289,6 +304,155 @@ extension StoreQueryWhere on QueryBuilder<Store, Store, QWhereClause> {
 }
 
 extension StoreQueryFilter on QueryBuilder<Store, Store, QFilterCondition> {
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'accountHolderName',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition>
+      accountHolderNameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'accountHolderName',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition>
+      accountHolderNameGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'accountHolderName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'accountHolderName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'accountHolderName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> accountHolderNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'accountHolderName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition>
+      accountHolderNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'accountHolderName',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterFilterCondition> accountNumberIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1587,6 +1751,18 @@ extension StoreQueryObject on QueryBuilder<Store, Store, QFilterCondition> {}
 extension StoreQueryLinks on QueryBuilder<Store, Store, QFilterCondition> {}
 
 extension StoreQuerySortBy on QueryBuilder<Store, Store, QSortBy> {
+  QueryBuilder<Store, Store, QAfterSortBy> sortByAccountHolderName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'accountHolderName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> sortByAccountHolderNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'accountHolderName', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> sortByAccountNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'accountNumber', Sort.asc);
@@ -1697,6 +1873,18 @@ extension StoreQuerySortBy on QueryBuilder<Store, Store, QSortBy> {
 }
 
 extension StoreQuerySortThenBy on QueryBuilder<Store, Store, QSortThenBy> {
+  QueryBuilder<Store, Store, QAfterSortBy> thenByAccountHolderName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'accountHolderName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> thenByAccountHolderNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'accountHolderName', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> thenByAccountNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'accountNumber', Sort.asc);
@@ -1819,6 +2007,14 @@ extension StoreQuerySortThenBy on QueryBuilder<Store, Store, QSortThenBy> {
 }
 
 extension StoreQueryWhereDistinct on QueryBuilder<Store, Store, QDistinct> {
+  QueryBuilder<Store, Store, QDistinct> distinctByAccountHolderName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'accountHolderName',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Store, Store, QDistinct> distinctByAccountNumber(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1887,6 +2083,12 @@ extension StoreQueryProperty on QueryBuilder<Store, Store, QQueryProperty> {
   QueryBuilder<Store, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Store, String?, QQueryOperations> accountHolderNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'accountHolderName');
     });
   }
 
@@ -4317,6 +4519,11 @@ const RecipientSchema = CollectionSchema(
       id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'pinned': PropertySchema(
+      id: 2,
+      name: r'pinned',
+      type: IsarType.bool,
     )
   },
   estimateSize: _recipientEstimateSize,
@@ -4362,6 +4569,7 @@ void _recipientSerialize(
 ) {
   writer.writeString(offsets[0], object.address);
   writer.writeString(offsets[1], object.name);
+  writer.writeBool(offsets[2], object.pinned);
 }
 
 Recipient _recipientDeserialize(
@@ -4374,6 +4582,7 @@ Recipient _recipientDeserialize(
   object.address = reader.readStringOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readStringOrNull(offsets[1]);
+  object.pinned = reader.readBoolOrNull(offsets[2]);
   return object;
 }
 
@@ -4388,6 +4597,8 @@ P _recipientDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -4829,6 +5040,32 @@ extension RecipientQueryFilter
       ));
     });
   }
+
+  QueryBuilder<Recipient, Recipient, QAfterFilterCondition> pinnedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'pinned',
+      ));
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QAfterFilterCondition> pinnedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'pinned',
+      ));
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QAfterFilterCondition> pinnedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'pinned',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension RecipientQueryObject
@@ -4859,6 +5096,18 @@ extension RecipientQuerySortBy on QueryBuilder<Recipient, Recipient, QSortBy> {
   QueryBuilder<Recipient, Recipient, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QAfterSortBy> sortByPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QAfterSortBy> sortByPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pinned', Sort.desc);
     });
   }
 }
@@ -4900,6 +5149,18 @@ extension RecipientQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<Recipient, Recipient, QAfterSortBy> thenByPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QAfterSortBy> thenByPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pinned', Sort.desc);
+    });
+  }
 }
 
 extension RecipientQueryWhereDistinct
@@ -4915,6 +5176,12 @@ extension RecipientQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Recipient, Recipient, QDistinct> distinctByPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'pinned');
     });
   }
 }
@@ -4936,6 +5203,12 @@ extension RecipientQueryProperty
   QueryBuilder<Recipient, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Recipient, bool?, QQueryOperations> pinnedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'pinned');
     });
   }
 }

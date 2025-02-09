@@ -99,6 +99,7 @@ class _EditStorePageState extends State<EditStorePage> {
             ? disabledColor
             : colors.onPrimaryContainer,
         label: Text('Save'),
+        icon: Icon(Icons.done),
       ),
     );
   }
@@ -107,6 +108,8 @@ class _EditStorePageState extends State<EditStorePage> {
     final nav = Navigator.of(context);
     _editedStore.name = _name.text.trim();
     _editedStore.email = _email.text.trim();
+    _editedStore.locale = getLocale(_curr);
+    _editedStore.symbol = getSymbol(_curr);
     await _db.updateStore(_editedStore);
     nav.pushNamedAndRemoveUntil('/', (_) => false);
   }

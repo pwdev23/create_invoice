@@ -10,7 +10,7 @@ import '../isar_collection/isar_collections.dart';
 import '../utils.dart';
 import 'preview_state.dart';
 
-const headers = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
+const kHeaders = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
 
 class PreviewPage extends StatefulWidget {
   static const String routeName = '/preview';
@@ -36,11 +36,19 @@ class _PreviewPageState extends State<PreviewPage> {
   bool _downloaded = false;
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
-  final _now = DateFormat.yMMM().format(DateTime.now());
+  final _yMMMMd = DateFormat.yMMMMd().format(DateTime.now());
+  final _fileName = 'INV_${DateFormat(kDateFormat).format(DateTime.now())}';
+  double _tD = 0;
+  double _sT = 0;
+  double _tax = 0;
+  double _gT = 0;
 
   Future<void> _onInit() async {
-    double gT = calcGrandTotal(widget.items);
-    await _buildPages(widget.items, gT);
+    _tD = calcTotalDiscount(widget.items);
+    _sT = calcSubTotal(widget.items);
+    _gT = calcGrandTotal(widget.items, widget.store.tax!);
+    _tax = calcTax(widget.store.tax!, _gT);
+    await _buildPages(widget.items);
   }
 
   @override
@@ -59,39 +67,63 @@ class _PreviewPageState extends State<PreviewPage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Preview'),
-      ),
-      body: PdfPreview(
-        canChangeOrientation: false,
-        canChangePageFormat: false,
-        canDebug: false,
-        actionBarTheme: PdfActionBarTheme(
-          backgroundColor: colors.primary,
-          iconColor: colors.onPrimary,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text('Preview'),
         ),
-        actions: [
-          IconButton(
-            onPressed: _downloaded ? null : () => _onDownload(_pdfBytes),
-            icon: Icon(Icons.save_alt),
-          ),
-        ],
-        build: (_) => _doc.save(),
+        body: Column(
+          children: [
+            Flexible(
+              child: PdfPreview(
+                pdfFileName: _fileName,
+                canChangeOrientation: false,
+                canChangePageFormat: false,
+                canDebug: false,
+                actionBarTheme: PdfActionBarTheme(
+                  backgroundColor: colors.primary,
+                  iconColor: colors.onPrimary,
+                ),
+                actions: [
+                  IconButton(
+                    onPressed:
+                        _downloaded ? null : () => _onDownload(_pdfBytes),
+                    icon: Icon(Icons.save_alt),
+                  ),
+                ],
+                build: (_) => _doc.save(),
+              ),
+            ),
+            const Divider(height: 0.0),
+            _BackToHomeButton(
+              onPressed: () => _onBackToHome(),
+              title: 'Back to home',
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _buildPages(List<PurchaseItem> items, double grandTotal) async {
+  void _onBackToHome() {
+    final nav = Navigator.of(context);
+    nav.pushNamedAndRemoveUntil('/', (_) => false);
+  }
+
+  Future<void> _buildPages(List<PurchaseItem> items) async {
     _doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        header: (context) => _buildHeader(context, grandTotal),
+        header: (context) => _buildHeader(context),
         footer: (context) => _buildFooter(context),
         build: (context) => [
           _buildSubheader(context),
           _buildItemTable(context, items),
-          _buildSummary(context, grandTotal)
+          _buildSummary(context),
+          _buildPaymentDetails(context),
+          _buildThankNote(context),
         ],
       ),
     );
@@ -99,22 +131,23 @@ class _PreviewPageState extends State<PreviewPage> {
     _pdfBytes = await _doc.save();
   }
 
-  pw.Widget _buildHeader(pw.Context context, double grandTotal) {
+  pw.Widget _buildHeader(pw.Context context) {
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
     );
 
     return pw.TableHelper.fromTextArray(
+      border: pw.TableBorder(
+        top: pw.BorderSide(width: .5),
+        right: pw.BorderSide(width: .5),
+        bottom: pw.BorderSide(width: .5),
+        left: pw.BorderSide(width: .5),
+        verticalInside: pw.BorderSide(width: .5),
+      ),
       cellHeight: 100,
-      columnWidths: {
-        0: pw.FlexColumnWidth(2),
-        1: pw.FlexColumnWidth(1),
-      },
-      cellAlignments: {
-        0: pw.Alignment.centerLeft,
-        1: pw.Alignment.center,
-      },
+      columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
+      cellAlignments: {0: pw.Alignment.centerLeft, 1: pw.Alignment.center},
       data: <List<dynamic>>[
         [
           pw.Padding(
@@ -131,7 +164,7 @@ class _PreviewPageState extends State<PreviewPage> {
               pw.Text('Amount:'),
               pw.SizedBox(height: 4.0),
               pw.Text(
-                formatted.format(grandTotal),
+                formatted.format(_gT - widget.paid),
                 style: pw.TextStyle(fontSize: 20),
               ),
             ],
@@ -146,8 +179,8 @@ class _PreviewPageState extends State<PreviewPage> {
       padding: pw.EdgeInsets.all(30),
       decoration: pw.BoxDecoration(
         border: pw.Border(
-          left: pw.BorderSide(),
-          right: pw.BorderSide(),
+          left: pw.BorderSide(width: .5),
+          right: pw.BorderSide(width: .5),
         ),
       ),
       child: pw.Row(
@@ -156,40 +189,77 @@ class _PreviewPageState extends State<PreviewPage> {
         children: [
           pw.Text(
             'Billed to: ${widget.recipient.name}\n${widget.recipient.address}',
-            style: pw.TextStyle(lineSpacing: 8),
+            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           ),
           pw.Text(
-            'Invoice number: 0\nDate: $_now',
-            style: pw.TextStyle(lineSpacing: 12),
+            'Number: n\nDate: $_yMMMMd',
+            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           )
         ],
       ),
     );
   }
 
-  pw.Widget _buildSummary(pw.Context context, double grandTotal) {
+  pw.Widget _buildSummary(pw.Context context) {
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
     );
 
     return pw.TableHelper.fromTextArray(
-      cellHeight: 40,
-      border: null,
-      columnWidths: {
-        0: pw.FlexColumnWidth(3),
-        1: pw.FlexColumnWidth(1),
-      },
+      border: pw.TableBorder(
+        top: pw.BorderSide.none,
+        right: pw.BorderSide(width: .5),
+        bottom: pw.BorderSide(width: .5),
+        left: pw.BorderSide(width: .5),
+        horizontalInside: pw.BorderSide(width: .5),
+      ),
+      cellHeight: 20,
+      cellStyle: const pw.TextStyle(fontSize: 10),
+      headerStyle: const pw.TextStyle(fontSize: 10),
+      columnWidths: {0: pw.FlexColumnWidth(3), 1: pw.FlexColumnWidth(1)},
       cellAlignments: {
         0: pw.Alignment.centerRight,
         1: pw.Alignment.centerRight,
       },
       data: <List<dynamic>>[
-        ['Subtotal:', 'n'],
-        ['Total discount:', 'n'],
-        ['TAX:', 'n'],
-        ['Grand total:', formatted.format(grandTotal)],
+        ['Subtotal:', formatted.format(_sT)],
+        ['Total discount:', '-${formatted.format(_tD)}'],
+        ['Tax:', '$_tax%'],
+        ['Grand total:', formatted.format(_gT)],
+        ['Paid:', formatted.format(widget.paid)],
+        ['Left over:', formatted.format(_gT - widget.paid)],
       ],
+    );
+  }
+
+  pw.Widget _buildPaymentDetails(pw.Context context) {
+    return pw.Container(
+      width: double.infinity,
+      padding: pw.EdgeInsets.all(30),
+      decoration: pw.BoxDecoration(
+        border: pw.Border(
+          left: pw.BorderSide(width: .5),
+          right: pw.BorderSide(width: .5),
+        ),
+      ),
+      child: pw.Text(
+        'Bank: ${widget.store.bankName}\nAccount name: ${widget.store.accountHolderName}\nAccount number: ${widget.store.accountNumber}\nSwift code: ${widget.store.swiftCode}',
+        style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+      ),
+    );
+  }
+
+  pw.Widget _buildThankNote(pw.Context context) {
+    return pw.Container(
+      padding: pw.EdgeInsets.all(30),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(width: .5),
+      ),
+      child: pw.Text(
+        widget.store.thankNote!,
+        style: pw.TextStyle(lineSpacing: 8, fontSize: 8.0),
+      ),
     );
   }
 
@@ -225,6 +295,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildItemTable(pw.Context context, List<PurchaseItem> items) {
     return pw.TableHelper.fromTextArray(
+      border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
       headerDecoration: pw.BoxDecoration(
         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
@@ -241,30 +312,27 @@ class _PreviewPageState extends State<PreviewPage> {
         5: pw.Alignment.centerRight,
       },
       headerStyle: pw.TextStyle(
-        // color: _baseTextColor,
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
       ),
       cellStyle: const pw.TextStyle(
-        // color: _darkColor,
         fontSize: 10,
       ),
       rowDecoration: pw.BoxDecoration(
         border: pw.Border(
           bottom: pw.BorderSide(
-            // color: accentColor,
             width: .5,
           ),
         ),
       ),
       headers: List<String>.generate(
-        headers.length,
-        (col) => headers[col],
+        kHeaders.length,
+        (col) => kHeaders[col],
       ),
       data: List<List<dynamic>>.generate(
         widget.items.length,
         (row) => List<dynamic>.generate(
-          headers.length,
+          kHeaders.length,
           (col) => col == 0
               ? '${row + 1}'
               : _buildItem(context, row, col, items[row]),
@@ -318,4 +386,36 @@ class PreviewArgs {
   final Recipient recipient;
   final List<PurchaseItem> items;
   final double paid;
+}
+
+class _BackToHomeButton extends StatelessWidget {
+  const _BackToHomeButton({
+    required this.onPressed,
+    required this.title,
+  });
+
+  final VoidCallback onPressed;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      height: kToolbarHeight,
+      width: double.infinity,
+      child: RawMaterialButton(
+        fillColor: colors.surfaceTint,
+        onPressed: onPressed,
+        elevation: 0.0,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        child: Text(
+          title,
+          style: textTheme.titleMedium!.copyWith(color: colors.surface),
+        ),
+      ),
+    );
+  }
 }

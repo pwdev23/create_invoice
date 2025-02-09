@@ -125,8 +125,8 @@ class _EditItemPageState extends State<EditItemPage> {
         foregroundColor: _nameCon.text.isNotEmpty
             ? colors.onPrimaryContainer
             : disabledColor,
-        icon: Icon(Icons.add),
-        label: Text('Edit item'),
+        icon: Icon(Icons.done),
+        label: Text('Save'),
       ),
     );
   }

@@ -9,6 +9,7 @@ class Store {
   String? email;
   String? bankName;
   String? accountNumber;
+  String? accountHolderName;
   String? swiftCode;
   double? tax;
   String? thankNote;
@@ -48,4 +49,5 @@ class Recipient {
   Id id = Isar.autoIncrement;
   String? name;
   String? address;
+  bool? pinned;
 }

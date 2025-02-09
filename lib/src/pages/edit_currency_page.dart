@@ -62,6 +62,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
           ? FloatingActionButton.extended(
               onPressed: () => _onContinue(),
               label: Text('Continue'),
+              icon: Icon(Icons.arrow_forward),
             )
           : null,
     );

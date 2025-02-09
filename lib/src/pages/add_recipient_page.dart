@@ -89,7 +89,8 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
     final nav = Navigator.of(context);
     var recipient = Recipient()
       ..name = _name.text.trim()
-      ..address = _addr.text.trim();
+      ..address = _addr.text.trim()
+      ..pinned = false;
     await _db.saveRecipient(recipient);
     nav.pop();
   }

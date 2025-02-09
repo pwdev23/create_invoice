@@ -34,7 +34,6 @@ class _StorePageState extends State<StorePage> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
         title: StreamBuilder<List<Store>>(
           stream: _db.streamStores(),
           builder: (context, snapshot) {

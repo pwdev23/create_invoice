@@ -20,8 +20,8 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   final _db = IsarService();
-  late List<Store> _stores;
-  late List<Recipient> _recipients;
+  late Store? _store;
+  late Recipient? _recipient;
 
   @override
   void initState() {
@@ -33,31 +33,38 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) => Material(child: CenterCircular());
 
   Future<void> _initStore() async {
-    _stores = await _db.findAllStores();
-    final count = _stores.length;
+    final stores = await _db.findAllStores();
+    final count = stores.length;
     if (count == 0) {
+      _store = null;
       final store = Store()
         ..email = 'info@store.com'
         ..name = 'My store'
         ..bankName = ''
         ..accountNumber = ''
+        ..accountHolderName = ''
         ..swiftCode = ''
         ..tax = 0
         ..thankNote = note
         ..locale = ''
         ..symbol = '';
       await _db.saveStore(store);
+    } else {
+      _store = stores[0];
     }
   }
 
   Future<void> _initRecipient() async {
-    _recipients = await _db.findAllRecipients();
-    final count = _recipients.length;
+    final count = await _db.countRecipients();
     if (count == 0) {
+      _recipient = null;
       final recipient = Recipient()
         ..name = 'My customer'
-        ..address = 'Planet earth';
+        ..address = 'Planet earth'
+        ..pinned = true;
       await _db.saveRecipient(recipient);
+    } else {
+      _recipient = await _db.findPinnedRecipients();
     }
   }
 
@@ -66,18 +73,18 @@ class _AuthPageState extends State<AuthPage> {
     await _initStore();
     await _initRecipient();
     await Future.delayed(const Duration(seconds: 2));
-    if (_stores.isEmpty || _recipients.isEmpty) {
+    if (_store == null || _recipient == null) {
       _auth();
     } else {
-      if (_stores[0].locale == '') {
+      if (_store!.locale == '') {
         final editArgs = EditCurrencyArgs(
           isInitial: true,
-          store: _stores[0],
-          recipient: _recipients[0],
+          store: _store!,
+          recipient: _recipient!,
         );
         nav.pushReplacementNamed('/edit-currency', arguments: editArgs);
       } else {
-        final args = InvoiceArgs(_stores[0], _recipients[0]);
+        final args = InvoiceArgs(_store!, _recipient!);
         nav.pushReplacementNamed('/invoice', arguments: args);
       }
     }

@@ -90,6 +90,7 @@ class _EditRecipientState extends State<EditRecipient> {
             ? disabledColor
             : colors.onPrimaryContainer,
         label: Text('Save'),
+        icon: Icon(Icons.done),
       ),
     );
   }
