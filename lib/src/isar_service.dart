@@ -34,6 +34,14 @@ class IsarService {
       final store = await db.stores.get(id);
       store!.email = editedStore.email;
       store.name = editedStore.name;
+      store.bankName = editedStore.bankName;
+      store.accountNumber = editedStore.accountNumber;
+      store.accountHolderName = editedStore.accountHolderName;
+      store.swiftCode = editedStore.swiftCode;
+      store.tax = editedStore.tax;
+      store.thankNote = editedStore.thankNote;
+      store.locale = editedStore.locale;
+      store.symbol = editedStore.symbol;
       await db.stores.put(store);
     });
   }
@@ -72,6 +80,12 @@ class IsarService {
   Stream<List<Item>> streamItems() async* {
     final db = await isarDb;
     yield* db.items.where().watch(fireImmediately: true);
+  }
+
+  Future<List<Item>> findAllItems() async {
+    final db = await isarDb;
+    final items = db.items.where().findAll();
+    return items;
   }
 
   Future<void> deletePurchaseItems(List<int> ids) async {
@@ -124,6 +138,16 @@ class IsarService {
     return await db.recipients.where().findAll();
   }
 
+  Future<Recipient?> findPinnedRecipients() async {
+    final db = await isarDb;
+    return await db.recipients.filter().pinnedEqualTo(true).findFirst();
+  }
+
+  Future<int> countRecipients() async {
+    final db = await isarDb;
+    return await db.recipients.count();
+  }
+
   Future<void> saveRecipient(Recipient recipient) async {
     final db = await isarDb;
     await db.writeTxn(() async => db.recipients.put(recipient));
@@ -140,7 +164,21 @@ class IsarService {
       final recipient = await db.recipients.get(editedRecipient.id);
       recipient!.name = editedRecipient.name;
       recipient.address = editedRecipient.address;
+      recipient.pinned = editedRecipient.pinned;
       await db.recipients.put(recipient);
+    });
+  }
+
+  Future<void> swapPinnedRecipient(
+    Recipient willUnpin,
+    Recipient willPin,
+  ) async {
+    final db = await isarDb;
+    await db.writeTxn(() async {
+      willUnpin.pinned = false;
+      await db.recipients.put(willUnpin);
+      willPin.pinned = true;
+      await db.recipients.put(willPin);
     });
   }
 

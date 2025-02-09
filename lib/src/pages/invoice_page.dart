@@ -8,6 +8,7 @@ import '../shared/shared.dart';
 import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
+import 'store_page.dart' show StoreArgs;
 
 class InvoicePage extends StatefulWidget {
   static const String routeName = '/invoice';
@@ -23,22 +24,35 @@ class InvoicePage extends StatefulWidget {
 
 class _InvoicePageState extends State<InvoicePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  late Store _editedStore;
   late Recipient _to;
   bool _skipLoading = false;
   final _db = IsarService();
   final _ids = <int>[];
   int _qty = 0;
   final _paid = TextEditingController();
+  final _bank = TextEditingController();
+  final _accNum = TextEditingController();
+  final _accName = TextEditingController();
+  final _code = TextEditingController();
+  final _tax = TextEditingController();
+  final _range = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _editedStore = widget.store;
     _to = widget.recipient;
   }
 
   @override
   void dispose() {
     _paid.dispose();
+    _bank.dispose();
+    _accNum.dispose();
+    _accName.dispose();
+    _code.dispose();
+    _tax.dispose();
     super.dispose();
   }
 
@@ -46,7 +60,10 @@ class _InvoicePageState extends State<InvoicePage> {
   Widget build(BuildContext context) {
     final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(
+      locale: widget.store.locale,
+      symbol: widget.store.symbol,
+    );
 
     return Scaffold(
       key: _key,
@@ -55,8 +72,8 @@ class _InvoicePageState extends State<InvoicePage> {
           padding: const EdgeInsets.only(left: 16.0),
           child: TextButton(
             style: TextButton.styleFrom(
-              backgroundColor: colors.primaryContainer,
-              foregroundColor: colors.onPrimaryContainer,
+              backgroundColor: colors.surfaceTint,
+              foregroundColor: colors.surface,
               shape: CircleBorder(),
             ),
             onPressed: () => _key.currentState!.openDrawer(),
@@ -64,14 +81,14 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
         ),
         title: _RecipientButton(
-          leadingText: 'To',
+          leadingText: 'Billed to',
           recipientName: _to.name!,
-          onPressed: () => _onOpenRecipient(),
+          onPressed: () => _onRecipient(),
         ),
         actions: [
           _ids.isEmpty
               ? TextButton.icon(
-                  onPressed: () => _openStore(),
+                  onPressed: () => _oAddItem(),
                   icon: Icon(Icons.add),
                   label: Text('Add item'),
                 )
@@ -90,7 +107,7 @@ class _InvoicePageState extends State<InvoicePage> {
             _StoreInfo(name: widget.store.name!, email: widget.store.email!),
             ListTile(
               style: ListTileStyle.drawer,
-              onTap: () => push(context, '/store'),
+              onTap: () => _onManageStore(),
               title: Text('Manage store'),
               leading: Icon(Icons.inbox),
             ),
@@ -134,7 +151,11 @@ class _InvoicePageState extends State<InvoicePage> {
                   isThreeLine: item!.discount! > 0,
                   subtitle: item.discount == 0
                       ? Text(formatted.format(item.price))
-                      : PriceTexts(item: item),
+                      : PriceTexts(
+                          item: item,
+                          locale: widget.store.locale!,
+                          symbol: widget.store.symbol!,
+                        ),
                 );
               },
               separatorBuilder: (_, __) => Divider(height: 0),
@@ -146,49 +167,66 @@ class _InvoicePageState extends State<InvoicePage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
-        onPressed: () => _onOpenPaidForm(),
-        label: Text('Proceed'),
+        onPressed: () => _onProceed(),
+        label: Text('Fill invoice details'),
+        icon: Icon(Icons.edit_note_outlined),
       ),
     );
   }
 
-  void _openStore() {
+  Future<void> _onProceed() async {
+    final msg = ScaffoldMessenger.of(context);
+    final granted = await requestPermission();
+    if (granted) {
+      final items = await _db.findAllPurchaseItems();
+      if (items.isEmpty) {
+        _onEmpty();
+      } else {
+        _onOpenDetailsForm(items);
+      }
+    } else {
+      const str = 'Permission denied';
+      msg.showSnackBar(SnackBar(content: Text(str)));
+    }
+  }
+
+  Future<void> _oAddItem() async {
+    final nav = Navigator.of(context);
+    final items = await _db.findAllItems();
+    if (items.isEmpty) {
+      final args = StoreArgs(widget.store.locale!, widget.store.symbol!);
+      nav.pushNamed('/store', arguments: args);
+    } else {
+      _openItemSheet(items);
+    }
+  }
+
+  void _openItemSheet(List<Item> items) {
+    final colors = Theme.of(context).colorScheme;
+
     showModalBottomSheet(
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: colors.surface,
       context: context,
       builder: (context) {
-        return StreamBuilder<List<Item>>(
-          stream: _db.streamItems(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator.adaptive());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Failed to load'));
-            }
-
-            if (snapshot.hasData) {
-              return ListView.separated(
-                itemBuilder: (context, i) {
-                  final title = snapshot.data![i].name!;
-                  return ListTile(
-                    title: Text(title),
-                    trailing: Transform.flip(
-                      flipX: true,
-                      child: Icon(
-                        Icons.arrow_outward,
-                      ),
-                    ),
-                    onTap: () => _onAddPurchaseItem(_db, snapshot.data![i]),
-                  );
-                },
-                separatorBuilder: (context, _) => Divider(height: 0),
-                itemCount: snapshot.data!.length,
-              );
-            }
-
-            return Center(child: Text('No data'));
-          },
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            ListView.separated(
+              padding: EdgeInsets.only(top: kToolbarHeight),
+              itemBuilder: (context, i) {
+                final title = items[i].name!;
+                return ListTile(
+                  title: Text(title),
+                  trailing: _TrailingIcon(),
+                  onTap: () => _onAddPurchaseItem(_db, items[i]),
+                );
+              },
+              separatorBuilder: (context, _) => Divider(height: 0),
+              itemCount: items.length,
+            ),
+            BottomSheetScrollHeader(),
+          ],
         );
       },
     );
@@ -201,63 +239,163 @@ class _InvoicePageState extends State<InvoicePage> {
     await isar.savePurchaseItem(purchaseItem);
   }
 
-  Future<void> _onCreateInvoice() async {
+  Future<void> _onCreateInvoice(List<PurchaseItem> items) async {
     final nav = Navigator.of(context);
-    final msg = ScaffoldMessenger.of(context);
-    final granted = await requestPermission();
-    if (granted) {
-      final items = await _db.findAllPurchaseItems();
-      if (items.isEmpty) {
-        _onEmpty();
-      } else {
-        final arguments = PreviewArgs(widget.store, widget.recipient, items);
-        nav.pushNamed('/preview', arguments: arguments);
-      }
-    } else {
-      const str = 'Permission denied';
-      msg.showSnackBar(SnackBar(content: Text(str)));
-    }
+    final n = _paid.text.isEmpty ? 0.0 : double.parse(_paid.text);
+    _editedStore.bankName = _bank.text.trim();
+    _editedStore.accountNumber = _accNum.text.trim();
+    _editedStore.accountHolderName = _accName.text.trim();
+    _editedStore.swiftCode = _code.text.isEmpty ? '' : _code.text.trim();
+    final tax = _tax.text.isEmpty ? 0 : double.parse(_tax.text);
+    _editedStore.tax = tax.toDouble();
+    final range = _range.text.isEmpty ? 1 : extractNumbers(_range.text);
+    await _db.updateStore(_editedStore);
+    final args = PreviewArgs(_editedStore, _to, items, n, range);
+    nav.pushNamed('/preview', arguments: args);
   }
 
-  void _onOpenPaidForm() {
+  void _onOpenDetailsForm(List<PurchaseItem> items) {
+    final textTheme = Theme.of(context).textTheme;
+    _bank.text = widget.store.bankName!;
+    _accNum.text = widget.store.accountNumber!;
+    _accName.text = widget.store.accountHolderName!;
+    _code.text = widget.store.swiftCode!;
+    _tax.text = widget.store.tax! == 0.0 ? '' : '${widget.store.tax!}';
+
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return Form(
-              child: Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: Column(
-                  spacing: 0,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Header(title: 'Paid'),
-                    Padding(
-                      padding: kPx,
-                      child: TextFormField(
-                        controller: _paid,
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: '0',
-                          label: Text('Paid'),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
+            return _ScrollableFormWithPadding(
+              children: [
+                Header(title: 'Invoice details'),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _paid,
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: '0',
+                      label: Text('Paid'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: FilledButton.icon(
-                        onPressed: () => _onCreateInvoice(),
-                        label: Text('Create invoice'),
-                        icon: Icon(Icons.upload_file),
-                      ),
-                    ),
-                  ],
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                  child: Text(
+                    'Payment details',
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _bank,
+                    decoration: InputDecoration(
+                      hintText: 'My money bank',
+                      label: Text('Bank name'),
+                    ),
+                    keyboardType: TextInputType.text,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _accNum,
+                    decoration: InputDecoration(
+                      hintText: '1231231231',
+                      label: Text('Account number'),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _accName,
+                    decoration: InputDecoration(
+                      hintText: 'Joe Taslim',
+                      label: Text('Account holder name'),
+                    ),
+                    keyboardType: TextInputType.name,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _code,
+                    decoration: InputDecoration(
+                      hintText: 'ABCDEFGH',
+                      label: Text('Swift code'),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                  child: Text(
+                    'Tax',
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _tax,
+                    decoration: InputDecoration(
+                      hintText: '0',
+                      label: Text('Tax'),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                  child: Text(
+                    'In percent',
+                    style: textTheme.bodySmall,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _range,
+                    decoration: InputDecoration(
+                      hintText: '1',
+                      label: Text('Due date range'),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: FilledButton.icon(
+                    onPressed: _bank.text.isEmpty ||
+                            _accNum.text.isEmpty ||
+                            _accName.text.isEmpty
+                        ? null
+                        : () => _onCreateInvoice(items),
+                    label: Text('Create invoice'),
+                    icon: Icon(Icons.upload_file),
+                  ),
+                ),
+              ],
             );
           },
         );
@@ -349,44 +487,60 @@ class _InvoicePageState extends State<InvoicePage> {
     nav.pop();
   }
 
-  Future<void> _onOpenRecipient() async {
+  Future<void> _onRecipient() async {
+    final nav = Navigator.of(context);
+    final recipients = await _db.findAllRecipients();
+    if (recipients.length < 2) {
+      nav.pushNamed('/recipient');
+    } else {
+      _onOpenRecipients(recipients);
+    }
+  }
+
+  void _onOpenRecipients(List<Recipient> recipients) {
+    final colors = Theme.of(context).colorScheme;
+
     showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: colors.surface,
       builder: (context) {
-        return StreamBuilder<List<Recipient>>(
-          stream: _db.streamRecipients(),
-          builder: (context, snapshot) {
-            final waiting = snapshot.connectionState == ConnectionState.waiting;
-            if (waiting) return CenterCircular();
-
-            if (snapshot.hasError) return CenterText(text: 'Failed to load');
-
-            if (snapshot.hasData && snapshot.data!.isEmpty) {
-              return CenterText(text: 'No data');
-            } else {
-              return ListView.separated(
-                itemBuilder: (context, i) {
-                  final r = snapshot.data![i];
-
-                  return ListTile(
-                    title: Text(r.name!),
-                    onTap: () => _onChooseRecipient(r),
-                  );
-                },
-                separatorBuilder: (_, __) => const Divider(height: 0.0),
-                itemCount: snapshot.data!.length,
-              );
-            }
-          },
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            ListView.separated(
+              padding: EdgeInsets.only(top: kToolbarHeight),
+              itemBuilder: (context, i) {
+                final title = recipients[i].name!;
+                return ListTile(
+                  title: Text(title),
+                  trailing: _TrailingIcon(),
+                  onTap: () => _onPinRecipient(recipients[i]),
+                );
+              },
+              separatorBuilder: (context, _) => Divider(height: 0),
+              itemCount: recipients.length,
+            ),
+            BottomSheetScrollHeader(),
+          ],
         );
       },
     );
   }
 
-  void _onChooseRecipient(Recipient recipient) {
+  Future<void> _onPinRecipient(Recipient recipient) async {
     final nav = Navigator.of(context);
-    if (_to.id != recipient.id) setState(() => _to = recipient);
+    if (_to.id != recipient.id) {
+      await _db.swapPinnedRecipient(_to, recipient);
+      setState(() => _to = recipient);
+    }
     nav.pop();
+  }
+
+  void _onManageStore() {
+    final nav = Navigator.of(context);
+    final args = StoreArgs(widget.store.locale!, widget.store.symbol!);
+    nav.pushNamed('/store', arguments: args);
   }
 }
 
@@ -507,6 +661,43 @@ class _StoreInfo extends StatelessWidget {
             TextSpan(text: email),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ScrollableFormWithPadding extends StatelessWidget {
+  const _ScrollableFormWithPadding({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: SingleChildScrollView(
+        child: Form(
+          child: Column(
+            spacing: 0,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TrailingIcon extends StatelessWidget {
+  const _TrailingIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.flip(
+      flipX: true,
+      child: Icon(
+        Icons.arrow_outward,
       ),
     );
   }

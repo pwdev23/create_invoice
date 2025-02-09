@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'routes/pages.dart';
+import 'pages/pages.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -25,6 +25,17 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
           recipient: args.recipient,
           store: args.store,
           items: args.items,
+          paid: args.paid,
+          daysRange: args.daysRange,
+        ),
+      );
+    case '/edit-currency':
+      final args = settings.arguments as EditCurrencyArgs;
+      return MaterialPageRoute(
+        builder: (_) => EditCurrencyPage(
+          isInitial: args.isInitial,
+          store: args.store,
+          recipient: args.recipient,
         ),
       );
     case '/edit-recipient':
@@ -39,7 +50,13 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (_) => EditStorePage(store: args.store));
     case '/store':
-      return MaterialPageRoute(builder: (_) => const StorePage());
+      final args = settings.arguments as StoreArgs;
+      return MaterialPageRoute(
+        builder: (_) => StorePage(
+          locale: args.locale,
+          symbol: args.symbol,
+        ),
+      );
     case '/recipient':
       return MaterialPageRoute(builder: (_) => const RecipientPage());
     default:

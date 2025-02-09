@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../isar_collection/isar_collections.dart' show Item;
-import '../routes/invoice_state.dart';
-import '../routes/preview_state.dart';
+import '../pages/preview_state.dart';
 
 class PriceTexts extends StatelessWidget {
-  const PriceTexts({super.key, required this.item});
+  const PriceTexts({
+    super.key,
+    required this.item,
+    required this.locale,
+    required this.symbol,
+  });
 
   final Item item;
+  final String locale;
+  final String symbol;
 
   @override
   Widget build(BuildContext context) {
     final calc = calcDiscount(item.price!, item.discount!, item.isPercentage!);
     final colors = Theme.of(context).colorScheme;
-    final formatted = NumberFormat.currency(locale: kLocale, symbol: kSymbol);
+    final formatted = NumberFormat.currency(locale: locale, symbol: symbol);
 
     return Text.rich(
       TextSpan(

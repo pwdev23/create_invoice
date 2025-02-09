@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import '../isar_collection/isar_collections.dart' show Item;
+import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
 
-class EditItemPage extends StatefulWidget {
-  static const routeName = '/edit-item';
+class AddItemPage extends StatefulWidget {
+  static const routeName = '/add-item';
 
-  const EditItemPage({super.key, required this.item});
-
-  final Item item;
+  const AddItemPage({super.key});
 
   @override
-  State<EditItemPage> createState() => _EditItemPageState();
+  State<AddItemPage> createState() => _AddItemPageState();
 }
 
-class _EditItemPageState extends State<EditItemPage> {
-  late Item _editedItem;
+class _AddItemPageState extends State<AddItemPage> {
   final _db = IsarService();
   final _formKey = GlobalKey<FormState>();
   final _skuCon = TextEditingController();
@@ -24,17 +21,6 @@ class _EditItemPageState extends State<EditItemPage> {
   final _priceCon = TextEditingController();
   final _discCon = TextEditingController();
   bool _isPercent = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _editedItem = widget.item;
-    _skuCon.text = widget.item.sku!;
-    _nameCon.text = widget.item.name!;
-    _priceCon.text = '${widget.item.price}';
-    _discCon.text = '${widget.item.discount}';
-    _isPercent = widget.item.isPercentage!;
-  }
 
   @override
   void dispose() {
@@ -52,7 +38,7 @@ class _EditItemPageState extends State<EditItemPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit item'),
+        title: Text('Add item'),
       ),
       body: Form(
         key: _formKey,
@@ -63,10 +49,11 @@ class _EditItemPageState extends State<EditItemPage> {
             Padding(
               padding: kPx,
               child: TextFormField(
-                controller: _skuCon,
+                controller: _nameCon,
+                keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  hintText: 'SKU',
-                  labelText: 'SKU',
+                  labelText: 'Item name',
+                  hintText: 'Item name',
                 ),
                 onChanged: (v) => setState(() {}),
               ),
@@ -74,11 +61,10 @@ class _EditItemPageState extends State<EditItemPage> {
             Padding(
               padding: kPx,
               child: TextFormField(
-                controller: _nameCon,
-                keyboardType: TextInputType.name,
+                controller: _skuCon,
                 decoration: InputDecoration(
-                  labelText: 'Item name',
-                  hintText: 'Item name',
+                  hintText: 'SKU',
+                  labelText: 'SKU',
                 ),
                 onChanged: (v) => setState(() {}),
               ),
@@ -117,7 +103,7 @@ class _EditItemPageState extends State<EditItemPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _isValid(_formKey) && _nameCon.text.isNotEmpty
-            ? () => _onEditItem()
+            ? () => _onAddItem()
             : null,
         disabledElevation: 0,
         backgroundColor:
@@ -126,21 +112,26 @@ class _EditItemPageState extends State<EditItemPage> {
             ? colors.onPrimaryContainer
             : disabledColor,
         icon: Icon(Icons.add),
-        label: Text('Edit item'),
+        label: Text('Add item'),
       ),
     );
   }
 
-  Future<void> _onEditItem() async {
-    final nav = Navigator.of(context);
+  Future<void> _onAddItem() async {
     final p = _priceCon.text.isEmpty ? 0.0 : double.parse(_priceCon.text);
     final d = _discCon.text.isEmpty ? 0.0 : double.parse(_discCon.text);
-    _editedItem.sku = _skuCon.text.isEmpty ? '' : _skuCon.text.trim();
-    _editedItem.name = _nameCon.text.isEmpty ? '' : _nameCon.text.trim();
-    _editedItem.price = p;
-    _editedItem.discount = d;
-    _editedItem.isPercentage = _isPercent;
-    await _db.updateItem(_editedItem);
+    final item = Item()
+      ..sku = _skuCon.text.isEmpty ? '' : _skuCon.text.trim()
+      ..name = _nameCon.text.isEmpty ? '' : _nameCon.text.trim()
+      ..price = p
+      ..discount = d
+      ..isPercentage = _isPercent;
+    await _db.saveItem(item);
+    _onSaved();
+  }
+
+  void _onSaved() {
+    final nav = Navigator.of(context);
     nav.pop();
   }
 
@@ -151,10 +142,4 @@ class _EditItemPageState extends State<EditItemPage> {
             : false
         : false;
   }
-}
-
-class EditItemArgs {
-  const EditItemArgs(this.item);
-
-  final Item item;
 }

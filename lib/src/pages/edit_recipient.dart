@@ -4,20 +4,30 @@ import '../constants.dart';
 import '../isar_collection/isar_collections.dart' show Recipient;
 import '../isar_service.dart';
 
-class AddRecipientPage extends StatefulWidget {
-  static const routeName = '/add-recipient';
+class EditRecipient extends StatefulWidget {
+  static const routeName = '/edit-recipient';
 
-  const AddRecipientPage({super.key});
+  const EditRecipient({super.key, required this.recipient});
+
+  final Recipient recipient;
 
   @override
-  State<AddRecipientPage> createState() => _AddRecipientPageState();
+  State<EditRecipient> createState() => _EditRecipientState();
 }
 
-class _AddRecipientPageState extends State<AddRecipientPage> {
+class _EditRecipientState extends State<EditRecipient> {
+  late Recipient _recipient;
   final _db = IsarService();
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _addr = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _name.text = widget.recipient.name!;
+    _addr.text = widget.recipient.address!;
+  }
 
   @override
   void dispose() {
@@ -33,7 +43,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add recipient'),
+        title: Text('Edit recipient'),
       ),
       body: Form(
         key: _formKey,
@@ -42,7 +52,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox.shrink(),
+            SizedBox(),
             Padding(
               padding: kPx,
               child: TextFormField(
@@ -79,18 +89,24 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
         foregroundColor: _name.text.isEmpty || _addr.text.isEmpty
             ? disabledColor
             : colors.onPrimaryContainer,
-        label: Text('Add recipient'),
-        icon: Icon(Icons.add),
+        label: Text('Save'),
+        icon: Icon(Icons.done),
       ),
     );
   }
 
   Future<void> _onSave() async {
     final nav = Navigator.of(context);
-    var recipient = Recipient()
-      ..name = _name.text.trim()
-      ..address = _addr.text.trim();
-    await _db.saveRecipient(recipient);
+    _recipient = widget.recipient;
+    _recipient.name = _name.text.trim();
+    _recipient.address = _addr.text.trim();
+    await _db.updateRecipient(_recipient);
     nav.pop();
   }
+}
+
+class EditRecipientArgs {
+  const EditRecipientArgs(this.recipient);
+
+  final Recipient recipient;
 }
