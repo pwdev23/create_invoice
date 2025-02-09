@@ -6,6 +6,7 @@ import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
 import '../shared/shared.dart';
 import '../utils.dart';
+import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
 import 'store_page.dart' show StoreArgs;
 
@@ -35,6 +36,7 @@ class _InvoicePageState extends State<InvoicePage> {
   final _accName = TextEditingController();
   final _code = TextEditingController();
   final _tax = TextEditingController();
+  final _range = TextEditingController();
 
   @override
   void initState() {
@@ -166,7 +168,8 @@ class _InvoicePageState extends State<InvoicePage> {
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
         onPressed: () => _onProceed(),
-        label: Text('Proceed'),
+        label: Text('Fill invoice details'),
+        icon: Icon(Icons.edit_note_outlined),
       ),
     );
   }
@@ -245,8 +248,9 @@ class _InvoicePageState extends State<InvoicePage> {
     _editedStore.swiftCode = _code.text.isEmpty ? '' : _code.text.trim();
     final tax = _tax.text.isEmpty ? 0 : double.parse(_tax.text);
     _editedStore.tax = tax.toDouble();
+    final range = _range.text.isEmpty ? 1 : extractNumbers(_range.text);
     await _db.updateStore(_editedStore);
-    final args = PreviewArgs(_editedStore, _to, items, n);
+    final args = PreviewArgs(_editedStore, _to, items, n, range);
     nav.pushNamed('/preview', arguments: args);
   }
 
@@ -338,7 +342,6 @@ class _InvoicePageState extends State<InvoicePage> {
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
-                const SizedBox(height: 16.0),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
                   child: Text(
@@ -364,6 +367,20 @@ class _InvoicePageState extends State<InvoicePage> {
                   child: Text(
                     'In percent',
                     style: textTheme.bodySmall,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _range,
+                    decoration: InputDecoration(
+                      hintText: '1',
+                      label: Text('Due date range'),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
                 ),
                 Padding(
@@ -498,7 +515,7 @@ class _InvoicePageState extends State<InvoicePage> {
                 return ListTile(
                   title: Text(title),
                   trailing: _TrailingIcon(),
-                  onTap: () => _onChooseRecipient(recipients[i]),
+                  onTap: () => _onPinRecipient(recipients[i]),
                 );
               },
               separatorBuilder: (context, _) => Divider(height: 0),
@@ -511,13 +528,10 @@ class _InvoicePageState extends State<InvoicePage> {
     );
   }
 
-  Future<void> _onChooseRecipient(Recipient recipient) async {
+  Future<void> _onPinRecipient(Recipient recipient) async {
     final nav = Navigator.of(context);
     if (_to.id != recipient.id) {
-      _to.pinned = false;
-      await _db.updateRecipient(_to);
-      recipient.pinned = true;
-      await _db.updateRecipient(recipient);
+      await _db.swapPinnedRecipient(_to, recipient);
       setState(() => _to = recipient);
     }
     nav.pop();

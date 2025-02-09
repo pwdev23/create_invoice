@@ -169,6 +169,19 @@ class IsarService {
     });
   }
 
+  Future<void> swapPinnedRecipient(
+    Recipient willUnpin,
+    Recipient willPin,
+  ) async {
+    final db = await isarDb;
+    await db.writeTxn(() async {
+      willUnpin.pinned = false;
+      await db.recipients.put(willUnpin);
+      willPin.pinned = true;
+      await db.recipients.put(willPin);
+    });
+  }
+
   Future<void> deleteRecipients(List<int> ids) async {
     final db = await isarDb;
     await db.writeTxn(() async {

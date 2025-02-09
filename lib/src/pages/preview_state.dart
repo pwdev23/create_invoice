@@ -13,36 +13,13 @@ double calcDiscount(double price, double discount, bool isPercent) {
 }
 
 double calcSubTotal(List<PurchaseItem> items) {
-  double grandTotal = 0;
+  double total = 0;
 
   for (var e in items) {
-    final t = e.item.value;
-    final d = t!.discount!;
-    final p = t.isPercentage!;
-    final price =
-        d > 0 ? calcDiscount(t.price!, d, p) * e.qty! : t.price! * e.qty!;
-    grandTotal += price;
+    total += e.item.value!.price! * e.qty!;
   }
 
-  return grandTotal;
-}
-
-double calcGrandTotal(List<PurchaseItem> items, double tax) {
-  double grandTotal = 0;
-
-  for (var e in items) {
-    final t = e.item.value;
-    final d = t!.discount!;
-    final p = t.isPercentage!;
-    final price =
-        d > 0 ? calcDiscount(t.price!, d, p) * e.qty! : t.price! * e.qty!;
-    grandTotal += price;
-  }
-
-  final f = tax / 100;
-  final a = grandTotal * f;
-
-  return grandTotal + a;
+  return total;
 }
 
 double calcTotalDiscount(List<PurchaseItem> items) {

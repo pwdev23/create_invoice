@@ -27,17 +27,10 @@ void main() {
   ];
 
   group('Calculations should be calculated correctly', () {
-    test('Grand total should be calculated correctly', () {
-      const tax = 11.0;
-      double grandTotal = 0;
-      grandTotal = calcGrandTotal(purchaseItems, tax);
-      expect(grandTotal, 33.3);
-    });
-
     test('Sub total should be calculated correctly', () {
-      double grandTotal = 0;
-      grandTotal = calcSubTotal(purchaseItems);
-      expect(grandTotal, 30);
+      double subTotal = 0;
+      subTotal = calcSubTotal(purchaseItems);
+      expect(subTotal, 40);
     });
 
     test('Total discount should be calculated correctly', () {

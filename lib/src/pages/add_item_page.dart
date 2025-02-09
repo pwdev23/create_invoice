@@ -49,10 +49,11 @@ class _AddItemPageState extends State<AddItemPage> {
             Padding(
               padding: kPx,
               child: TextFormField(
-                controller: _skuCon,
+                controller: _nameCon,
+                keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  hintText: 'SKU',
-                  labelText: 'SKU',
+                  labelText: 'Item name',
+                  hintText: 'Item name',
                 ),
                 onChanged: (v) => setState(() {}),
               ),
@@ -60,11 +61,10 @@ class _AddItemPageState extends State<AddItemPage> {
             Padding(
               padding: kPx,
               child: TextFormField(
-                controller: _nameCon,
-                keyboardType: TextInputType.name,
+                controller: _skuCon,
                 decoration: InputDecoration(
-                  labelText: 'Item name',
-                  hintText: 'Item name',
+                  hintText: 'SKU',
+                  labelText: 'SKU',
                 ),
                 onChanged: (v) => setState(() {}),
               ),

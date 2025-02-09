@@ -21,12 +21,14 @@ class PreviewPage extends StatefulWidget {
     required this.recipient,
     required this.items,
     required this.paid,
+    required this.daysRange,
   });
 
   final Store store;
   final Recipient recipient;
   final List<PurchaseItem> items;
   final double paid;
+  final int daysRange;
 
   @override
   State<PreviewPage> createState() => _PreviewPageState();
@@ -36,17 +38,19 @@ class _PreviewPageState extends State<PreviewPage> {
   bool _downloaded = false;
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
+  String _dueDate = '';
   final _yMMMMd = DateFormat.yMMMMd().format(DateTime.now());
-  final _fileName = 'INV_${DateFormat(kDateFormat).format(DateTime.now())}';
+  final _fName = 'INV_${DateFormat(kDateFormat).format(DateTime.now())}.pdf';
   double _tD = 0;
   double _sT = 0;
   double _tax = 0;
   double _gT = 0;
 
   Future<void> _onInit() async {
+    _dueDate = _getDueDate(widget.daysRange);
     _tD = calcTotalDiscount(widget.items);
     _sT = calcSubTotal(widget.items);
-    _gT = calcGrandTotal(widget.items, widget.store.tax!);
+    _gT = _sT - _tD;
     _tax = calcTax(widget.store.tax!, _gT);
     await _buildPages(widget.items);
   }
@@ -78,7 +82,7 @@ class _PreviewPageState extends State<PreviewPage> {
           children: [
             Flexible(
               child: PdfPreview(
-                pdfFileName: _fileName,
+                pdfFileName: _fName,
                 canChangeOrientation: false,
                 canChangePageFormat: false,
                 canDebug: false,
@@ -122,7 +126,6 @@ class _PreviewPageState extends State<PreviewPage> {
           _buildSubheader(context),
           _buildItemTable(context, items),
           _buildSummary(context),
-          _buildPaymentDetails(context),
           _buildThankNote(context),
         ],
       ),
@@ -138,6 +141,7 @@ class _PreviewPageState extends State<PreviewPage> {
     );
 
     return pw.TableHelper.fromTextArray(
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
       border: pw.TableBorder(
         top: pw.BorderSide(width: .5),
         right: pw.BorderSide(width: .5),
@@ -145,7 +149,7 @@ class _PreviewPageState extends State<PreviewPage> {
         left: pw.BorderSide(width: .5),
         verticalInside: pw.BorderSide(width: .5),
       ),
-      cellHeight: 100,
+      cellHeight: 75,
       columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
       cellAlignments: {0: pw.Alignment.centerLeft, 1: pw.Alignment.center},
       data: <List<dynamic>>[
@@ -154,18 +158,22 @@ class _PreviewPageState extends State<PreviewPage> {
             padding: const pw.EdgeInsets.only(left: 20),
             child: pw.Text(
               'INVOICE',
-              style: pw.TextStyle(fontSize: 40),
+              style: pw.TextStyle(fontSize: 40, color: PdfColors.white),
             ),
           ),
           pw.Column(
             mainAxisAlignment: pw.MainAxisAlignment.center,
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              pw.Text('Amount:'),
+              pw.Text('Amount:', style: pw.TextStyle(color: PdfColors.white)),
               pw.SizedBox(height: 4.0),
               pw.Text(
-                formatted.format(_gT - widget.paid),
-                style: pw.TextStyle(fontSize: 20),
+                formatted.format(_gT + _tax - widget.paid),
+                style: pw.TextStyle(
+                  fontSize: 20,
+                  color: PdfColors.white,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -176,11 +184,11 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildSubheader(pw.Context context) {
     return pw.Container(
-      padding: pw.EdgeInsets.all(30),
+      padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       decoration: pw.BoxDecoration(
         border: pw.Border(
-          left: pw.BorderSide(width: .5),
-          right: pw.BorderSide(width: .5),
+          left: pw.BorderSide(width: .5200),
+          right: pw.BorderSide(width: .5200),
         ),
       ),
       child: pw.Row(
@@ -192,7 +200,7 @@ class _PreviewPageState extends State<PreviewPage> {
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           ),
           pw.Text(
-            'Number: n\nDate: $_yMMMMd',
+            'Date: $_yMMMMd\nDue date: $_dueDate',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           )
         ],
@@ -206,43 +214,49 @@ class _PreviewPageState extends State<PreviewPage> {
       symbol: widget.store.symbol,
     );
 
-    return pw.TableHelper.fromTextArray(
-      border: pw.TableBorder(
-        top: pw.BorderSide.none,
-        right: pw.BorderSide(width: .5),
-        bottom: pw.BorderSide(width: .5),
-        left: pw.BorderSide(width: .5),
-        horizontalInside: pw.BorderSide(width: .5),
-      ),
-      cellHeight: 20,
-      cellStyle: const pw.TextStyle(fontSize: 10),
-      headerStyle: const pw.TextStyle(fontSize: 10),
-      columnWidths: {0: pw.FlexColumnWidth(3), 1: pw.FlexColumnWidth(1)},
-      cellAlignments: {
-        0: pw.Alignment.centerRight,
-        1: pw.Alignment.centerRight,
-      },
-      data: <List<dynamic>>[
-        ['Subtotal:', formatted.format(_sT)],
-        ['Total discount:', '-${formatted.format(_tD)}'],
-        ['Tax:', '$_tax%'],
-        ['Grand total:', formatted.format(_gT)],
-        ['Paid:', formatted.format(widget.paid)],
-        ['Left over:', formatted.format(_gT - widget.paid)],
-      ],
-    );
-  }
-
-  pw.Widget _buildPaymentDetails(pw.Context context) {
     return pw.Container(
-      width: double.infinity,
-      padding: pw.EdgeInsets.all(30),
       decoration: pw.BoxDecoration(
         border: pw.Border(
           left: pw.BorderSide(width: .5),
           right: pw.BorderSide(width: .5),
         ),
       ),
+      child: pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          _buildPaymentDetails(context),
+          pw.SizedBox(
+            width: 200,
+            child: pw.TableHelper.fromTextArray(
+              border: pw.TableBorder(
+                left: pw.BorderSide(width: .5),
+                horizontalInside: pw.BorderSide(width: .5),
+              ),
+              cellHeight: 20,
+              cellStyle: const pw.TextStyle(fontSize: 10),
+              headerStyle: const pw.TextStyle(fontSize: 10),
+              cellAlignments: {
+                0: pw.Alignment.centerRight,
+                1: pw.Alignment.centerRight,
+              },
+              data: <List<dynamic>>[
+                ['Subtotal:', formatted.format(_sT)],
+                ['Total discount:', '-${formatted.format(_tD)}'],
+                ['Tax:', formatted.format(_tax)],
+                ['Grand total:', formatted.format(_gT + _tax)],
+                ['Paid:', formatted.format(widget.paid)],
+                ['Left over:', formatted.format(_gT + _tax - widget.paid)],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _buildPaymentDetails(pw.Context context) {
+    return pw.Container(
+      padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       child: pw.Text(
         'Bank: ${widget.store.bankName}\nAccount name: ${widget.store.accountHolderName}\nAccount number: ${widget.store.accountNumber}\nSwift code: ${widget.store.swiftCode}',
         style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
@@ -252,7 +266,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildThankNote(pw.Context context) {
     return pw.Container(
-      padding: pw.EdgeInsets.all(30),
+      padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       decoration: pw.BoxDecoration(
         border: pw.Border.all(width: .5),
       ),
@@ -285,11 +299,11 @@ class _PreviewPageState extends State<PreviewPage> {
       case 1:
         return t!.name;
       case 2:
-        return _buildPriceTexts(item, true);
+        return t!.price;
       case 3:
         return item.qty;
       default:
-        return _buildPriceTexts(item, false);
+        return t!.price! * item.qty!;
     }
   }
 
@@ -297,12 +311,9 @@ class _PreviewPageState extends State<PreviewPage> {
     return pw.TableHelper.fromTextArray(
       border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
-      headerDecoration: pw.BoxDecoration(
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
-        // color: baseColor,
-      ),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
       headerHeight: 25,
-      cellHeight: 40,
+      cellHeight: 30,
       cellAlignments: {
         0: pw.Alignment.center,
         1: pw.Alignment.centerLeft,
@@ -314,21 +325,10 @@ class _PreviewPageState extends State<PreviewPage> {
       headerStyle: pw.TextStyle(
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
+        color: PdfColors.white,
       ),
-      cellStyle: const pw.TextStyle(
-        fontSize: 10,
-      ),
-      rowDecoration: pw.BoxDecoration(
-        border: pw.Border(
-          bottom: pw.BorderSide(
-            width: .5,
-          ),
-        ),
-      ),
-      headers: List<String>.generate(
-        kHeaders.length,
-        (col) => kHeaders[col],
-      ),
+      cellStyle: const pw.TextStyle(fontSize: 10),
+      headers: List<String>.generate(kHeaders.length, (col) => kHeaders[col]),
       data: List<List<dynamic>>.generate(
         widget.items.length,
         (row) => List<dynamic>.generate(
@@ -341,35 +341,6 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  dynamic _buildPriceTexts(PurchaseItem item, bool single) {
-    final formatted = NumberFormat.currency(
-      locale: widget.store.locale,
-      symbol: widget.store.symbol,
-    );
-    final t = item.item.value;
-    final c = calcDiscount(t!.price!, t.discount!, t.isPercentage!);
-    final qty = single ? 1 : item.qty!;
-
-    return t.discount == 0
-        ? formatted.format(t.price)
-        : pw.Column(
-            mainAxisAlignment: pw.MainAxisAlignment.center,
-            children: [
-              pw.Text(
-                formatted.format(t.price! * qty),
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  decoration: pw.TextDecoration.lineThrough,
-                ),
-              ),
-              pw.Text(
-                formatted.format(c * qty),
-                style: pw.TextStyle(fontSize: 10),
-              ),
-            ],
-          );
-  }
-
   Future<void> _onDownload(Uint8List pdfBytes) async {
     final msg = ScaffoldMessenger.of(context);
     await downloadPdf(pdfBytes);
@@ -377,15 +348,28 @@ class _PreviewPageState extends State<PreviewPage> {
     msg.showSnackBar(SnackBar(content: Text(str)));
     setState(() => _downloaded = true);
   }
+
+  String _getDueDate(int daysRange) {
+    final dur = Duration(days: daysRange);
+    final date = DateTime.now().add(dur);
+    return DateFormat.yMMMMd().format(date);
+  }
 }
 
 class PreviewArgs {
-  const PreviewArgs(this.store, this.recipient, this.items, this.paid);
+  const PreviewArgs(
+    this.store,
+    this.recipient,
+    this.items,
+    this.paid,
+    this.daysRange,
+  );
 
   final Store store;
   final Recipient recipient;
   final List<PurchaseItem> items;
   final double paid;
+  final int daysRange;
 }
 
 class _BackToHomeButton extends StatelessWidget {
