@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../isar_collection/isar_collections.dart' show Item;
-import '../routes/preview_state.dart';
+import '../pages/preview_state.dart';
 
 class PriceTexts extends StatelessWidget {
   const PriceTexts({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'routes/pages.dart';
+import 'pages/pages.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {

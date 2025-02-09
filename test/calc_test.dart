@@ -1,5 +1,5 @@
 import 'package:create_invoice/src/isar_collection/isar_collections.dart';
-import 'package:create_invoice/src/routes/preview_state.dart';
+import 'package:create_invoice/src/pages/preview_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
