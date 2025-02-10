@@ -8,6 +8,7 @@ import '../shared/shared.dart';
 import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
+import 'preview_state.dart';
 import 'store_page.dart' show StoreArgs;
 
 class InvoicePage extends StatefulWidget {
@@ -255,7 +256,6 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   void _onOpenDetailsForm(List<PurchaseItem> items) {
-    final textTheme = Theme.of(context).textTheme;
     _bank.text = widget.store.bankName!;
     _accNum.text = widget.store.accountNumber!;
     _accName.text = widget.store.accountHolderName!;
@@ -271,26 +271,36 @@ class _InvoicePageState extends State<InvoicePage> {
             return _ScrollableFormWithPadding(
               children: [
                 Header(title: 'Invoice details'),
-                Padding(
-                  padding: kPx,
-                  child: TextFormField(
-                    controller: _paid,
-                    decoration: InputDecoration(
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      hintText: '0',
-                      label: Text('Paid'),
+                _PaddedRow(
+                  children: [
+                    Flexible(
+                      child: TextFormField(
+                        controller: _paid,
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: '0',
+                          label: Text('Paid'),
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (v) => setState(() {}),
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (v) => setState(() {}),
-                  ),
+                    const SizedBox(width: 12.0),
+                    Flexible(
+                      child: TextFormField(
+                        controller: _range,
+                        decoration: InputDecoration(
+                          hintText: '1',
+                          label: Text('Due date range'),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (v) => setState(() {}),
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-                  child: Text(
-                    'Payment details',
-                    style: textTheme.titleMedium,
-                  ),
-                ),
+                _DividerText(text: 'Payment details'),
                 Padding(
                   padding: kPx,
                   child: TextFormField(
@@ -342,41 +352,14 @@ class _InvoicePageState extends State<InvoicePage> {
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-                  child: Text(
-                    'Tax',
-                    style: textTheme.titleMedium,
-                  ),
-                ),
+                _DividerText(text: 'Tax'),
                 Padding(
                   padding: kPx,
                   child: TextFormField(
                     controller: _tax,
                     decoration: InputDecoration(
                       hintText: '0',
-                      label: Text('Tax'),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (v) => setState(() {}),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                  child: Text(
-                    'In percent',
-                    style: textTheme.bodySmall,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Padding(
-                  padding: kPx,
-                  child: TextFormField(
-                    controller: _range,
-                    decoration: InputDecoration(
-                      hintText: '1',
-                      label: Text('Due date range'),
+                      label: Text('Tax (In percent)'),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     keyboardType: TextInputType.number,
@@ -699,6 +682,42 @@ class _TrailingIcon extends StatelessWidget {
       child: Icon(
         Icons.arrow_outward,
       ),
+    );
+  }
+}
+
+class _PaddedRow extends StatelessWidget {
+  const _PaddedRow({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: kPx,
+      child: Row(
+        children: children,
+      ),
+    );
+  }
+}
+
+class _DividerText extends StatelessWidget {
+  const _DividerText({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return PaddedText(
+      text: text,
+      style: textTheme.titleMedium,
+      left: 16,
+      top: 20,
+      right: 16,
+      bottom: 12,
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../isar_collection/isar_collections.dart';
-import '../utils.dart';
+import 'edit_store_state.dart' show loadImage;
 import 'preview_state.dart';
 
 const kHeaders = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
@@ -36,10 +36,11 @@ class PreviewPage extends StatefulWidget {
 
 class _PreviewPageState extends State<PreviewPage> {
   bool _downloaded = false;
+  Uint8List? _imgBytes;
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
   String _dueDate = '';
-  final _yMMMMd = DateFormat.yMMMMd().format(DateTime.now());
+  final _now = DateFormat.yMMMMd().format(DateTime.now());
   final _fName = 'INV_${DateFormat(kDateFormat).format(DateTime.now())}.pdf';
   double _tD = 0;
   double _sT = 0;
@@ -47,6 +48,7 @@ class _PreviewPageState extends State<PreviewPage> {
   double _gT = 0;
 
   Future<void> _onInit() async {
+    await loadImage((v) => setState(() => _imgBytes = v));
     _dueDate = _getDueDate(widget.daysRange);
     _tD = calcTotalDiscount(widget.items);
     _sT = calcSubTotal(widget.items);
@@ -120,9 +122,9 @@ class _PreviewPageState extends State<PreviewPage> {
     _doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        header: (context) => _buildHeader(context),
-        footer: (context) => _buildFooter(context),
+        header: (context) => _buildProfile(context),
         build: (context) => [
+          _buildHeader(context),
           _buildSubheader(context),
           _buildItemTable(context, items),
           _buildSummary(context),
@@ -141,14 +143,8 @@ class _PreviewPageState extends State<PreviewPage> {
     );
 
     return pw.TableHelper.fromTextArray(
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
-      border: pw.TableBorder(
-        top: pw.BorderSide(width: .5),
-        right: pw.BorderSide(width: .5),
-        bottom: pw.BorderSide(width: .5),
-        left: pw.BorderSide(width: .5),
-        verticalInside: pw.BorderSide(width: .5),
-      ),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
+      border: pw.TableBorder.all(width: .5),
       cellHeight: 75,
       columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
       cellAlignments: {0: pw.Alignment.centerLeft, 1: pw.Alignment.center},
@@ -200,7 +196,7 @@ class _PreviewPageState extends State<PreviewPage> {
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           ),
           pw.Text(
-            'Date: $_yMMMMd\nDue date: $_dueDate',
+            'Date: $_now\nDue date: $_dueDate',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           )
         ],
@@ -277,14 +273,50 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildFooter(pw.Context context) {
+  pw.Widget _buildProfile(pw.Context context) {
     return pw.Container(
-      alignment: pw.Alignment.centerRight,
-      margin: const pw.EdgeInsets.only(top: 20.0),
-      child: pw.Text(
-        '${widget.store.name}\n${widget.store.email}',
-        style: pw.TextStyle(lineSpacing: 8),
-        textAlign: pw.TextAlign.end,
+      padding: pw.EdgeInsets.only(right: 30),
+      decoration: pw.BoxDecoration(
+        border: pw.Border(
+          top: pw.BorderSide(width: .5),
+          right: pw.BorderSide(width: .5),
+          left: pw.BorderSide(width: .5),
+        ),
+      ),
+      child: pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Container(
+            alignment: pw.Alignment.center,
+            width: 128.0,
+            height: 128.0,
+            decoration: pw.BoxDecoration(
+              border: pw.Border(
+                right: pw.BorderSide(
+                  style: pw.BorderStyle.dashed,
+                  width: .5,
+                ),
+              ),
+              image: _imgBytes != null
+                  ? pw.DecorationImage(image: pw.MemoryImage(_imgBytes!))
+                  : null,
+            ),
+            child: _imgBytes != null
+                ? null
+                : pw.Text(
+                    getTextLogo(widget.store.name!),
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+          ),
+          pw.Text(
+            '${widget.store.name}\n${widget.store.email}',
+            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+            textAlign: pw.TextAlign.end,
+          ),
+        ],
       ),
     );
   }
@@ -292,6 +324,10 @@ class _PreviewPageState extends State<PreviewPage> {
   dynamic _buildItem(pw.Context context, int row, int col, PurchaseItem item) {
     final i = col - 1;
     final t = item.item.value;
+    final formatted = NumberFormat.currency(
+      locale: widget.store.locale,
+      symbol: widget.store.symbol,
+    );
 
     switch (i) {
       case 0:
@@ -299,11 +335,11 @@ class _PreviewPageState extends State<PreviewPage> {
       case 1:
         return t!.name;
       case 2:
-        return t!.price;
+        return formatted.format(t!.price);
       case 3:
         return item.qty;
       default:
-        return t!.price! * item.qty!;
+        return formatted.format(t!.price! * item.qty!);
     }
   }
 
@@ -311,7 +347,7 @@ class _PreviewPageState extends State<PreviewPage> {
     return pw.TableHelper.fromTextArray(
       border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
       headerHeight: 25,
       cellHeight: 30,
       cellAlignments: {
