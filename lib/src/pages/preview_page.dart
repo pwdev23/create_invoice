@@ -135,8 +135,8 @@ class _PreviewPageState extends State<PreviewPage> {
     _pdfBytes = await _doc.save();
   }
 
-  pw.Widget _buildHeader(pw.Context context) {
-    final l10n = AppLocalizations.of(context as BuildContext)!;
+  pw.Widget _buildHeader(pw.Context pwContext) {
+    final l10n = AppLocalizations.of(context)!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
@@ -181,8 +181,8 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildSubheader(pw.Context context) {
-    final l10n = AppLocalizations.of(context as BuildContext)!;
+  pw.Widget _buildSubheader(pw.Context pwContext) {
+    final l10n = AppLocalizations.of(context)!;
     final name = widget.recipient.name;
     final addr = widget.recipient.address;
 
@@ -211,8 +211,8 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildSummary(pw.Context context) {
-    final l10n = AppLocalizations.of(context as BuildContext)!;
+  pw.Widget _buildSummary(pw.Context pwContext) {
+    final l10n = AppLocalizations.of(context)!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
@@ -228,7 +228,7 @@ class _PreviewPageState extends State<PreviewPage> {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          _buildPaymentDetails(context),
+          _buildPaymentDetails(pwContext),
           pw.SizedBox(
             width: 200,
             child: pw.TableHelper.fromTextArray(
@@ -261,8 +261,8 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildPaymentDetails(pw.Context context) {
-    final l10n = AppLocalizations.of(context as BuildContext)!;
+  pw.Widget _buildPaymentDetails(pw.Context pwContext) {
+    final l10n = AppLocalizations.of(context)!;
 
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
@@ -273,7 +273,7 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildThankNote(pw.Context context) {
+  pw.Widget _buildThankNote(pw.Context pwContext) {
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       decoration: pw.BoxDecoration(
@@ -286,7 +286,7 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  pw.Widget _buildProfile(pw.Context context) {
+  pw.Widget _buildProfile(pw.Context pwContext) {
     return pw.Container(
       padding: pw.EdgeInsets.only(right: 30),
       decoration: pw.BoxDecoration(
@@ -334,7 +334,8 @@ class _PreviewPageState extends State<PreviewPage> {
     );
   }
 
-  dynamic _buildItem(pw.Context context, int row, int col, PurchaseItem item) {
+  dynamic _buildItem(
+      pw.Context pwContext, int row, int col, PurchaseItem item) {
     final i = col - 1;
     final t = item.item.value;
     final formatted = NumberFormat.currency(
@@ -356,8 +357,8 @@ class _PreviewPageState extends State<PreviewPage> {
     }
   }
 
-  pw.Widget _buildItemTable(pw.Context context, List<PurchaseItem> items) {
-    final l10n = AppLocalizations.of(context as BuildContext)!;
+  pw.Widget _buildItemTable(pw.Context pwContext, List<PurchaseItem> items) {
+    final l10n = AppLocalizations.of(context)!;
     final headers = <String>[
       '#',
       'SKU',
@@ -394,7 +395,7 @@ class _PreviewPageState extends State<PreviewPage> {
           headers.length,
           (col) => col == 0
               ? '${row + 1}'
-              : _buildItem(context, row, col, items[row]),
+              : _buildItem(pwContext, row, col, items[row]),
         ),
       ),
     );
