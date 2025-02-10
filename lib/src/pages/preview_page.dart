@@ -143,7 +143,7 @@ class _PreviewPageState extends State<PreviewPage> {
     );
 
     return pw.TableHelper.fromTextArray(
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
       border: pw.TableBorder.all(width: .5),
       cellHeight: 75,
       columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
@@ -347,7 +347,7 @@ class _PreviewPageState extends State<PreviewPage> {
     return pw.TableHelper.fromTextArray(
       border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo200),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
       headerHeight: 25,
       cellHeight: 30,
       cellAlignments: {

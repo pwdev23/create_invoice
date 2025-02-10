@@ -4,10 +4,8 @@ import '../isar_collection/isar_collections.dart' show Store, Recipient;
 import '../isar_service.dart';
 import '../shared/center_circular.dart';
 import 'edit_currency_page.dart' show EditCurrencyArgs;
+import 'edit_store_state.dart' show kNote;
 import 'invoice_page.dart' show InvoiceArgs;
-
-const note =
-    'Thank you for your business! Please complete the remaining balance by the due date to avoid late fees. If you have any questions, feel free to contact us.';
 
 class AuthPage extends StatefulWidget {
   static const String routeName = '/';
@@ -45,7 +43,7 @@ class _AuthPageState extends State<AuthPage> {
         ..accountHolderName = ''
         ..swiftCode = ''
         ..tax = 0
-        ..thankNote = note
+        ..thankNote = kNote
         ..locale = ''
         ..symbol = '';
       await _db.saveStore(store);

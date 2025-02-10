@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -7,6 +6,8 @@ import '../constants.dart';
 import '../isar_collection/isar_collections.dart' show Store;
 import '../isar_service.dart';
 import '../shared/bottom_sheet_scroll_header.dart';
+import '../shared/dashed_border_container.dart';
+import '../shared/padded_text.dart';
 import 'edit_currency_state.dart';
 import 'edit_store_state.dart';
 import 'preview_state.dart' show getTextLogo;
@@ -28,6 +29,7 @@ class _EditStorePageState extends State<EditStorePage> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _name = TextEditingController();
+  final _note = TextEditingController();
   late Currency _curr;
   var _action = LogoAction.update;
 
@@ -42,6 +44,7 @@ class _EditStorePageState extends State<EditStorePage> {
     _editedStore = widget.store;
     _email.text = widget.store.email!;
     _name.text = widget.store.name!;
+    _note.text = widget.store.thankNote!;
     _curr = getCurrency(widget.store.locale!);
   }
 
@@ -49,6 +52,7 @@ class _EditStorePageState extends State<EditStorePage> {
   void dispose() {
     _email.dispose();
     _name.dispose();
+    _note.dispose();
     super.dispose();
   }
 
@@ -56,7 +60,10 @@ class _EditStorePageState extends State<EditStorePage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final disabledColor = Theme.of(context).disabledColor;
-
+    final textTheme = Theme.of(context).textTheme;
+    final alertStyle =
+        textTheme.bodySmall!.copyWith(color: colors.onTertiaryContainer);
+    final textBold = TextStyle(fontWeight: FontWeight.bold);
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit store info'),
@@ -65,8 +72,9 @@ class _EditStorePageState extends State<EditStorePage> {
         key: _formKey,
         child: ListView(
           children: [
+            _DividerText(text: 'Logo'),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: kPx,
               child: _CompanyLogoButton(
                 bytes: _imageBytes,
                 name: widget.store.name!,
@@ -92,6 +100,23 @@ class _EditStorePageState extends State<EditStorePage> {
                       ),
               ),
             ),
+            _AlertTextBox(
+              margin: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
+              backgroundColor: colors.tertiaryContainer,
+              iconColor: colors.onTertiaryContainer,
+              icon: Icons.info_outline,
+              child: Text.rich(
+                style: alertStyle,
+                TextSpan(
+                  text: kLogoHelp1,
+                  children: [
+                    TextSpan(text: kLogoHelp2, style: textBold),
+                    TextSpan(text: kLogoHelp3),
+                  ],
+                ),
+              ),
+            ),
+            _DividerText(text: 'Main'),
             Padding(
               padding: kPx,
               child: TextFormField(
@@ -122,6 +147,22 @@ class _EditStorePageState extends State<EditStorePage> {
               title: getName(_curr),
               onPressed: () => _onEditCurrency(),
             ),
+            _DividerText(text: 'Tank note'),
+            Padding(
+              padding: kPx,
+              child: TextFormField(
+                controller: _note,
+                decoration: InputDecoration(
+                  hintText: 'Thank you for your business!',
+                  label: Text('Thank note'),
+                ),
+                keyboardType: TextInputType.text,
+                maxLines: 8,
+                minLines: 2,
+                onChanged: (v) => setState(() {}),
+              ),
+            ),
+            SizedBox(height: kToolbarHeight * 2),
           ],
         ),
       ),
@@ -146,6 +187,7 @@ class _EditStorePageState extends State<EditStorePage> {
     _editedStore.email = _email.text.trim();
     _editedStore.locale = getLocale(_curr);
     _editedStore.symbol = getSymbol(_curr);
+    _editedStore.thankNote = _note.text.isEmpty ? kNote : _note.text.trim();
     await _db.updateStore(_editedStore);
     nav.pushNamedAndRemoveUntil('/', (_) => false);
   }
@@ -235,7 +277,10 @@ class _CurrencyButton extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Icon(Icons.arrow_drop_down_outlined),
+              child: Icon(
+                Icons.arrow_drop_down_outlined,
+                color: colors.primary,
+              ),
             ),
           ],
         ),
@@ -267,7 +312,7 @@ class _CompanyLogoButton extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _DashedBorderContainer(
+            child: DashedBorderContainer(
               color: colors.outline,
               strokeWidth: 1,
               dashSpace: bytes != null ? 0.0 : 3.0,
@@ -303,82 +348,58 @@ class _CompanyLogoButton extends StatelessWidget {
   }
 }
 
-class _DashedBorderPainter extends CustomPainter {
-  _DashedBorderPainter({
-    required this.color,
-    required this.strokeWidth,
-    required this.dashWidth,
-    required this.dashSpace,
-    required this.borderRadius,
-  });
+class _DividerText extends StatelessWidget {
+  const _DividerText({required this.text});
 
-  final Color color;
-  final double strokeWidth;
-  final double dashWidth;
-  final double dashSpace;
-  final double borderRadius;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final RRect rRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Radius.circular(borderRadius),
-    );
-
-    final Path path = Path()..addRRect(rRect);
-    final Path dashPath = Path();
-
-    for (PathMetric pathMetric in path.computeMetrics()) {
-      double distance = 0.0;
-      while (distance < pathMetric.length) {
-        dashPath.addPath(
-          pathMetric.extractPath(distance, distance + dashWidth),
-          Offset.zero,
-        );
-        distance += dashWidth + dashSpace;
-      }
-    }
-
-    canvas.drawPath(dashPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _DashedBorderContainer extends StatelessWidget {
-  const _DashedBorderContainer({
-    this.color = Colors.black,
-    this.borderRadius = 12.0,
-    this.strokeWidth = 2.0,
-    this.dashWidth = 5.0,
-    this.dashSpace = 3.0,
-    this.child,
-  });
-
-  final Color color;
-  final double borderRadius;
-  final double strokeWidth;
-  final double dashWidth;
-  final double dashSpace;
-  final Widget? child;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _DashedBorderPainter(
-        color: color,
-        strokeWidth: strokeWidth,
-        dashWidth: dashWidth,
-        dashSpace: dashSpace,
-        borderRadius: borderRadius,
+    final textTheme = Theme.of(context).textTheme;
+
+    return PaddedText(
+      text: text,
+      style: textTheme.titleMedium,
+      left: 16,
+      top: 20,
+      right: 16,
+      bottom: 12,
+    );
+  }
+}
+
+class _AlertTextBox extends StatelessWidget {
+  const _AlertTextBox({
+    required this.backgroundColor,
+    required this.icon,
+    required this.child,
+    required this.iconColor,
+    this.margin,
+  });
+
+  final Color backgroundColor;
+  final Widget child;
+  final IconData icon;
+  final Color iconColor;
+  final EdgeInsets? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      padding: EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.all(Radius.circular(12.0)),
       ),
-      child: child,
+      child: Row(
+        spacing: 12.0,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: iconColor),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }

@@ -6,6 +6,13 @@ import 'package:path_provider/path_provider.dart';
 
 enum LogoAction { update, delete }
 
+const kLogoHelp1 = 'For the best results, please choose a ';
+const kLogoHelp2 = 'square (1:1 ratio) ';
+const kLogoHelp3 = 'image.';
+
+const kNote =
+    'Thank you for your business! Please complete the remaining balance by the due date to avoid late fees. If you have any questions, feel free to contact us.';
+
 const kLogoPng = 'logo.png';
 
 Future<File> saveImage(File image) async {
