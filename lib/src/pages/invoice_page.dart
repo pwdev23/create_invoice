@@ -8,6 +8,7 @@ import '../shared/shared.dart';
 import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
+import 'preview_state.dart';
 import 'store_page.dart' show StoreArgs;
 
 class InvoicePage extends StatefulWidget {

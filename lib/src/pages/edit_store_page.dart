@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -5,6 +8,8 @@ import '../isar_collection/isar_collections.dart' show Store;
 import '../isar_service.dart';
 import '../shared/bottom_sheet_scroll_header.dart';
 import 'edit_currency_state.dart';
+import 'edit_store_state.dart';
+import 'preview_state.dart' show getTextLogo;
 
 class EditStorePage extends StatefulWidget {
   static const routeName = '/edit-store';
@@ -24,10 +29,16 @@ class _EditStorePageState extends State<EditStorePage> {
   final _email = TextEditingController();
   final _name = TextEditingController();
   late Currency _curr;
+  var _action = LogoAction.update;
+
+  Uint8List? _imageBytes;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadImage((v) => setState(() => _imageBytes = v));
+    });
     _editedStore = widget.store;
     _email.text = widget.store.email!;
     _name.text = widget.store.name!;
@@ -52,12 +63,35 @@ class _EditStorePageState extends State<EditStorePage> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          spacing: 16.0,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
           children: [
-            SizedBox(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _CompanyLogoButton(
+                bytes: _imageBytes,
+                name: widget.store.name!,
+                action: _imageBytes != null
+                    ? PopupMenuButton<LogoAction>(
+                        initialValue: _action,
+                        onSelected: (v) => _onSelected(v),
+                        iconColor: colors.primary,
+                        itemBuilder: (context) => <PopupMenuEntry<LogoAction>>[
+                          const PopupMenuItem<LogoAction>(
+                            value: LogoAction.update,
+                            child: Text('Update'),
+                          ),
+                          const PopupMenuItem<LogoAction>(
+                            value: LogoAction.delete,
+                            child: Text('Remove'),
+                          ),
+                        ],
+                      )
+                    : IconButton(
+                        onPressed: () => _onPickImage(),
+                        icon: Icon(Icons.edit, color: colors.primary),
+                      ),
+              ),
+            ),
             Padding(
               padding: kPx,
               child: TextFormField(
@@ -70,6 +104,7 @@ class _EditStorePageState extends State<EditStorePage> {
                 onChanged: (v) => setState(() {}),
               ),
             ),
+            const SizedBox(height: 16.0),
             Padding(
               padding: kPx,
               child: TextFormField(
@@ -82,6 +117,7 @@ class _EditStorePageState extends State<EditStorePage> {
                 onChanged: (v) => setState(() {}),
               ),
             ),
+            const SizedBox(height: 16.0),
             _CurrencyButton(
               title: getName(_curr),
               onPressed: () => _onEditCurrency(),
@@ -144,6 +180,25 @@ class _EditStorePageState extends State<EditStorePage> {
     setState(() => _curr = currency);
     nav.pop();
   }
+
+  Future<void> _onPickImage() async {
+    await pickImage((v) => setState(() => _imageBytes = v));
+  }
+
+  Future<void> _onDelete() async {
+    await removeImage();
+    setState(() => _imageBytes = null);
+  }
+
+  Future<void> _onSelected(LogoAction action) async {
+    switch (action) {
+      case LogoAction.update:
+        await _onPickImage().then((_) => setState(() => _action = action));
+        break;
+      default:
+        await _onDelete().then((_) => setState(() => _action = action));
+    }
+  }
 }
 
 class EditStoreArgs {
@@ -185,6 +240,145 @@ class _CurrencyButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CompanyLogoButton extends StatelessWidget {
+  const _CompanyLogoButton({
+    required this.action,
+    this.bytes,
+    required this.name,
+  });
+
+  final String name;
+  final Uint8List? bytes;
+  final Widget action;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
+    return Card(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _DashedBorderContainer(
+              color: colors.outline,
+              strokeWidth: 1,
+              dashSpace: bytes != null ? 0.0 : 3.0,
+              dashWidth: 5.0,
+              borderRadius: 6.0,
+              child: Container(
+                alignment: Alignment.center,
+                width: 128.0,
+                height: 128.0,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                  image: bytes != null
+                      ? DecorationImage(image: MemoryImage(bytes!))
+                      : null,
+                ),
+                child: bytes != null
+                    ? null
+                    : Text(
+                        getTextLogo(name),
+                        style: textTheme.displaySmall,
+                      ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: action,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  _DashedBorderPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.dashWidth,
+    required this.dashSpace,
+    required this.borderRadius,
+  });
+
+  final Color color;
+  final double strokeWidth;
+  final double dashWidth;
+  final double dashSpace;
+  final double borderRadius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final RRect rRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Radius.circular(borderRadius),
+    );
+
+    final Path path = Path()..addRRect(rRect);
+    final Path dashPath = Path();
+
+    for (PathMetric pathMetric in path.computeMetrics()) {
+      double distance = 0.0;
+      while (distance < pathMetric.length) {
+        dashPath.addPath(
+          pathMetric.extractPath(distance, distance + dashWidth),
+          Offset.zero,
+        );
+        distance += dashWidth + dashSpace;
+      }
+    }
+
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _DashedBorderContainer extends StatelessWidget {
+  const _DashedBorderContainer({
+    this.color = Colors.black,
+    this.borderRadius = 12.0,
+    this.strokeWidth = 2.0,
+    this.dashWidth = 5.0,
+    this.dashSpace = 3.0,
+    this.child,
+  });
+
+  final Color color;
+  final double borderRadius;
+  final double strokeWidth;
+  final double dashWidth;
+  final double dashSpace;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _DashedBorderPainter(
+        color: color,
+        strokeWidth: strokeWidth,
+        dashWidth: dashWidth,
+        dashSpace: dashSpace,
+        borderRadius: borderRadius,
+      ),
+      child: child,
     );
   }
 }
