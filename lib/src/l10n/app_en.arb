@@ -1,0 +1,198 @@
+{
+    "appTitle": "Create invoice",
+    "@appTitle": {
+        "description": "App title for the root app"
+    },
+    "addItem": "Add item",
+    "@addItem": {
+        "description": "A title for add item page"
+    },
+    "itemName": "Item name",
+    "@itemName": {
+        "description": "A title for item name text field"
+    },
+    "price": "Price",
+    "@price": {
+        "description": "A title for price text field"
+    },
+    "discount": "Discount",
+    "@discount": {
+        "description": "A title for discount text field"
+    },
+    "usePercentage": "Use percentage",
+    "@usePercentage": {
+        "description": "A hint text for discount text field"
+    },
+    "addRecipient": "Add recipient",
+    "@addRecipient": {
+        "description": "A title for recipient page"
+    },
+    "name": "Name",
+    "@name": {
+        "description": "A title for name text field"
+    },
+    "address": "Address",
+    "@address": {
+        "description": "A title for address text field"
+    },
+    "thankNote": "Thank you for your business! Please complete the remaining balance by the due date to avoid late fees. If you have any questions, feel free to contact us.",
+    "@thankNote": {
+        "description": "A thank note for invoice"
+    },
+    "selectCurrency": "Select currency",
+    "@selectCurrency": {
+        "description": "A title for select currency page"
+    },
+    "editCurrency": "Edit currency",
+    "@editCurrency": {
+        "description": "A title for edit currency page"
+    },
+    "cont": "Continue",
+    "@cont": {
+        "description": "An action text for continue button"
+    },
+    "editItem": "Edit item",
+    "@editItem": {
+        "description": "A title for edit item page"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "An action text for save button"
+    },
+    "editRecipient": "Edit recipient",
+    "@editRecipient": {
+        "description": "A title for edit recipient page"
+    },
+    "editStore": "Edit store info",
+    "@editStore": {
+        "description": "A title for edit store info page"
+    },
+    "storeName": "Store name",
+    "@storeName": {
+        "description": "A title for store name text field"
+    },
+    "billedTo": "Billed to",
+    "@billedTo": {
+        "description": "A leading text for recipient"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "An action text for delete button"
+    },
+    "manageStore": "Manage store",
+    "@manageStore": {
+        "description": "An action text for manage store button"
+    },
+    "recipient": "Recipient",
+    "@recipient": {
+        "description": "A title for recipient page"
+    },
+    "failedToLoad": "Failed to load",
+    "@failedToLoad": {
+        "description": "A text to explain load failure"
+    },
+    "noData": "No data",
+    "@noData": {
+        "description": "A text to explain no data"
+    },
+    "fillInvoiceDetails": "Fill invoice details",
+    "@fillInvoiceDetails": {
+        "description": "An action text for fill invoice details button"
+    },
+    "permissionDenied": "Permission denied",
+    "@permissionDenied": {
+        "description": "A text to explain permission was denied"
+    },
+    "invoiceDetails": "Invoice details",
+    "@invoiceDetails": {
+        "description": "A title for invoice details form"
+    },
+    "paid": "Paid",
+    "@paid": {
+        "description": "A title for paid text field"
+    },
+    "paymentDetails": "Payment details",
+    "@paymentDetails": {
+        "description": "A text divider for payment details section"
+    },
+    "accountNumber": "Account number",
+    "@accountNumber": {
+        "description": "A title for account number text field"
+    },
+    "accountHolderName": "Account holder name",
+    "@accountHolderName": {
+        "description": "A title for account holder name text field"
+    },
+    "swiftCode": "Swift code",
+    "@swiftCode": {
+        "description": "A title for swift code text field"
+    },
+    "Tax": "Tax",
+    "@Tax": {
+        "description": "A title for tax text field"
+    },
+    "inPercent": "In percent",
+    "@inPercent": {
+        "description": "A text helper for tax text field"
+    },
+    "dueDateRange": "Due date range",
+    "@dueDateRange": {
+        "description": "A text for due date range text field"
+    },
+    "noPurchaseItem": "Can't proceed, there's no purchase item",
+    "@noPurchaseItem": {
+        "description": "A text for no purchase item message"
+    },
+    "qty": "Qty",
+    "@qty": {
+        "description": "A text for qty cell"
+    },
+    "preview": "Preview",
+    "@preview": {
+        "description": "A title for preview page"
+    },
+    "backToHome": "Back to home",
+    "@backToHome": {
+        "description": "An action text for back to home button"
+    },
+    "invoice": "Invoice",
+    "@invoice": {
+        "description": "A title for invoice"
+    },
+    "amount": "Amount",
+    "@amount": {
+        "description": "A title for amount cell"
+    },
+    "date": "Date",
+    "@date": {
+        "description": "A leading text for date info"
+    },
+    "dueDate": "Due date",
+    "@dueDate": {
+        "description": "A leading text for due date info"
+    },
+    "subtotal": "Subtotal",
+    "@subtotal": {
+        "description": "A leading text for subtotal info"
+    },
+    "totalDiscount": "Total discount",
+    "@totalDiscount": {
+        "description": "A leading text for total discount info"
+    },
+    "grandTotal": "Grand total",
+    "@grandTotal": {
+        "description": "A leading text for grand total info"
+    },
+    "leftOver": "Left over",
+    "@leftOver": {
+        "description": "A leading text for left over info"
+    },
+    "bank": "Bank",
+    "@bank": {
+        "description": "A leading text for bank info"
+    },
+    "successfullyDownloaded": "File successfully downloaded",
+    "@successfullyDownloaded": {
+        "description": "A message after file successfully downloaded"
+    }
+}
