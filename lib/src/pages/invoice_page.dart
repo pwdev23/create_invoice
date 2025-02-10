@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../common.dart';
 import '../constants.dart';
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
@@ -59,6 +59,7 @@ class _InvoicePageState extends State<InvoicePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
     final formatted = NumberFormat.currency(
@@ -82,7 +83,7 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
         ),
         title: _RecipientButton(
-          leadingText: 'Billed to',
+          leadingText: l10n.billedTo,
           recipientName: _to.name!,
           onPressed: () => _onRecipient(),
         ),
@@ -91,13 +92,13 @@ class _InvoicePageState extends State<InvoicePage> {
               ? TextButton.icon(
                   onPressed: () => _oAddItem(),
                   icon: Icon(Icons.add),
-                  label: Text('Add item'),
+                  label: Text(l10n.addItem),
                 )
               : TextButton.icon(
                   onPressed: () => _onDelete(_db, _ids)
                       .then((_) => setState(() => _ids.clear())),
                   icon: Icon(Icons.delete, color: colors.error),
-                  label: Text('Delete'),
+                  label: Text(l10n.delete),
                   style: TextButton.styleFrom(foregroundColor: colors.error),
                 ),
         ],
@@ -109,14 +110,14 @@ class _InvoicePageState extends State<InvoicePage> {
             ListTile(
               style: ListTileStyle.drawer,
               onTap: () => _onManageStore(),
-              title: Text('Manage store'),
+              title: Text(l10n.manageStore),
               leading: Icon(Icons.inbox),
             ),
             Divider(height: 0.0),
             ListTile(
               style: ListTileStyle.drawer,
               onTap: () => push(context, '/recipient'),
-              title: Text('Recipient'),
+              title: Text(l10n.recipient),
               leading: Icon(Icons.people),
             )
           ],
@@ -128,10 +129,10 @@ class _InvoicePageState extends State<InvoicePage> {
           final waiting = snapshot.connectionState == ConnectionState.waiting;
           if (!_skipLoading && waiting) return CenterCircular();
 
-          if (snapshot.hasError) return CenterText(text: 'Failed to load');
+          if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
 
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return CenterText(text: 'No data');
+            return CenterText(text: l10n.noData);
           } else {
             return ListView.separated(
               itemBuilder: (context, i) {
@@ -168,14 +169,14 @@ class _InvoicePageState extends State<InvoicePage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
-        onPressed: () => _onProceed(),
-        label: Text('Fill invoice details'),
+        onPressed: () => _onProceed(l10n.permissionDenied),
+        label: Text(l10n.fillInvoiceDetails),
         icon: Icon(Icons.edit_note_outlined),
       ),
     );
   }
 
-  Future<void> _onProceed() async {
+  Future<void> _onProceed(String errorMessage) async {
     final msg = ScaffoldMessenger.of(context);
     final granted = await requestPermission();
     if (granted) {
@@ -186,8 +187,7 @@ class _InvoicePageState extends State<InvoicePage> {
         _onOpenDetailsForm(items);
       }
     } else {
-      const str = 'Permission denied';
-      msg.showSnackBar(SnackBar(content: Text(str)));
+      msg.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 
@@ -256,6 +256,7 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   void _onOpenDetailsForm(List<PurchaseItem> items) {
+    final l10n = AppLocalizations.of(context)!;
     _bank.text = widget.store.bankName!;
     _accNum.text = widget.store.accountNumber!;
     _accName.text = widget.store.accountHolderName!;
@@ -270,7 +271,7 @@ class _InvoicePageState extends State<InvoicePage> {
           builder: (context, setState) {
             return _ScrollableFormWithPadding(
               children: [
-                Header(title: 'Invoice details'),
+                Header(title: l10n.invoiceDetails),
                 _PaddedRow(
                   children: [
                     Flexible(
@@ -279,7 +280,7 @@ class _InvoicePageState extends State<InvoicePage> {
                         decoration: InputDecoration(
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           hintText: '0',
-                          label: Text('Paid'),
+                          label: Text(l10n.paid),
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (v) => setState(() {}),
@@ -291,7 +292,7 @@ class _InvoicePageState extends State<InvoicePage> {
                         controller: _range,
                         decoration: InputDecoration(
                           hintText: '1',
-                          label: Text('Due date range'),
+                          label: Text(l10n.dueDateRange),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
                         keyboardType: TextInputType.number,
@@ -300,14 +301,14 @@ class _InvoicePageState extends State<InvoicePage> {
                     ),
                   ],
                 ),
-                _DividerText(text: 'Payment details'),
+                _DividerText(text: l10n.paymentDetails),
                 Padding(
                   padding: kPx,
                   child: TextFormField(
                     controller: _bank,
                     decoration: InputDecoration(
                       hintText: 'My money bank',
-                      label: Text('Bank name'),
+                      label: Text(l10n.bank),
                     ),
                     keyboardType: TextInputType.text,
                     onChanged: (v) => setState(() {}),
@@ -320,7 +321,7 @@ class _InvoicePageState extends State<InvoicePage> {
                     controller: _accNum,
                     decoration: InputDecoration(
                       hintText: '1231231231',
-                      label: Text('Account number'),
+                      label: Text(l10n.accountNumber),
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (v) => setState(() {}),
@@ -333,7 +334,7 @@ class _InvoicePageState extends State<InvoicePage> {
                     controller: _accName,
                     decoration: InputDecoration(
                       hintText: 'Joe Taslim',
-                      label: Text('Account holder name'),
+                      label: Text(l10n.accountHolderName),
                     ),
                     keyboardType: TextInputType.name,
                     onChanged: (v) => setState(() {}),
@@ -346,7 +347,7 @@ class _InvoicePageState extends State<InvoicePage> {
                     controller: _code,
                     decoration: InputDecoration(
                       hintText: 'ABCDEFGH',
-                      label: Text('Swift code'),
+                      label: Text(l10n.swiftCode),
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (v) => setState(() {}),
@@ -359,7 +360,7 @@ class _InvoicePageState extends State<InvoicePage> {
                     controller: _tax,
                     decoration: InputDecoration(
                       hintText: '0',
-                      label: Text('Tax (In percent)'),
+                      label: Text('${l10n.tax} (${l10n.inPercent})'),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     keyboardType: TextInputType.number,
@@ -374,7 +375,7 @@ class _InvoicePageState extends State<InvoicePage> {
                             _accName.text.isEmpty
                         ? null
                         : () => _onCreateInvoice(items),
-                    label: Text('Create invoice'),
+                    label: Text(l10n.appTitle),
                     icon: Icon(Icons.upload_file),
                   ),
                 ),
@@ -387,12 +388,14 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   void _onEmpty() {
+    final l10n = AppLocalizations.of(context)!;
     final msg = ScaffoldMessenger.of(context);
-    const str = 'Can\'t proceed, there\'s no purchase item';
-    msg.showSnackBar(SnackBar(content: Text(str)));
+    msg.showSnackBar(SnackBar(content: Text(l10n.noPurchaseItem)));
   }
 
   void _openQtyControl(PurchaseItem purchaseItem) {
+    final l10n = AppLocalizations.of(context)!;
+
     setState(() => _qty = purchaseItem.qty!);
     if (_ids.contains(purchaseItem.id)) {
       setState(() => _ids.remove(purchaseItem.id));
@@ -417,7 +420,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       padding: const EdgeInsets.only(top: 12.0, right: 16.0),
                       child: TextButton(
                         onPressed: () => _onSaveQty(purchaseItem),
-                        child: Text('Save'),
+                        child: Text(l10n.save),
                       ),
                     ),
                   ],

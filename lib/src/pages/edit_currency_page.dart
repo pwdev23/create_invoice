@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import '../common.dart';
 import '../isar_collection/isar_collections.dart' show Store, Recipient;
 import '../isar_service.dart';
 import 'edit_currency_state.dart';
@@ -37,7 +36,8 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.isInitial ? 'Select currency' : 'Edit currency';
+    final l10n = AppLocalizations.of(context)!;
+    final title = widget.isInitial ? l10n.selectCurrency : l10n.editCurrency;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +61,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
       floatingActionButton: widget.isInitial
           ? FloatingActionButton.extended(
               onPressed: () => _onContinue(),
-              label: Text('Continue'),
+              label: Text(l10n.cont),
               icon: Icon(Icons.arrow_forward),
             )
           : null,

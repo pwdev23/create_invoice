@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import '../common.dart';
 import '../constants.dart';
 import '../isar_collection/isar_collections.dart' show Item;
 import '../isar_service.dart';
@@ -47,12 +46,13 @@ class _EditItemPageState extends State<EditItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final disabledColor = Theme.of(context).disabledColor;
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit item'),
+        title: Text(l10n.editItem),
       ),
       body: Form(
         key: _formKey,
@@ -77,8 +77,8 @@ class _EditItemPageState extends State<EditItemPage> {
                 controller: _nameCon,
                 keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: 'Item name',
-                  hintText: 'Item name',
+                  labelText: l10n.itemName,
+                  hintText: l10n.itemName,
                 ),
                 onChanged: (v) => setState(() {}),
               ),
@@ -88,7 +88,7 @@ class _EditItemPageState extends State<EditItemPage> {
               child: TextFormField(
                 controller: _priceCon,
                 decoration: InputDecoration(
-                  labelText: 'Price',
+                  labelText: l10n.price,
                   hintText: '5.0',
                 ),
                 keyboardType: TextInputType.number,
@@ -100,7 +100,7 @@ class _EditItemPageState extends State<EditItemPage> {
               child: TextFormField(
                 controller: _discCon,
                 decoration: InputDecoration(
-                  labelText: 'Discount',
+                  labelText: l10n.discount,
                   hintText: '0.0',
                 ),
                 keyboardType: TextInputType.number,
@@ -108,7 +108,7 @@ class _EditItemPageState extends State<EditItemPage> {
               ),
             ),
             SwitchListTile.adaptive(
-              title: Text('Use percentage'),
+              title: Text(l10n.usePercentage),
               value: _isPercent,
               onChanged: (v) => setState(() => _isPercent = v),
             )
@@ -126,7 +126,7 @@ class _EditItemPageState extends State<EditItemPage> {
             ? colors.onPrimaryContainer
             : disabledColor,
         icon: Icon(Icons.done),
-        label: Text('Save'),
+        label: Text(l10n.save),
       ),
     );
   }

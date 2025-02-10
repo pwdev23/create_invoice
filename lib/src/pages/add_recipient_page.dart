@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import '../common.dart';
 import '../constants.dart';
 import '../isar_collection/isar_collections.dart' show Recipient;
 import '../isar_service.dart';
@@ -28,12 +27,13 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final disabledColor = Theme.of(context).disabledColor;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add recipient'),
+        title: Text(l10n.addRecipient),
       ),
       body: Form(
         key: _formKey,
@@ -49,7 +49,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
                 controller: _name,
                 decoration: InputDecoration(
                   hintText: 'Budi Arie',
-                  label: Text('Name'),
+                  label: Text(l10n.name),
                 ),
                 keyboardType: TextInputType.name,
                 onChanged: (v) => setState(() {}),
@@ -61,7 +61,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
                 controller: _addr,
                 decoration: InputDecoration(
                   hintText: 'Planet earth',
-                  label: Text('Address'),
+                  label: Text(l10n.address),
                 ),
                 keyboardType: TextInputType.streetAddress,
                 onChanged: (v) => setState(() {}),
@@ -79,7 +79,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
         foregroundColor: _name.text.isEmpty || _addr.text.isEmpty
             ? disabledColor
             : colors.onPrimaryContainer,
-        label: Text('Add recipient'),
+        label: Text(l10n.addRecipient),
         icon: Icon(Icons.add),
       ),
     );

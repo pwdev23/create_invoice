@@ -127,8 +127,8 @@
     "@swiftCode": {
         "description": "A title for swift code text field"
     },
-    "Tax": "Tax",
-    "@Tax": {
+    "tax": "Tax",
+    "@tax": {
         "description": "A title for tax text field"
     },
     "inPercent": "In percent",
@@ -194,5 +194,41 @@
     "successfullyDownloaded": "File successfully downloaded",
     "@successfullyDownloaded": {
         "description": "A message after file successfully downloaded"
+    },
+    "logo": "Logo",
+    "@logo": {
+        "description": "A title for logo section"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "An action text for update button"
+    },
+    "remove": "Remove",
+    "@remove": {
+        "description": "An action text for remove button"
+    },
+    "main": "Main",
+    "@main": {
+        "description": "A title for main section"
+    },
+    "leadingThankNote": "Thank note",
+    "@leadingThankNote": {
+        "description": "A leading text for thank note text field"
+    },
+    "hintThankNote": "Thank you for your business!",
+    "@hintThankNote": {
+        "description": "A hint text for thank note text field"
+    },
+    "logoHelp1": "For the best results, please choose a ",
+    "@logoHelp1": {
+        "description": "A partial text for logo helper"
+    },
+    "logoHelp2": "square (1:1 ratio) ",
+    "@logoHelp2": {
+        "description": "A partial text for logo helper"
+    },
+    "logoHelp3": "image.",
+    "@logoHelp3": {
+        "description": "A partial text for logo helper"
     }
 }
