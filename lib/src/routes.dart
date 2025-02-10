@@ -59,6 +59,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       );
     case '/recipient':
       return MaterialPageRoute(builder: (_) => const RecipientPage());
+    case '/languages':
+      final args = settings.arguments as SetLanguageArgs;
+      return MaterialPageRoute(
+          builder: (_) => SetLanguagePage(langCode: args.langCode));
     default:
       return MaterialPageRoute(
         builder: (_) => ErrorPage(route: settings.name!),

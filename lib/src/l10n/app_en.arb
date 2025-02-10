@@ -3,6 +3,18 @@
     "@appTitle": {
         "description": "App title for the root app"
     },
+    "languageSettings": "Language settings",
+    "@languageSettings": {
+        "description": "A title for language settings page"
+    },
+    "english": "English",
+    "@english": {
+        "description": "A title for English list tile"
+    },
+    "indonesian": "Indonesian",
+    "@indonesian": {
+        "description": "A title for Indonesian list tile"
+    },
     "addItem": "Add item",
     "@addItem": {
         "description": "A title for add item page"

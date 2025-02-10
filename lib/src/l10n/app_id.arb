@@ -1,5 +1,8 @@
 {
     "appTitle": "Buat faktur",
+    "english": "Inggris",
+    "languageSettings": "Pengaturan bahasa",
+    "indonesian": "Bahasa Indonesia",
     "addItem": "Tambah item",
     "itemName": "Nama item",
     "price": "Harga",

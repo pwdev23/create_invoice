@@ -9,6 +9,7 @@ import '../utils.dart';
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
 import 'preview_state.dart';
+import 'set_language_page.dart' show SetLanguageArgs;
 import 'store_page.dart' show StoreArgs;
 
 class InvoicePage extends StatefulWidget {
@@ -60,6 +61,7 @@ class _InvoicePageState extends State<InvoicePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
     final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
     final formatted = NumberFormat.currency(
@@ -113,12 +115,19 @@ class _InvoicePageState extends State<InvoicePage> {
               title: Text(l10n.manageStore),
               leading: Icon(Icons.inbox),
             ),
-            Divider(height: 0.0),
+            const Divider(height: 0.0),
             ListTile(
               style: ListTileStyle.drawer,
               onTap: () => push(context, '/recipient'),
               title: Text(l10n.recipient),
               leading: Icon(Icons.people),
+            ),
+            const Divider(height: 0.0),
+            ListTile(
+              style: ListTileStyle.drawer,
+              onTap: () => _onSettingLanguage(locale),
+              title: Text(l10n.languageSettings),
+              leading: Icon(Icons.translate),
             )
           ],
         ),
@@ -527,6 +536,12 @@ class _InvoicePageState extends State<InvoicePage> {
     final nav = Navigator.of(context);
     final args = StoreArgs(widget.store.locale!, widget.store.symbol!);
     nav.pushNamed('/store', arguments: args);
+  }
+
+  void _onSettingLanguage(String locale) {
+    final nav = Navigator.of(context);
+    final args = SetLanguageArgs(locale);
+    nav.pushNamed('/languages', arguments: args);
   }
 }
 

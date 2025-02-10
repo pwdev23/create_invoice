@@ -10,3 +10,4 @@ export 'invoice_page.dart';
 export 'preview_page.dart';
 export 'store_page.dart';
 export 'recipient_page.dart';
+export 'set_language_page.dart';
