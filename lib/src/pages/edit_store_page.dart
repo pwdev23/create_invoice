@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-
+import '../common.dart';
 import '../constants.dart';
 import '../isar_collection/isar_collections.dart' show Store;
 import '../isar_service.dart';
@@ -58,21 +57,23 @@ class _EditStorePageState extends State<EditStorePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final disabledColor = Theme.of(context).disabledColor;
     final textTheme = Theme.of(context).textTheme;
     final alertStyle =
         textTheme.bodySmall!.copyWith(color: colors.onTertiaryContainer);
     final textBold = TextStyle(fontWeight: FontWeight.bold);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit store info'),
+        title: Text(l10n.editStore),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
           children: [
-            _DividerText(text: 'Logo'),
+            _DividerText(text: l10n.logo),
             Padding(
               padding: kPx,
               child: _CompanyLogoButton(
@@ -84,13 +85,13 @@ class _EditStorePageState extends State<EditStorePage> {
                         onSelected: (v) => _onSelected(v),
                         iconColor: colors.primary,
                         itemBuilder: (context) => <PopupMenuEntry<LogoAction>>[
-                          const PopupMenuItem<LogoAction>(
+                          PopupMenuItem<LogoAction>(
                             value: LogoAction.update,
-                            child: Text('Update'),
+                            child: Text(l10n.update),
                           ),
-                          const PopupMenuItem<LogoAction>(
+                          PopupMenuItem<LogoAction>(
                             value: LogoAction.delete,
-                            child: Text('Remove'),
+                            child: Text(l10n.remove),
                           ),
                         ],
                       )
@@ -108,22 +109,22 @@ class _EditStorePageState extends State<EditStorePage> {
               child: Text.rich(
                 style: alertStyle,
                 TextSpan(
-                  text: kLogoHelp1,
+                  text: l10n.logoHelp1,
                   children: [
-                    TextSpan(text: kLogoHelp2, style: textBold),
-                    TextSpan(text: kLogoHelp3),
+                    TextSpan(text: l10n.logoHelp2, style: textBold),
+                    TextSpan(text: l10n.logoHelp3),
                   ],
                 ),
               ),
             ),
-            _DividerText(text: 'Main'),
+            _DividerText(text: l10n.main),
             Padding(
               padding: kPx,
               child: TextFormField(
                 controller: _name,
                 decoration: InputDecoration(
                   hintText: 'My store name',
-                  label: Text('Store name'),
+                  label: Text(l10n.storeName),
                 ),
                 keyboardType: TextInputType.name,
                 onChanged: (v) => setState(() {}),
@@ -147,14 +148,14 @@ class _EditStorePageState extends State<EditStorePage> {
               title: getName(_curr),
               onPressed: () => _onEditCurrency(),
             ),
-            _DividerText(text: 'Tank note'),
+            _DividerText(text: l10n.leadingThankNote),
             Padding(
               padding: kPx,
               child: TextFormField(
                 controller: _note,
                 decoration: InputDecoration(
-                  hintText: 'Thank you for your business!',
-                  label: Text('Thank note'),
+                  hintText: l10n.hintThankNote,
+                  label: Text(l10n.leadingThankNote),
                 ),
                 keyboardType: TextInputType.text,
                 maxLines: 8,
@@ -167,7 +168,9 @@ class _EditStorePageState extends State<EditStorePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _name.text.isEmpty || _email.text.isEmpty ? null : _onSave,
+        onPressed: _name.text.isEmpty || _email.text.isEmpty
+            ? null
+            : () => _onSave(l10n.thankNote),
         disabledElevation: 0,
         backgroundColor: _name.text.isEmpty || _email.text.isEmpty
             ? disabledColor
@@ -175,19 +178,19 @@ class _EditStorePageState extends State<EditStorePage> {
         foregroundColor: _name.text.isEmpty || _email.text.isEmpty
             ? disabledColor
             : colors.onPrimaryContainer,
-        label: Text('Save'),
+        label: Text(l10n.save),
         icon: Icon(Icons.done),
       ),
     );
   }
 
-  Future<void> _onSave() async {
+  Future<void> _onSave(String fallback) async {
     final nav = Navigator.of(context);
     _editedStore.name = _name.text.trim();
     _editedStore.email = _email.text.trim();
     _editedStore.locale = getLocale(_curr);
     _editedStore.symbol = getSymbol(_curr);
-    _editedStore.thankNote = _note.text.isEmpty ? kNote : _note.text.trim();
+    _editedStore.thankNote = _note.text.isEmpty ? fallback : _note.text.trim();
     await _db.updateStore(_editedStore);
     nav.pushNamedAndRemoveUntil('/', (_) => false);
   }

@@ -1,16 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../common.dart';
 import '../isar_collection/isar_collections.dart';
 import 'edit_store_state.dart' show loadImage;
 import 'preview_state.dart';
-
-const kHeaders = ['#', 'SKU', 'Name', 'Price', 'Qty', 'Total'];
 
 class PreviewPage extends StatefulWidget {
   static const String routeName = '/preview';
@@ -71,6 +69,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
 
     return PopScope(
@@ -78,7 +77,7 @@ class _PreviewPageState extends State<PreviewPage> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text('Preview'),
+          title: Text(l10n.preview),
         ),
         body: Column(
           children: [
@@ -105,7 +104,7 @@ class _PreviewPageState extends State<PreviewPage> {
             const Divider(height: 0.0),
             _BackToHomeButton(
               onPressed: () => _onBackToHome(),
-              title: 'Back to home',
+              title: l10n.backToHome,
             ),
           ],
         ),
@@ -137,6 +136,7 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildHeader(pw.Context context) {
+    final l10n = AppLocalizations.of(context as BuildContext)!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
@@ -153,7 +153,7 @@ class _PreviewPageState extends State<PreviewPage> {
           pw.Padding(
             padding: const pw.EdgeInsets.only(left: 20),
             child: pw.Text(
-              'INVOICE',
+              l10n.invoice.toUpperCase(),
               style: pw.TextStyle(fontSize: 40, color: PdfColors.white),
             ),
           ),
@@ -161,7 +161,10 @@ class _PreviewPageState extends State<PreviewPage> {
             mainAxisAlignment: pw.MainAxisAlignment.center,
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              pw.Text('Amount:', style: pw.TextStyle(color: PdfColors.white)),
+              pw.Text(
+                '${l10n.amount}:',
+                style: pw.TextStyle(color: PdfColors.white),
+              ),
               pw.SizedBox(height: 4.0),
               pw.Text(
                 formatted.format(_gT + _tax - widget.paid),
@@ -179,6 +182,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildSubheader(pw.Context context) {
+    final l10n = AppLocalizations.of(context as BuildContext)!;
+    final name = widget.recipient.name;
+    final addr = widget.recipient.address;
+
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       decoration: pw.BoxDecoration(
@@ -192,11 +199,11 @@ class _PreviewPageState extends State<PreviewPage> {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            'Billed to: ${widget.recipient.name}\n${widget.recipient.address}',
+            '${l10n.billedTo}: $name\n$addr',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           ),
           pw.Text(
-            'Date: $_now\nDue date: $_dueDate',
+            '${l10n.date}: $_now\n${l10n.dueDate}: $_dueDate',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           )
         ],
@@ -205,6 +212,7 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildSummary(pw.Context context) {
+    final l10n = AppLocalizations.of(context as BuildContext)!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
@@ -236,12 +244,15 @@ class _PreviewPageState extends State<PreviewPage> {
                 1: pw.Alignment.centerRight,
               },
               data: <List<dynamic>>[
-                ['Subtotal:', formatted.format(_sT)],
-                ['Total discount:', '-${formatted.format(_tD)}'],
-                ['Tax:', formatted.format(_tax)],
-                ['Grand total:', formatted.format(_gT + _tax)],
-                ['Paid:', formatted.format(widget.paid)],
-                ['Left over:', formatted.format(_gT + _tax - widget.paid)],
+                ['${l10n.subtotal}:', formatted.format(_sT)],
+                ['${l10n.totalDiscount}:', '-${formatted.format(_tD)}'],
+                ['${l10n.tax}:', formatted.format(_tax)],
+                ['${l10n.grandTotal}:', formatted.format(_gT + _tax)],
+                ['${l10n.paid}:', formatted.format(widget.paid)],
+                [
+                  '${l10n.leftOver}:',
+                  formatted.format(_gT + _tax - widget.paid)
+                ],
               ],
             ),
           ),
@@ -251,10 +262,12 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildPaymentDetails(pw.Context context) {
+    final l10n = AppLocalizations.of(context as BuildContext)!;
+
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       child: pw.Text(
-        'Bank: ${widget.store.bankName}\nAccount name: ${widget.store.accountHolderName}\nAccount number: ${widget.store.accountNumber}\nSwift code: ${widget.store.swiftCode}',
+        '${l10n.bank}: ${widget.store.bankName}\n${l10n.accountHolderName}: ${widget.store.accountHolderName}\n${l10n.accountNumber}: ${widget.store.accountNumber}\n${l10n.swiftCode}: ${widget.store.swiftCode}',
         style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
       ),
     );
@@ -344,6 +357,16 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildItemTable(pw.Context context, List<PurchaseItem> items) {
+    final l10n = AppLocalizations.of(context as BuildContext)!;
+    final headers = <String>[
+      '#',
+      'SKU',
+      l10n.itemName,
+      l10n.price,
+      l10n.qty,
+      'Total'
+    ];
+
     return pw.TableHelper.fromTextArray(
       border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
@@ -364,11 +387,11 @@ class _PreviewPageState extends State<PreviewPage> {
         color: PdfColors.white,
       ),
       cellStyle: const pw.TextStyle(fontSize: 10),
-      headers: List<String>.generate(kHeaders.length, (col) => kHeaders[col]),
+      headers: List<String>.generate(headers.length, (col) => headers[col]),
       data: List<List<dynamic>>.generate(
         widget.items.length,
         (row) => List<dynamic>.generate(
-          kHeaders.length,
+          headers.length,
           (col) => col == 0
               ? '${row + 1}'
               : _buildItem(context, row, col, items[row]),
@@ -378,10 +401,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   Future<void> _onDownload(Uint8List pdfBytes) async {
+    final l10n = AppLocalizations.of(context)!;
     final msg = ScaffoldMessenger.of(context);
     await downloadPdf(pdfBytes);
-    const str = 'File successfully downloaded';
-    msg.showSnackBar(SnackBar(content: Text(str)));
+    msg.showSnackBar(SnackBar(content: Text(l10n.successfullyDownloaded)));
     setState(() => _downloaded = true);
   }
 

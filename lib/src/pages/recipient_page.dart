@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import '../common.dart';
 import '../isar_collection/isar_collections.dart' show Recipient;
 import '../isar_service.dart';
 import '../shared/shared.dart';
@@ -21,22 +20,23 @@ class _RecipientPageState extends State<RecipientPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final nav = Navigator.of(context);
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipient'),
+        title: Text(l10n.recipient),
         actions: [
           _ids.isEmpty
               ? TextButton.icon(
                   onPressed: () => nav.pushNamed('/add-recipient'),
-                  label: Text('Add recipient'),
+                  label: Text(l10n.addRecipient),
                   icon: Icon(Icons.add),
                 )
               : TextButton.icon(
                   onPressed: () => _onDelete(_ids),
-                  label: Text('Delete'),
+                  label: Text(l10n.delete),
                   icon: Icon(Icons.delete, color: colors.error),
                   style: TextButton.styleFrom(foregroundColor: colors.error),
                 ),
@@ -48,10 +48,10 @@ class _RecipientPageState extends State<RecipientPage> {
           final waiting = snapshot.connectionState == ConnectionState.waiting;
           if (!_skipLoading && waiting) return CenterCircular();
 
-          if (snapshot.hasError) return CenterText(text: 'Failed to load');
+          if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
 
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return CenterText(text: 'No data');
+            return CenterText(text: l10n.noData);
           } else {
             return ListView.separated(
               itemBuilder: (context, i) {

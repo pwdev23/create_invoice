@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../common.dart';
 import '../isar_collection/isar_collections.dart' show Store, Item;
 import '../isar_service.dart';
 import '../shared/shared.dart';
@@ -26,6 +26,7 @@ class _StorePageState extends State<StorePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final formatted = NumberFormat.currency(
       locale: widget.locale,
@@ -58,12 +59,12 @@ class _StorePageState extends State<StorePage> {
           _ids.isEmpty
               ? TextButton.icon(
                   onPressed: () => _onAddItem(),
-                  label: Text('Add item'),
+                  label: Text(l10n.addItem),
                   icon: Icon(Icons.add),
                 )
               : TextButton.icon(
                   onPressed: () => _onDelete(_ids),
-                  label: Text('Delete'),
+                  label: Text(l10n.delete),
                   icon: Icon(Icons.delete, color: colors.error),
                   style: TextButton.styleFrom(foregroundColor: colors.error),
                 ),
@@ -75,10 +76,10 @@ class _StorePageState extends State<StorePage> {
           final waiting = snapshot.connectionState == ConnectionState.waiting;
           if (!_skipLoading && waiting) return CenterCircular();
 
-          if (snapshot.hasError) return CenterText(text: 'Failed to load');
+          if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
 
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return CenterText(text: 'No data');
+            return CenterText(text: l10n.noData);
           } else {
             return ListView.separated(
               itemBuilder: (context, i) {
