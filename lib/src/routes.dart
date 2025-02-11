@@ -49,10 +49,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       final args = settings.arguments as EditStoreArgs;
       return MaterialPageRoute(
           builder: (_) => EditStorePage(store: args.store));
-    case '/store':
-      final args = settings.arguments as StoreArgs;
+    case '/item':
+      final args = settings.arguments as ItemArgs;
       return MaterialPageRoute(
-        builder: (_) => StorePage(
+        builder: (_) => ItemPage(
           locale: args.locale,
           symbol: args.symbol,
         ),

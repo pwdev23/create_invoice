@@ -39,6 +39,7 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
           var locale = _getLocale(opt);
 
           return RadioListTile.adaptive(
+            controlAffinity: ListTileControlAffinity.trailing,
             title: Text(_getName(opt)),
             value: opt,
             groupValue: _opt,

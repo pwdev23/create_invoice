@@ -141,9 +141,10 @@ class _PreviewPageState extends State<PreviewPage> {
       locale: widget.store.locale,
       symbol: widget.store.symbol,
     );
+    final color = widget.store.color!;
 
     return pw.TableHelper.fromTextArray(
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
+      headerDecoration: pw.BoxDecoration(color: getColor(widget.store.color!)),
       border: pw.TableBorder.all(width: .5),
       cellHeight: 75,
       columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
@@ -154,7 +155,7 @@ class _PreviewPageState extends State<PreviewPage> {
             padding: const pw.EdgeInsets.only(left: 20),
             child: pw.Text(
               l10n.invoice.toUpperCase(),
-              style: pw.TextStyle(fontSize: 40, color: PdfColors.white),
+              style: pw.TextStyle(fontSize: 40, color: getTitleColor(color)),
             ),
           ),
           pw.Column(
@@ -163,14 +164,14 @@ class _PreviewPageState extends State<PreviewPage> {
             children: [
               pw.Text(
                 '${l10n.amount}:',
-                style: pw.TextStyle(color: PdfColors.white),
+                style: pw.TextStyle(color: getTitleColor(color)),
               ),
               pw.SizedBox(height: 4.0),
               pw.Text(
                 formatted.format(_gT + _tax - widget.paid),
                 style: pw.TextStyle(
                   fontSize: 20,
-                  color: PdfColors.white,
+                  color: getTitleColor(color),
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
@@ -359,6 +360,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildItemTable(pw.Context pwContext, List<PurchaseItem> items) {
     final l10n = AppLocalizations.of(context)!;
+    final color = widget.store.color;
     final headers = <String>[
       '#',
       'SKU',
@@ -371,7 +373,7 @@ class _PreviewPageState extends State<PreviewPage> {
     return pw.TableHelper.fromTextArray(
       border: pw.TableBorder.all(width: .5),
       cellAlignment: pw.Alignment.centerLeft,
-      headerDecoration: pw.BoxDecoration(color: PdfColors.indigo300),
+      headerDecoration: pw.BoxDecoration(color: getColor(widget.store.color!)),
       headerHeight: 25,
       cellHeight: 30,
       cellAlignments: {
@@ -385,7 +387,7 @@ class _PreviewPageState extends State<PreviewPage> {
       headerStyle: pw.TextStyle(
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
-        color: PdfColors.white,
+        color: getTitleColor(color!),
       ),
       cellStyle: const pw.TextStyle(fontSize: 10),
       headers: List<String>.generate(headers.length, (col) => headers[col]),

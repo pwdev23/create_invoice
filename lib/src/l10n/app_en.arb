@@ -242,5 +242,15 @@
     "logoHelp3": "image.",
     "@logoHelp3": {
         "description": "A partial text for logo helper"
+    },
+    "nItem": "{count, plural, =0{Item} =1{1 Item} other{{count} Items}}",
+    "@nItem": {
+        "description": "A plural item text",
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "compact"
+            }
+        }
     }
 }

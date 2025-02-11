@@ -48,6 +48,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
           final curr = Currency.values[i];
 
           return RadioListTile.adaptive(
+            controlAffinity: ListTileControlAffinity.trailing,
             value: curr,
             groupValue: _curr,
             title: Text(getName(curr)),

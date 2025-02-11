@@ -155,7 +155,6 @@ class _EditStorePageState extends State<EditStorePage> {
                 controller: _note,
                 decoration: InputDecoration(
                   hintText: l10n.hintThankNote,
-                  label: Text(l10n.leadingThankNote),
                 ),
                 keyboardType: TextInputType.text,
                 maxLines: 8,

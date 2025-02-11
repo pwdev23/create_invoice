@@ -42,6 +42,7 @@ class IsarService {
       store.thankNote = editedStore.thankNote;
       store.locale = editedStore.locale;
       store.symbol = editedStore.symbol;
+      store.color = editedStore.color;
       await db.stores.put(store);
     });
   }

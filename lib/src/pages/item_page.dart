@@ -1,25 +1,24 @@
 import 'package:intl/intl.dart';
 
 import '../common.dart';
-import '../isar_collection/isar_collections.dart' show Store, Item;
+import '../isar_collection/isar_collections.dart' show Item;
 import '../isar_service.dart';
 import '../shared/shared.dart';
 import 'edit_item_page.dart' show EditItemArgs;
-import 'edit_store_page.dart' show EditStoreArgs;
 
-class StorePage extends StatefulWidget {
-  static const routeName = '/store';
+class ItemPage extends StatefulWidget {
+  static const routeName = '/item';
 
-  const StorePage({super.key, required this.locale, required this.symbol});
+  const ItemPage({super.key, required this.locale, required this.symbol});
 
   final String locale;
   final String symbol;
 
   @override
-  State<StorePage> createState() => _StorePageState();
+  State<ItemPage> createState() => _ItemPageState();
 }
 
-class _StorePageState extends State<StorePage> {
+class _ItemPageState extends State<ItemPage> {
   final _db = IsarService();
   bool _skipLoading = false;
   final _ids = <int>[];
@@ -35,23 +34,14 @@ class _StorePageState extends State<StorePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: StreamBuilder<List<Store>>(
-          stream: _db.streamStores(),
+        title: StreamBuilder<List<Item>>(
+          stream: _db.streamItems(),
           builder: (context, snapshot) {
-            final waiting = snapshot.connectionState == ConnectionState.waiting;
-            if (!_skipLoading && waiting) return SizedBox.shrink();
-
-            if (snapshot.hasError) return SizedBox.shrink();
-
             if (snapshot.hasData && snapshot.data!.isEmpty) {
-              return SizedBox.shrink();
+              return Text(l10n.nItem(0));
             } else {
-              final s = snapshot.data![0];
-              return _StoreInfoButton(
-                email: s.email!,
-                name: s.name!,
-                onPressed: () => _onEditStoreInfo(s),
-              );
+              final count = snapshot.data != null ? snapshot.data!.length : 0;
+              return Text(l10n.nItem(count));
             }
           },
         ),
@@ -149,12 +139,6 @@ class _StorePageState extends State<StorePage> {
     await _db.deleteItems(ids);
     setState(() => _ids.clear());
   }
-
-  void _onEditStoreInfo(Store store) {
-    final nav = Navigator.of(context);
-    final args = EditStoreArgs(store);
-    nav.pushNamed('/edit-store', arguments: args);
-  }
 }
 
 class _TrailingIcon extends StatelessWidget {
@@ -171,51 +155,8 @@ class _TrailingIcon extends StatelessWidget {
   }
 }
 
-class _StoreInfoButton extends StatelessWidget {
-  const _StoreInfoButton(
-      {required this.onPressed, required this.email, required this.name});
-
-  final VoidCallback onPressed;
-  final String email;
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: double.infinity);
-
-    return RawMaterialButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      onPressed: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-          vertical: 2.0,
-        ),
-        child: ConstrainedBox(
-          constraints: minMax,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                email,
-                style: textTheme.bodySmall,
-              ),
-              Text(
-                name,
-                style: TextStyle(color: colors.onPrimaryContainer),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class StoreArgs {
-  const StoreArgs(this.locale, this.symbol);
+class ItemArgs {
+  const ItemArgs(this.locale, this.symbol);
 
   final String locale;
   final String symbol;
