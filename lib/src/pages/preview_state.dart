@@ -143,16 +143,16 @@ PdfColor? getColor(String color) {
 PdfColor getTitleColor(String color) {
   switch (color) {
     case 'blueGrey':
-    case 'grey':
     case 'brown':
     case 'purple':
-    case 'deepPurple':
     case 'indigo':
     case 'blue':
     case 'teal':
     case 'green':
       return PdfColors.white;
 
+    case 'grey':
+    case 'deepPurple':
     case 'pink':
     case 'cyan':
     case 'lightBlue':
