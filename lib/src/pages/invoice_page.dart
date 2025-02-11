@@ -40,11 +40,15 @@ class _InvoicePageState extends State<InvoicePage> {
   final _code = TextEditingController();
   final _tax = TextEditingController();
   final _range = TextEditingController();
-  var _color = InvoiceColor.indigo;
+  late InvoiceColor _color;
 
   @override
   void initState() {
     super.initState();
+    _color = InvoiceColor.values.firstWhere(
+      (e) => e.name == widget.store.color,
+      orElse: () => InvoiceColor.indigo,
+    );
     _editedStore = widget.store;
     _to = widget.recipient;
   }
@@ -258,7 +262,7 @@ class _InvoicePageState extends State<InvoicePage> {
     final tax = _tax.text.isEmpty ? 0 : double.parse(_tax.text);
     _editedStore.tax = tax.toDouble();
     final range = _range.text.isEmpty ? 1 : extractNumbers(_range.text);
-    _editedStore.color = _color.toString();
+    _editedStore.color = _color.name;
     await _db.updateStore(_editedStore);
     final args = PreviewArgs(_editedStore, _to, items, n, range);
     nav.pushNamed('/preview', arguments: args);

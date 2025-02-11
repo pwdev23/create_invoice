@@ -26,14 +26,14 @@ void main() {
       ..item.value = item2,
   ];
 
-  group('Calculations should be calculated correctly', () {
+  group('calcSubTotal should be calculated correctly', () {
     test('Sub total should be calculated correctly', () {
       double subTotal = 0;
       subTotal = calcSubTotal(purchaseItems);
       expect(subTotal, 40);
     });
 
-    test('Total discount should be calculated correctly', () {
+    test('calcTotalDiscount should be calculated correctly', () {
       final discount = calcTotalDiscount(purchaseItems);
       expect(discount, 5);
     });
