@@ -406,9 +406,15 @@ class _PreviewPageState extends State<PreviewPage> {
   Future<void> _onDownload(Uint8List pdfBytes) async {
     final l10n = AppLocalizations.of(context)!;
     final msg = ScaffoldMessenger.of(context);
-    await downloadPdf(pdfBytes);
-    msg.showSnackBar(SnackBar(content: Text(l10n.successfullyDownloaded)));
-    setState(() => _downloaded = true);
+    final saved = l10n.successfullyDownloaded;
+    await downloadPdf(
+      pdfBytes,
+      (_) => msg.showSnackBar(SnackBar(content: Text(l10n.permissionDenied))),
+      (_) {
+        msg.showSnackBar(SnackBar(content: Text(saved)));
+        setState(() => _downloaded = true);
+      },
+    );
   }
 
   String _getDueDate(int daysRange) {

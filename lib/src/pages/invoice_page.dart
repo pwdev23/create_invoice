@@ -9,7 +9,6 @@ import '../utils.dart';
 import 'edit_store_page.dart' show EditStoreArgs;
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
-import 'preview_state.dart';
 import 'set_language_page.dart' show SetLanguageArgs;
 import 'item_page.dart' show ItemArgs;
 
@@ -181,25 +180,19 @@ class _InvoicePageState extends State<InvoicePage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
-        onPressed: () => _onProceed(l10n.permissionDenied),
+        onPressed: () => _onProceed(),
         label: Text(l10n.fillInvoiceDetails),
         icon: Icon(Icons.edit_note_outlined),
       ),
     );
   }
 
-  Future<void> _onProceed(String errorMessage) async {
-    final msg = ScaffoldMessenger.of(context);
-    final granted = await requestPermission();
-    if (granted) {
-      final items = await _db.findAllPurchaseItems();
-      if (items.isEmpty) {
-        _onEmpty();
-      } else {
-        _onOpenDetailsForm(items);
-      }
+  Future<void> _onProceed() async {
+    final items = await _db.findAllPurchaseItems();
+    if (items.isEmpty) {
+      _onEmpty();
     } else {
-      msg.showSnackBar(SnackBar(content: Text(errorMessage)));
+      _onOpenDetailsForm(items);
     }
   }
 
