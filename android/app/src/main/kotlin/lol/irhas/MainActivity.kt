@@ -1,4 +1,4 @@
-package lol.projectweekend.create_invoice
+package lol.irhas
 
 import io.flutter.embedding.android.FlutterActivity
 
