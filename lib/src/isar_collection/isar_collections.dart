@@ -15,6 +15,7 @@ class Store {
   String? thankNote;
   String? locale;
   String? symbol;
+  String? color;
 }
 
 @collection

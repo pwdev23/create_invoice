@@ -6,11 +6,12 @@ import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
 import '../shared/shared.dart';
 import '../utils.dart';
+import 'edit_store_page.dart' show EditStoreArgs;
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
 import 'preview_state.dart';
 import 'set_language_page.dart' show SetLanguageArgs;
-import 'store_page.dart' show StoreArgs;
+import 'item_page.dart' show ItemArgs;
 
 class InvoicePage extends StatefulWidget {
   static const String routeName = '/invoice';
@@ -39,6 +40,7 @@ class _InvoicePageState extends State<InvoicePage> {
   final _code = TextEditingController();
   final _tax = TextEditingController();
   final _range = TextEditingController();
+  var _color = InvoiceColor.indigo;
 
   @override
   void initState() {
@@ -62,7 +64,6 @@ class _InvoicePageState extends State<InvoicePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
-    final avatar = widget.store.name![0];
     final colors = Theme.of(context).colorScheme;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
@@ -72,18 +73,6 @@ class _InvoicePageState extends State<InvoicePage> {
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: colors.surfaceTint,
-              foregroundColor: colors.surface,
-              shape: CircleBorder(),
-            ),
-            onPressed: () => _key.currentState!.openDrawer(),
-            child: Text(avatar.toUpperCase()),
-          ),
-        ),
         title: _RecipientButton(
           leadingText: l10n.billedTo,
           recipientName: _to.name!,
@@ -108,11 +97,21 @@ class _InvoicePageState extends State<InvoicePage> {
       drawer: Drawer(
         child: Column(
           children: [
-            _StoreInfo(name: widget.store.name!, email: widget.store.email!),
+            _StoreInfo(
+              name: widget.store.name!,
+              email: widget.store.email!,
+            ),
             ListTile(
               style: ListTileStyle.drawer,
               onTap: () => _onManageStore(),
               title: Text(l10n.manageStore),
+              leading: Icon(Icons.store),
+            ),
+            const Divider(height: 0.0),
+            ListTile(
+              style: ListTileStyle.drawer,
+              onTap: () => _onManageItem(),
+              title: Text(l10n.nItem(0)),
               leading: Icon(Icons.inbox),
             ),
             const Divider(height: 0.0),
@@ -204,8 +203,8 @@ class _InvoicePageState extends State<InvoicePage> {
     final nav = Navigator.of(context);
     final items = await _db.findAllItems();
     if (items.isEmpty) {
-      final args = StoreArgs(widget.store.locale!, widget.store.symbol!);
-      nav.pushNamed('/store', arguments: args);
+      final args = ItemArgs(widget.store.locale!, widget.store.symbol!);
+      nav.pushNamed('/item', arguments: args);
     } else {
       _openItemSheet(items);
     }
@@ -259,6 +258,7 @@ class _InvoicePageState extends State<InvoicePage> {
     final tax = _tax.text.isEmpty ? 0 : double.parse(_tax.text);
     _editedStore.tax = tax.toDouble();
     final range = _range.text.isEmpty ? 1 : extractNumbers(_range.text);
+    _editedStore.color = _color.toString();
     await _db.updateStore(_editedStore);
     final args = PreviewArgs(_editedStore, _to, items, n, range);
     nav.pushNamed('/preview', arguments: args);
@@ -362,18 +362,34 @@ class _InvoicePageState extends State<InvoicePage> {
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
-                _DividerText(text: 'Tax'),
+                _DividerText(text: '${l10n.tax} (${l10n.inPercent})'),
                 Padding(
                   padding: kPx,
                   child: TextFormField(
                     controller: _tax,
-                    decoration: InputDecoration(
-                      hintText: '0',
-                      label: Text('${l10n.tax} (${l10n.inPercent})'),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
+                    decoration: InputDecoration(hintText: '0'),
                     keyboardType: TextInputType.number,
                     onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                _DividerText(text: 'Color'),
+                SingleChildScrollView(
+                  padding: kPx,
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(InvoiceColor.values.length, (i) {
+                      final color = InvoiceColor.values[i];
+                      final borderColor = color == InvoiceColor.white
+                          ? Colors.black12
+                          : Colors.transparent;
+                      return _ColorDot(
+                        onPressed: () => setState(() => _color = color),
+                        fillColor: getInvoiceColor(color)!,
+                        selected: _color == color,
+                        inactiveBorderColor: borderColor,
+                        activeBorderColor: Colors.blue,
+                      );
+                    }),
                   ),
                 ),
                 Padding(
@@ -525,17 +541,21 @@ class _InvoicePageState extends State<InvoicePage> {
 
   Future<void> _onPinRecipient(Recipient recipient) async {
     final nav = Navigator.of(context);
-    if (_to.id != recipient.id) {
-      await _db.swapPinnedRecipient(_to, recipient);
-      setState(() => _to = recipient);
-    }
+    if (_to.id != recipient.id) await _db.swapPinnedRecipient(_to, recipient);
+    setState(() => _to = recipient);
     nav.pop();
   }
 
   void _onManageStore() {
     final nav = Navigator.of(context);
-    final args = StoreArgs(widget.store.locale!, widget.store.symbol!);
-    nav.pushNamed('/store', arguments: args);
+    final args = EditStoreArgs(widget.store);
+    nav.pushNamed('/edit-store', arguments: args);
+  }
+
+  void _onManageItem() {
+    final nav = Navigator.of(context);
+    final args = ItemArgs(widget.store.locale!, widget.store.symbol!);
+    nav.pushNamed('/item', arguments: args);
   }
 
   void _onSettingLanguage(String locale) {
@@ -736,6 +756,39 @@ class _DividerText extends StatelessWidget {
       top: 20,
       right: 16,
       bottom: 12,
+    );
+  }
+}
+
+class _ColorDot extends StatelessWidget {
+  const _ColorDot({
+    required this.onPressed,
+    required this.fillColor,
+    required this.selected,
+    this.activeBorderColor = Colors.blue,
+    this.inactiveBorderColor = Colors.transparent,
+  });
+
+  final VoidCallback onPressed;
+  final Color fillColor;
+  final bool selected;
+  final Color activeBorderColor;
+  final Color inactiveBorderColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        shape: CircleBorder(
+          side: BorderSide(
+            width: 3.0,
+            color: selected ? activeBorderColor : inactiveBorderColor,
+          ),
+        ),
+        backgroundColor: fillColor,
+      ),
+      onPressed: onPressed,
+      child: const SizedBox.shrink(),
     );
   }
 }

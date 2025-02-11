@@ -32,38 +32,43 @@ const StoreSchema = CollectionSchema(
       name: r'bankName',
       type: IsarType.string,
     ),
-    r'email': PropertySchema(
+    r'color': PropertySchema(
       id: 3,
+      name: r'color',
+      type: IsarType.string,
+    ),
+    r'email': PropertySchema(
+      id: 4,
       name: r'email',
       type: IsarType.string,
     ),
     r'locale': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'locale',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'name',
       type: IsarType.string,
     ),
     r'swiftCode': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'swiftCode',
       type: IsarType.string,
     ),
     r'symbol': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'tax': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'tax',
       type: IsarType.double,
     ),
     r'thankNote': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'thankNote',
       type: IsarType.string,
     )
@@ -102,6 +107,12 @@ int _storeEstimateSize(
   }
   {
     final value = object.bankName;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.color;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -154,13 +165,14 @@ void _storeSerialize(
   writer.writeString(offsets[0], object.accountHolderName);
   writer.writeString(offsets[1], object.accountNumber);
   writer.writeString(offsets[2], object.bankName);
-  writer.writeString(offsets[3], object.email);
-  writer.writeString(offsets[4], object.locale);
-  writer.writeString(offsets[5], object.name);
-  writer.writeString(offsets[6], object.swiftCode);
-  writer.writeString(offsets[7], object.symbol);
-  writer.writeDouble(offsets[8], object.tax);
-  writer.writeString(offsets[9], object.thankNote);
+  writer.writeString(offsets[3], object.color);
+  writer.writeString(offsets[4], object.email);
+  writer.writeString(offsets[5], object.locale);
+  writer.writeString(offsets[6], object.name);
+  writer.writeString(offsets[7], object.swiftCode);
+  writer.writeString(offsets[8], object.symbol);
+  writer.writeDouble(offsets[9], object.tax);
+  writer.writeString(offsets[10], object.thankNote);
 }
 
 Store _storeDeserialize(
@@ -173,14 +185,15 @@ Store _storeDeserialize(
   object.accountHolderName = reader.readStringOrNull(offsets[0]);
   object.accountNumber = reader.readStringOrNull(offsets[1]);
   object.bankName = reader.readStringOrNull(offsets[2]);
-  object.email = reader.readStringOrNull(offsets[3]);
+  object.color = reader.readStringOrNull(offsets[3]);
+  object.email = reader.readStringOrNull(offsets[4]);
   object.id = id;
-  object.locale = reader.readStringOrNull(offsets[4]);
-  object.name = reader.readStringOrNull(offsets[5]);
-  object.swiftCode = reader.readStringOrNull(offsets[6]);
-  object.symbol = reader.readStringOrNull(offsets[7]);
-  object.tax = reader.readDoubleOrNull(offsets[8]);
-  object.thankNote = reader.readStringOrNull(offsets[9]);
+  object.locale = reader.readStringOrNull(offsets[5]);
+  object.name = reader.readStringOrNull(offsets[6]);
+  object.swiftCode = reader.readStringOrNull(offsets[7]);
+  object.symbol = reader.readStringOrNull(offsets[8]);
+  object.tax = reader.readDoubleOrNull(offsets[9]);
+  object.thankNote = reader.readStringOrNull(offsets[10]);
   return object;
 }
 
@@ -208,8 +221,10 @@ P _storeDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -740,6 +755,150 @@ extension StoreQueryFilter on QueryBuilder<Store, Store, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'bankName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'color',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'color',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'color',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'color',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorMatches(String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'color',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'color',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> colorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'color',
         value: '',
       ));
     });
@@ -1787,6 +1946,18 @@ extension StoreQuerySortBy on QueryBuilder<Store, Store, QSortBy> {
     });
   }
 
+  QueryBuilder<Store, Store, QAfterSortBy> sortByColor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'color', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> sortByColorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'color', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> sortByEmail() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'email', Sort.asc);
@@ -1906,6 +2077,18 @@ extension StoreQuerySortThenBy on QueryBuilder<Store, Store, QSortThenBy> {
   QueryBuilder<Store, Store, QAfterSortBy> thenByBankNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bankName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> thenByColor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'color', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> thenByColorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'color', Sort.desc);
     });
   }
 
@@ -2030,6 +2213,13 @@ extension StoreQueryWhereDistinct on QueryBuilder<Store, Store, QDistinct> {
     });
   }
 
+  QueryBuilder<Store, Store, QDistinct> distinctByColor(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'color', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Store, Store, QDistinct> distinctByEmail(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2101,6 +2291,12 @@ extension StoreQueryProperty on QueryBuilder<Store, Store, QQueryProperty> {
   QueryBuilder<Store, String?, QQueryOperations> bankNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bankName');
+    });
+  }
+
+  QueryBuilder<Store, String?, QQueryOperations> colorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'color');
     });
   }
 

@@ -45,7 +45,8 @@ class _AuthPageState extends State<AuthPage> {
         ..tax = 0
         ..thankNote = kNote
         ..locale = ''
-        ..symbol = '';
+        ..symbol = ''
+        ..color = 'white';
       await _db.saveStore(store);
     } else {
       _store = stores[0];
@@ -56,11 +57,13 @@ class _AuthPageState extends State<AuthPage> {
     final count = await _db.countRecipients();
     if (count == 0) {
       _recipient = null;
-      final recipient = Recipient()
-        ..name = 'My customer'
-        ..address = 'Planet earth'
-        ..pinned = true;
-      await _db.saveRecipient(recipient);
+      for (var i = 0; i < 2; i++) {
+        final recipient = Recipient()
+          ..name = 'My customer ${i + 1}'
+          ..address = 'Planet earth'
+          ..pinned = true;
+        await _db.saveRecipient(recipient);
+      }
     } else {
       _recipient = await _db.findPinnedRecipients();
     }

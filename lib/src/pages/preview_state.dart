@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart' show PdfColors, PdfColor;
 import 'package:permission_handler/permission_handler.dart';
 
 import '../isar_collection/isar_collections.dart' show PurchaseItem;
@@ -91,5 +92,80 @@ String getTextLogo(String name) {
     return '${split[0][0]}${split[1][0]}'.toUpperCase();
   } else {
     return name[0].toUpperCase();
+  }
+}
+
+PdfColor? getColor(String color) {
+  switch (color) {
+    case 'blueGrey':
+      return PdfColors.blueGrey300;
+    case 'grey':
+      return PdfColors.grey300;
+    case 'brown':
+      return PdfColors.brown300;
+    case 'pink':
+      return PdfColors.pink300;
+    case 'purple':
+      return PdfColors.purple300;
+    case 'deepPurple':
+      return PdfColors.deepPurple300;
+    case 'indigo':
+      return PdfColors.indigo300;
+    case 'blue':
+      return PdfColors.blue300;
+    case 'lightBlue':
+      return PdfColors.lightBlue300;
+    case 'cyan':
+      return PdfColors.cyan300;
+    case 'teal':
+      return PdfColors.teal300;
+    case 'green':
+      return PdfColors.green300;
+    case 'lightGreen':
+      return PdfColors.lightGreen300;
+    case 'lime':
+      return PdfColors.lime300;
+    case 'yellow':
+      return PdfColors.yellow300;
+    case 'amber':
+      return PdfColors.amber300;
+    case 'orange':
+      return PdfColors.orange300;
+    case 'deepOrange':
+      return PdfColors.deepOrange300;
+    case 'red':
+      return PdfColors.red300;
+    default:
+      return null;
+  }
+}
+
+PdfColor getTitleColor(String color) {
+  switch (color) {
+    case 'blueGrey':
+    case 'grey':
+    case 'brown':
+    case 'purple':
+    case 'deepPurple':
+    case 'indigo':
+    case 'blue':
+    case 'teal':
+    case 'green':
+      return PdfColors.white;
+
+    case 'pink':
+    case 'cyan':
+    case 'lightBlue':
+    case 'lightGreen':
+    case 'lime':
+    case 'yellow':
+    case 'amber':
+    case 'orange':
+    case 'deepOrange':
+    case 'red':
+      return PdfColors.black;
+
+    default:
+      return PdfColors.black;
   }
 }
