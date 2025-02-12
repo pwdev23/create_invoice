@@ -146,7 +146,7 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: const EdgeInsets.all(20.0),
               color: colors.surface,
               child: Text(
-                'Version $kVersion',
+                getVersionText(kVersion),
                 textAlign: TextAlign.center,
                 style: textTheme.bodySmall,
               ),
