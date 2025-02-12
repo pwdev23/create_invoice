@@ -242,8 +242,10 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: EdgeInsets.only(top: kToolbarHeight),
               itemBuilder: (context, i) {
                 final title = items[i].name!;
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
+
                 return ListTile(
-                  title: Text(title),
+                  title: Text(title, style: ellipsis),
                   trailing: _TrailingIcon(),
                   onTap: () => _onAddPurchaseItem(_db, items[i]),
                 );
@@ -540,8 +542,10 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: EdgeInsets.only(top: kToolbarHeight),
               itemBuilder: (context, i) {
                 final title = recipients[i].name!;
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
+
                 return ListTile(
-                  title: Text(title),
+                  title: Text(title, style: ellipsis),
                   trailing: _TrailingIcon(),
                   onTap: () => _onPinRecipient(recipients[i]),
                 );
