@@ -269,6 +269,7 @@ class _InvoicePageState extends State<InvoicePage> {
 
   Future<void> _onCreateInvoice(List<PurchaseItem> items) async {
     final nav = Navigator.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
     final n = _paid.text.isEmpty ? 0.0 : double.parse(_paid.text);
     _editedStore.bankName = _bank.text.trim();
     _editedStore.accountNumber = _accNum.text.trim();
@@ -279,7 +280,7 @@ class _InvoicePageState extends State<InvoicePage> {
     final range = _range.text.isEmpty ? 1 : extractNumbers(_range.text);
     _editedStore.color = _color.name;
     await _db.updateStore(_editedStore);
-    final args = PreviewArgs(_editedStore, _to, items, n, range);
+    final args = PreviewArgs(_editedStore, _to, items, n, range, locale);
     nav.pushNamed('/preview', arguments: args);
   }
 
