@@ -57,10 +57,11 @@ class _RecipientPageState extends State<RecipientPage> {
               itemBuilder: (context, i) {
                 if (!_skipLoading) _skipLoading = true;
                 final t = snapshot.data![i];
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
 
                 return ListTile(
-                  title: Text(t.name!),
-                  subtitle: Text(t.address!),
+                  title: Text(t.name!, style: ellipsis),
+                  subtitle: Text(t.address!, style: ellipsis),
                   onTap: () => _onTap(t),
                   onLongPress: () => _onLongPressed(t.id),
                   trailing: Icon(Icons.edit),

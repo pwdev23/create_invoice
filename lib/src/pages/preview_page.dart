@@ -185,7 +185,7 @@ class _PreviewPageState extends State<PreviewPage> {
   pw.Widget _buildSubheader(pw.Context pwContext) {
     final l10n = AppLocalizations.of(context)!;
     final name = widget.recipient.name;
-    final addr = widget.recipient.address;
+    final addr = widget.recipient.address!.replaceAll(',', '\n');
 
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),

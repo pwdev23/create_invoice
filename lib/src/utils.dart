@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 // Shorten of pushNamed without arguments
-void push(BuildContext context, String routeName) {
+void push(BuildContext context, String routeName, bool isPop) {
   final nav = Navigator.of(context);
-  nav.pushNamed(routeName);
+  if (isPop) {
+    nav.popAndPushNamed(routeName);
+  } else {
+    nav.pushNamed(routeName);
+  }
 }

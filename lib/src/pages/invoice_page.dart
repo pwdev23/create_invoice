@@ -127,7 +127,7 @@ class _InvoicePageState extends State<InvoicePage> {
                 ListTile(
                   tileColor: colors.surface,
                   style: ListTileStyle.drawer,
-                  onTap: () => push(context, '/recipient'),
+                  onTap: () => push(context, '/recipient', true),
                   title: Text(l10n.recipient),
                   leading: Icon(Icons.people),
                 ),
@@ -242,8 +242,10 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: EdgeInsets.only(top: kToolbarHeight),
               itemBuilder: (context, i) {
                 final title = items[i].name!;
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
+
                 return ListTile(
-                  title: Text(title),
+                  title: Text(title, style: ellipsis),
                   trailing: _TrailingIcon(),
                   onTap: () => _onAddPurchaseItem(_db, items[i]),
                 );
@@ -540,8 +542,12 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: EdgeInsets.only(top: kToolbarHeight),
               itemBuilder: (context, i) {
                 final title = recipients[i].name!;
+                final subtitle = recipients[i].address!;
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
+
                 return ListTile(
-                  title: Text(title),
+                  title: Text(title, style: ellipsis),
+                  subtitle: Text(subtitle, style: ellipsis),
                   trailing: _TrailingIcon(),
                   onTap: () => _onPinRecipient(recipients[i]),
                 );
@@ -566,19 +572,19 @@ class _InvoicePageState extends State<InvoicePage> {
   void _onManageStore() {
     final nav = Navigator.of(context);
     final args = EditStoreArgs(widget.store);
-    nav.pushNamed('/edit-store', arguments: args);
+    nav.popAndPushNamed('/edit-store', arguments: args);
   }
 
   void _onManageItem() {
     final nav = Navigator.of(context);
     final args = ItemArgs(widget.store.locale!, widget.store.symbol!);
-    nav.pushNamed('/item', arguments: args);
+    nav.popAndPushNamed('/item', arguments: args);
   }
 
   void _onSettingLanguage(String locale) {
     final nav = Navigator.of(context);
     final args = SetLanguageArgs(locale);
-    nav.pushNamed('/languages', arguments: args);
+    nav.popAndPushNamed('/languages', arguments: args);
   }
 }
 
@@ -604,7 +610,8 @@ class _RecipientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
-    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: double.infinity);
+    final width = MediaQuery.of(context).size.width;
+    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: width * 0.4);
 
     return RawMaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -636,7 +643,9 @@ class _RecipientButton extends StatelessWidget {
               ),
               Text(
                 recipientName,
-                style: TextStyle(color: colors.onPrimaryContainer),
+                style: TextStyle(
+                    color: colors.onPrimaryContainer,
+                    overflow: TextOverflow.ellipsis),
               ),
             ],
           ),

@@ -77,9 +77,10 @@ class _ItemPageState extends State<ItemPage> {
                 final t = snapshot.data![i];
                 final title = t.name;
                 final id = t.id;
+                final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
 
                 return ListTile(
-                  title: Text(title!),
+                  title: Text(title!, style: ellipsis),
                   isThreeLine: t.discount! > 0,
                   subtitle: t.discount == 0
                       ? Text(formatted.format(t.price))
