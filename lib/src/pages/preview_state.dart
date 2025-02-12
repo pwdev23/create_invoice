@@ -10,6 +10,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../isar_collection/isar_collections.dart' show PurchaseItem;
 
+const kEnableDownload = false;
+
 const kDateFormat = 'yyyyMMdd-HHmmss';
 
 double calcTax(double tax, double grandTotal) {

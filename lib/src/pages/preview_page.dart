@@ -20,6 +20,7 @@ class PreviewPage extends StatefulWidget {
     required this.items,
     required this.paid,
     required this.daysRange,
+    required this.locale,
   });
 
   final Store store;
@@ -27,6 +28,7 @@ class PreviewPage extends StatefulWidget {
   final List<PurchaseItem> items;
   final double paid;
   final int daysRange;
+  final String locale;
 
   @override
   State<PreviewPage> createState() => _PreviewPageState();
@@ -38,8 +40,6 @@ class _PreviewPageState extends State<PreviewPage> {
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
   String _dueDate = '';
-  final _now = DateFormat.yMMMMd().format(DateTime.now());
-  final _fName = 'INV_${DateFormat(kDateFormat).format(DateTime.now())}.pdf';
   double _tD = 0;
   double _sT = 0;
   double _tax = 0;
@@ -71,6 +71,8 @@ class _PreviewPageState extends State<PreviewPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
+    final dateFormat = DateFormat(kDateFormat, widget.locale);
+    final fName = 'INV_${dateFormat.format(DateTime.now())}.pdf';
 
     return PopScope(
       canPop: false,
@@ -83,7 +85,7 @@ class _PreviewPageState extends State<PreviewPage> {
           children: [
             Flexible(
               child: PdfPreview(
-                pdfFileName: _fName,
+                pdfFileName: fName,
                 canChangeOrientation: false,
                 canChangePageFormat: false,
                 canDebug: false,
@@ -91,13 +93,15 @@ class _PreviewPageState extends State<PreviewPage> {
                   backgroundColor: colors.primary,
                   iconColor: colors.onPrimary,
                 ),
-                actions: [
-                  IconButton(
-                    onPressed:
-                        _downloaded ? null : () => _onDownload(_pdfBytes),
-                    icon: Icon(Icons.save_alt),
-                  ),
-                ],
+                actions: kEnableDownload
+                    ? [
+                        IconButton(
+                          onPressed:
+                              _downloaded ? null : () => _onDownload(_pdfBytes),
+                          icon: Icon(Icons.save_alt),
+                        ),
+                      ]
+                    : null,
                 build: (_) => _doc.save(),
               ),
             ),
@@ -183,6 +187,7 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildSubheader(pw.Context pwContext) {
+    final now = DateFormat.yMMMMd(widget.locale).format(DateTime.now());
     final l10n = AppLocalizations.of(context)!;
     final name = widget.recipient.name;
     final addr = widget.recipient.address!.replaceAll(',', '\n');
@@ -204,7 +209,7 @@ class _PreviewPageState extends State<PreviewPage> {
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           ),
           pw.Text(
-            '${l10n.date}: $_now\n${l10n.dueDate}: $_dueDate',
+            '${l10n.date}: $now\n${l10n.dueDate}: $_dueDate',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
           )
         ],
@@ -420,7 +425,7 @@ class _PreviewPageState extends State<PreviewPage> {
   String _getDueDate(int daysRange) {
     final dur = Duration(days: daysRange);
     final date = DateTime.now().add(dur);
-    return DateFormat.yMMMMd().format(date);
+    return DateFormat.yMMMMd(widget.locale).format(date);
   }
 }
 
@@ -431,6 +436,7 @@ class PreviewArgs {
     this.items,
     this.paid,
     this.daysRange,
+    this.locale,
   );
 
   final Store store;
@@ -438,6 +444,7 @@ class PreviewArgs {
   final List<PurchaseItem> items;
   final double paid;
   final int daysRange;
+  final String locale;
 }
 
 class _BackToHomeButton extends StatelessWidget {
