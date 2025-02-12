@@ -542,10 +542,12 @@ class _InvoicePageState extends State<InvoicePage> {
               padding: EdgeInsets.only(top: kToolbarHeight),
               itemBuilder: (context, i) {
                 final title = recipients[i].name!;
+                final subtitle = recipients[i].address!;
                 final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
 
                 return ListTile(
                   title: Text(title, style: ellipsis),
+                  subtitle: Text(subtitle, style: ellipsis),
                   trailing: _TrailingIcon(),
                   onTap: () => _onPinRecipient(recipients[i]),
                 );

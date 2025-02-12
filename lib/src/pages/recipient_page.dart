@@ -61,7 +61,7 @@ class _RecipientPageState extends State<RecipientPage> {
 
                 return ListTile(
                   title: Text(t.name!, style: ellipsis),
-                  subtitle: Text(t.address!),
+                  subtitle: Text(t.address!, style: ellipsis),
                   onTap: () => _onTap(t),
                   onLongPress: () => _onLongPressed(t.id),
                   trailing: Icon(Icons.edit),
