@@ -9,3 +9,8 @@ void push(BuildContext context, String routeName, bool isPop) {
     nav.pushNamed(routeName);
   }
 }
+
+String getVersionText(String version) {
+  final s = version.split('+');
+  return 'Version ${s[0]} Build(${s[1]})';
+}
