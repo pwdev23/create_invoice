@@ -68,6 +68,7 @@ class _InvoicePageState extends State<InvoicePage> {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: widget.store.symbol,
@@ -98,39 +99,58 @@ class _InvoicePageState extends State<InvoicePage> {
         ],
       ),
       drawer: Drawer(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
           children: [
-            _StoreInfo(
-              name: widget.store.name!,
-              email: widget.store.email!,
+            ListView(
+              children: [
+                _StoreInfo(
+                  name: widget.store.name!,
+                  email: widget.store.email!,
+                ),
+                ListTile(
+                  tileColor: colors.surface,
+                  style: ListTileStyle.drawer,
+                  onTap: () => _onManageStore(),
+                  title: Text(l10n.manageStore),
+                  leading: Icon(Icons.store),
+                ),
+                const Divider(height: 0.0),
+                ListTile(
+                  tileColor: colors.surface,
+                  style: ListTileStyle.drawer,
+                  onTap: () => _onManageItem(),
+                  title: Text(l10n.nItem(0)),
+                  leading: Icon(Icons.inbox),
+                ),
+                const Divider(height: 0.0),
+                ListTile(
+                  tileColor: colors.surface,
+                  style: ListTileStyle.drawer,
+                  onTap: () => push(context, '/recipient'),
+                  title: Text(l10n.recipient),
+                  leading: Icon(Icons.people),
+                ),
+                const Divider(height: 0.0),
+                ListTile(
+                  tileColor: colors.surface,
+                  style: ListTileStyle.drawer,
+                  onTap: () => _onSettingLanguage(locale),
+                  title: Text(l10n.languageSettings),
+                  leading: Icon(Icons.translate),
+                ),
+              ],
             ),
-            ListTile(
-              style: ListTileStyle.drawer,
-              onTap: () => _onManageStore(),
-              title: Text(l10n.manageStore),
-              leading: Icon(Icons.store),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20.0),
+              color: colors.surface,
+              child: Text(
+                'Version $kVersion',
+                textAlign: TextAlign.center,
+                style: textTheme.bodySmall,
+              ),
             ),
-            const Divider(height: 0.0),
-            ListTile(
-              style: ListTileStyle.drawer,
-              onTap: () => _onManageItem(),
-              title: Text(l10n.nItem(0)),
-              leading: Icon(Icons.inbox),
-            ),
-            const Divider(height: 0.0),
-            ListTile(
-              style: ListTileStyle.drawer,
-              onTap: () => push(context, '/recipient'),
-              title: Text(l10n.recipient),
-              leading: Icon(Icons.people),
-            ),
-            const Divider(height: 0.0),
-            ListTile(
-              style: ListTileStyle.drawer,
-              onTap: () => _onSettingLanguage(locale),
-              title: Text(l10n.languageSettings),
-              leading: Icon(Icons.translate),
-            )
           ],
         ),
       ),
