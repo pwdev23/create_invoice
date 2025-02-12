@@ -37,37 +37,39 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          spacing: 16.0,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox.shrink(),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _name,
-                decoration: InputDecoration(
-                  hintText: 'Budi Arie',
-                  label: Text(l10n.name),
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 16.0,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox.shrink(),
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _name,
+                  decoration: InputDecoration(
+                    hintText: 'Budi Arie',
+                    label: Text(l10n.name),
+                  ),
+                  keyboardType: TextInputType.name,
+                  onChanged: (v) => setState(() {}),
                 ),
-                keyboardType: TextInputType.name,
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _addr,
-                decoration: InputDecoration(
-                  hintText: 'Planet earth',
-                  label: Text(l10n.address),
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _addr,
+                  decoration: InputDecoration(
+                    hintText: 'Planet earth',
+                    label: Text(l10n.address),
+                  ),
+                  keyboardType: TextInputType.streetAddress,
+                  onChanged: (v) => setState(() {}),
                 ),
-                keyboardType: TextInputType.streetAddress,
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

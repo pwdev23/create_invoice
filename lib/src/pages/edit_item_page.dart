@@ -56,63 +56,66 @@ class _EditItemPageState extends State<EditItemPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          spacing: 16.0,
-          children: [
-            SizedBox.shrink(),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _skuCon,
-                decoration: InputDecoration(
-                  hintText: 'SKU',
-                  labelText: 'SKU',
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 16.0,
+            children: [
+              SizedBox.shrink(),
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _nameCon,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    labelText: l10n.itemName,
+                    hintText: l10n.itemName,
+                  ),
+                  onChanged: (v) => setState(() {}),
                 ),
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _nameCon,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  labelText: l10n.itemName,
-                  hintText: l10n.itemName,
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _skuCon,
+                  decoration: InputDecoration(
+                    hintText: 'SKU',
+                    labelText: 'SKU',
+                  ),
+                  onChanged: (v) => setState(() {}),
                 ),
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _priceCon,
-                decoration: InputDecoration(
-                  labelText: l10n.price,
-                  hintText: '5.0',
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _priceCon,
+                  decoration: InputDecoration(
+                    labelText: l10n.price,
+                    hintText: '5.0',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (v) => setState(() {}),
                 ),
-                keyboardType: TextInputType.number,
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _discCon,
-                decoration: InputDecoration(
-                  labelText: l10n.discount,
-                  hintText: '0.0',
+              Padding(
+                padding: kPx,
+                child: TextFormField(
+                  controller: _discCon,
+                  decoration: InputDecoration(
+                    labelText: l10n.discount,
+                    hintText: '0.0',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (v) => setState(() {}),
                 ),
-                keyboardType: TextInputType.number,
-                onChanged: (v) => setState(() {}),
               ),
-            ),
-            SwitchListTile.adaptive(
-              title: Text(l10n.usePercentage),
-              value: _isPercent,
-              onChanged: (v) => setState(() => _isPercent = v),
-            )
-          ],
+              SwitchListTile.adaptive(
+                title: Text(l10n.usePercentage),
+                value: _isPercent,
+                onChanged: (v) => setState(() => _isPercent = v),
+              ),
+              const SizedBox(height: kToolbarHeight * 2),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

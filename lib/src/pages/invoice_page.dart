@@ -127,7 +127,7 @@ class _InvoicePageState extends State<InvoicePage> {
                 ListTile(
                   tileColor: colors.surface,
                   style: ListTileStyle.drawer,
-                  onTap: () => push(context, '/recipient'),
+                  onTap: () => push(context, '/recipient', true),
                   title: Text(l10n.recipient),
                   leading: Icon(Icons.people),
                 ),
@@ -566,19 +566,19 @@ class _InvoicePageState extends State<InvoicePage> {
   void _onManageStore() {
     final nav = Navigator.of(context);
     final args = EditStoreArgs(widget.store);
-    nav.pushNamed('/edit-store', arguments: args);
+    nav.popAndPushNamed('/edit-store', arguments: args);
   }
 
   void _onManageItem() {
     final nav = Navigator.of(context);
     final args = ItemArgs(widget.store.locale!, widget.store.symbol!);
-    nav.pushNamed('/item', arguments: args);
+    nav.popAndPushNamed('/item', arguments: args);
   }
 
   void _onSettingLanguage(String locale) {
     final nav = Navigator.of(context);
     final args = SetLanguageArgs(locale);
-    nav.pushNamed('/languages', arguments: args);
+    nav.popAndPushNamed('/languages', arguments: args);
   }
 }
 
