@@ -604,7 +604,8 @@ class _RecipientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
-    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: double.infinity);
+    final width = MediaQuery.of(context).size.width;
+    final minMax = BoxConstraints(minWidth: 88.0, maxWidth: width * 0.4);
 
     return RawMaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -636,7 +637,9 @@ class _RecipientButton extends StatelessWidget {
               ),
               Text(
                 recipientName,
-                style: TextStyle(color: colors.onPrimaryContainer),
+                style: TextStyle(
+                    color: colors.onPrimaryContainer,
+                    overflow: TextOverflow.ellipsis),
               ),
             ],
           ),
