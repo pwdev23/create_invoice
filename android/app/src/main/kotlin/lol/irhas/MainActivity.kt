@@ -1,4 +1,4 @@
-package lol.irhas.create_invoice
+package lol.irhas
 
 import io.flutter.embedding.android.FlutterActivity
 
