@@ -51,9 +51,7 @@ class _EditItemPageState extends State<EditItemPage> {
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.editItem),
-      ),
+      appBar: AppBar(title: Text(l10n.editItem)),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -119,15 +117,17 @@ class _EditItemPageState extends State<EditItemPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _isValid(_formKey) && _nameCon.text.isNotEmpty
-            ? () => _onEditItem()
-            : null,
+        onPressed:
+            _isValid(_formKey) && _nameCon.text.isNotEmpty
+                ? () => _onEditItem()
+                : null,
         disabledElevation: 0,
         backgroundColor:
             _nameCon.text.isNotEmpty ? colors.primaryContainer : disabledColor,
-        foregroundColor: _nameCon.text.isNotEmpty
-            ? colors.onPrimaryContainer
-            : disabledColor,
+        foregroundColor:
+            _nameCon.text.isNotEmpty
+                ? colors.onPrimaryContainer
+                : disabledColor,
         icon: Icon(Icons.done),
         label: Text(l10n.save),
       ),

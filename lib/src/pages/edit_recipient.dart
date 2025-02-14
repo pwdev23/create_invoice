@@ -42,9 +42,7 @@ class _EditRecipientState extends State<EditRecipient> {
     final disabledColor = Theme.of(context).disabledColor;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.editRecipient),
-      ),
+      appBar: AppBar(title: Text(l10n.editRecipient)),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -85,12 +83,14 @@ class _EditRecipientState extends State<EditRecipient> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _name.text.isEmpty || _addr.text.isEmpty ? null : _onSave,
         disabledElevation: 0,
-        backgroundColor: _name.text.isEmpty || _addr.text.isEmpty
-            ? disabledColor
-            : colors.primaryContainer,
-        foregroundColor: _name.text.isEmpty || _addr.text.isEmpty
-            ? disabledColor
-            : colors.onPrimaryContainer,
+        backgroundColor:
+            _name.text.isEmpty || _addr.text.isEmpty
+                ? disabledColor
+                : colors.primaryContainer,
+        foregroundColor:
+            _name.text.isEmpty || _addr.text.isEmpty
+                ? disabledColor
+                : colors.onPrimaryContainer,
         label: Text(l10n.save),
         icon: Icon(Icons.done),
       ),

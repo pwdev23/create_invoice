@@ -37,9 +37,7 @@ class _AddItemPageState extends State<AddItemPage> {
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.addItem),
-      ),
+      appBar: AppBar(title: Text(l10n.addItem)),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -105,15 +103,17 @@ class _AddItemPageState extends State<AddItemPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _isValid(_formKey) && _nameCon.text.isNotEmpty
-            ? () => _onAddItem()
-            : null,
+        onPressed:
+            _isValid(_formKey) && _nameCon.text.isNotEmpty
+                ? () => _onAddItem()
+                : null,
         disabledElevation: 0,
         backgroundColor:
             _nameCon.text.isNotEmpty ? colors.primaryContainer : disabledColor,
-        foregroundColor: _nameCon.text.isNotEmpty
-            ? colors.onPrimaryContainer
-            : disabledColor,
+        foregroundColor:
+            _nameCon.text.isNotEmpty
+                ? colors.onPrimaryContainer
+                : disabledColor,
         icon: Icon(Icons.add),
         label: Text(l10n.addItem),
       ),
@@ -123,12 +123,13 @@ class _AddItemPageState extends State<AddItemPage> {
   Future<void> _onAddItem() async {
     final p = _priceCon.text.isEmpty ? 0.0 : double.parse(_priceCon.text);
     final d = _discCon.text.isEmpty ? 0.0 : double.parse(_discCon.text);
-    final item = Item()
-      ..sku = _skuCon.text.isEmpty ? '' : _skuCon.text.trim()
-      ..name = _nameCon.text.isEmpty ? '' : _nameCon.text.trim()
-      ..price = p
-      ..discount = d
-      ..isPercentage = _isPercent;
+    final item =
+        Item()
+          ..sku = _skuCon.text.isEmpty ? '' : _skuCon.text.trim()
+          ..name = _nameCon.text.isEmpty ? '' : _nameCon.text.trim()
+          ..price = p
+          ..discount = d
+          ..isPercentage = _isPercent;
     await _db.saveItem(item);
     _onSaved();
   }
