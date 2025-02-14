@@ -20,7 +20,7 @@ enum InvoiceColor {
   amber,
   orange,
   deepOrange,
-  red
+  red,
 }
 
 int extractNumbers(String input) {

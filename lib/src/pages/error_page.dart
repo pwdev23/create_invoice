@@ -15,10 +15,7 @@ class ErrorPage extends StatelessWidget {
           TextSpan(
             text: 'No route defined for: ',
             children: [
-              TextSpan(
-                text: route,
-                style: const TextStyle(color: Colors.blue),
-              )
+              TextSpan(text: route, style: const TextStyle(color: Colors.blue)),
             ],
           ),
         ),

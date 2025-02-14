@@ -40,9 +40,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
     final title = widget.isInitial ? l10n.selectCurrency : l10n.editCurrency;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: ListView.separated(
         itemBuilder: (context, i) {
           final curr = Currency.values[i];
@@ -58,13 +56,14 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
         separatorBuilder: (_, __) => Divider(height: 0.0),
         itemCount: Currency.values.length,
       ),
-      floatingActionButton: widget.isInitial
-          ? FloatingActionButton.extended(
-              onPressed: () => _onContinue(),
-              label: Text(l10n.cont),
-              icon: Icon(Icons.arrow_forward),
-            )
-          : null,
+      floatingActionButton:
+          widget.isInitial
+              ? FloatingActionButton.extended(
+                onPressed: () => _onContinue(),
+                label: Text(l10n.cont),
+                icon: Icon(Icons.arrow_forward),
+              )
+              : null,
     );
   }
 

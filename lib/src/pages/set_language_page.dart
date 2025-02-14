@@ -30,9 +30,7 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.languageSettings),
-      ),
+      appBar: AppBar(title: Text(l10n.languageSettings)),
       body: ListView.separated(
         itemBuilder: (context, index) {
           var opt = LangOption.values[index];

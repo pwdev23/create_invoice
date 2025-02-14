@@ -32,9 +32,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
     final disabledColor = Theme.of(context).disabledColor;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.addRecipient),
-      ),
+      appBar: AppBar(title: Text(l10n.addRecipient)),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -75,12 +73,14 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _name.text.isEmpty || _addr.text.isEmpty ? null : _onSave,
         disabledElevation: 0,
-        backgroundColor: _name.text.isEmpty || _addr.text.isEmpty
-            ? disabledColor
-            : colors.primaryContainer,
-        foregroundColor: _name.text.isEmpty || _addr.text.isEmpty
-            ? disabledColor
-            : colors.onPrimaryContainer,
+        backgroundColor:
+            _name.text.isEmpty || _addr.text.isEmpty
+                ? disabledColor
+                : colors.primaryContainer,
+        foregroundColor:
+            _name.text.isEmpty || _addr.text.isEmpty
+                ? disabledColor
+                : colors.onPrimaryContainer,
         label: Text(l10n.addRecipient),
         icon: Icon(Icons.add),
       ),
@@ -89,10 +89,11 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
 
   Future<void> _onSave() async {
     final nav = Navigator.of(context);
-    var recipient = Recipient()
-      ..name = _name.text.trim()
-      ..address = _addr.text.trim()
-      ..pinned = false;
+    var recipient =
+        Recipient()
+          ..name = _name.text.trim()
+          ..address = _addr.text.trim()
+          ..pinned = false;
     await _db.saveRecipient(recipient);
     nav.pop();
   }

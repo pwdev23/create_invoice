@@ -85,17 +85,20 @@ class _InvoicePageState extends State<InvoicePage> {
         actions: [
           _ids.isEmpty
               ? TextButton.icon(
-                  onPressed: () => _oAddItem(),
-                  icon: Icon(Icons.add),
-                  label: Text(l10n.addItem),
-                )
+                onPressed: () => _oAddItem(),
+                icon: Icon(Icons.add),
+                label: Text(l10n.addItem),
+              )
               : TextButton.icon(
-                  onPressed: () => _onDelete(_db, _ids)
-                      .then((_) => setState(() => _ids.clear())),
-                  icon: Icon(Icons.delete, color: colors.error),
-                  label: Text(l10n.delete),
-                  style: TextButton.styleFrom(foregroundColor: colors.error),
-                ),
+                onPressed:
+                    () => _onDelete(
+                      _db,
+                      _ids,
+                    ).then((_) => setState(() => _ids.clear())),
+                icon: Icon(Icons.delete, color: colors.error),
+                label: Text(l10n.delete),
+                style: TextButton.styleFrom(foregroundColor: colors.error),
+              ),
         ],
       ),
       drawer: Drawer(
@@ -178,17 +181,19 @@ class _InvoicePageState extends State<InvoicePage> {
                   onLongPress: () => setState(() => _ids.add(id)),
                   title: Text(title),
                   trailing: _Qty(qty: qty!),
-                  tileColor: _ids.contains(id)
-                      ? colors.primaryContainer
-                      : colors.surface,
+                  tileColor:
+                      _ids.contains(id)
+                          ? colors.primaryContainer
+                          : colors.surface,
                   isThreeLine: item!.discount! > 0,
-                  subtitle: item.discount == 0
-                      ? Text(formatted.format(item.price))
-                      : PriceTexts(
-                          item: item,
-                          locale: widget.store.locale!,
-                          symbol: widget.store.symbol!,
-                        ),
+                  subtitle:
+                      item.discount == 0
+                          ? Text(formatted.format(item.price))
+                          : PriceTexts(
+                            item: item,
+                            locale: widget.store.locale!,
+                            symbol: widget.store.symbol!,
+                          ),
                 );
               },
               separatorBuilder: (_, __) => Divider(height: 0),
@@ -261,9 +266,10 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   Future<void> _onAddPurchaseItem(IsarService isar, Item item) async {
-    final purchaseItem = PurchaseItem()
-      ..item.value = item
-      ..qty = 1;
+    final purchaseItem =
+        PurchaseItem()
+          ..item.value = item
+          ..qty = 1;
     await isar.savePurchaseItem(purchaseItem);
   }
 
@@ -403,9 +409,10 @@ class _InvoicePageState extends State<InvoicePage> {
                   child: Row(
                     children: List.generate(InvoiceColor.values.length, (i) {
                       final color = InvoiceColor.values[i];
-                      final borderColor = color == InvoiceColor.white
-                          ? Colors.black12
-                          : Colors.transparent;
+                      final borderColor =
+                          color == InvoiceColor.white
+                              ? Colors.black12
+                              : Colors.transparent;
                       return _ColorDot(
                         onPressed: () => setState(() => _color = color),
                         fillColor: getInvoiceColor(color)!,
@@ -419,11 +426,12 @@ class _InvoicePageState extends State<InvoicePage> {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: FilledButton.icon(
-                    onPressed: _bank.text.isEmpty ||
-                            _accNum.text.isEmpty ||
-                            _accName.text.isEmpty
-                        ? null
-                        : () => _onCreateInvoice(items),
+                    onPressed:
+                        _bank.text.isEmpty ||
+                                _accNum.text.isEmpty ||
+                                _accName.text.isEmpty
+                            ? null
+                            : () => _onCreateInvoice(items),
                     label: Text(l10n.appTitle),
                     icon: Icon(Icons.upload_file),
                   ),
@@ -454,55 +462,60 @@ class _InvoicePageState extends State<InvoicePage> {
       showModalBottomSheet(
         isDismissible: false,
         context: context,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setState) {
-            final textTheme = Theme.of(context).textTheme;
-            final colors = Theme.of(context).colorScheme;
+        builder:
+            (context) => StatefulBuilder(
+              builder: (context, setState) {
+                final textTheme = Theme.of(context).textTheme;
+                final colors = Theme.of(context).colorScheme;
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12.0, right: 16.0),
-                      child: TextButton(
-                        onPressed: () => _onSaveQty(purchaseItem),
-                        child: Text(l10n.save),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 12.0,
+                            right: 16.0,
+                          ),
+                          child: TextButton(
+                            onPressed: () => _onSaveQty(purchaseItem),
+                            child: Text(l10n.save),
+                          ),
+                        ),
+                      ],
                     ),
+                    Text('$_qty', style: textTheme.displayMedium),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          style: IconButton.styleFrom(
+                            backgroundColor: colors.primaryContainer,
+                            foregroundColor: colors.onPrimaryContainer,
+                          ),
+                          onPressed:
+                              _qty > 1
+                                  ? () => setState(() => _qty = _qty - 1)
+                                  : () {},
+                          icon: Icon(Icons.remove),
+                        ),
+                        IconButton(
+                          style: IconButton.styleFrom(
+                            backgroundColor: colors.primaryContainer,
+                            foregroundColor: colors.onPrimaryContainer,
+                          ),
+                          onPressed: () => setState(() => _qty = _qty + 1),
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: kToolbarHeight),
                   ],
-                ),
-                Text('$_qty', style: textTheme.displayMedium),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      style: IconButton.styleFrom(
-                        backgroundColor: colors.primaryContainer,
-                        foregroundColor: colors.onPrimaryContainer,
-                      ),
-                      onPressed: _qty > 1
-                          ? () => setState(() => _qty = _qty - 1)
-                          : () {},
-                      icon: Icon(Icons.remove),
-                    ),
-                    IconButton(
-                      style: IconButton.styleFrom(
-                        backgroundColor: colors.primaryContainer,
-                        foregroundColor: colors.onPrimaryContainer,
-                      ),
-                      onPressed: () => setState(() => _qty = _qty + 1),
-                      icon: Icon(Icons.add),
-                    ),
-                  ],
-                ),
-                SizedBox(height: kToolbarHeight),
-              ],
-            );
-          },
-        ),
+                );
+              },
+            ),
       );
     }
   }
@@ -622,10 +635,7 @@ class _RecipientButton extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       onPressed: onPressed,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-          vertical: 2.0,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         child: ConstrainedBox(
           constraints: minMax,
           child: Column(
@@ -635,10 +645,7 @@ class _RecipientButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 4.0,
                 children: [
-                  Text(
-                    leadingText,
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(leadingText, style: textTheme.bodySmall),
                   Icon(
                     Icons.keyboard_arrow_down,
                     size: 16,
@@ -649,8 +656,9 @@ class _RecipientButton extends StatelessWidget {
               Text(
                 recipientName,
                 style: TextStyle(
-                    color: colors.onPrimaryContainer,
-                    overflow: TextOverflow.ellipsis),
+                  color: colors.onPrimaryContainer,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -707,12 +715,7 @@ class _StoreInfo extends StatelessWidget {
       alignment: Alignment.bottomLeft,
       child: Text.rich(
         style: TextStyle(color: colors.onPrimaryContainer),
-        TextSpan(
-          text: '$name\n',
-          children: [
-            TextSpan(text: email),
-          ],
-        ),
+        TextSpan(text: '$name\n', children: [TextSpan(text: email)]),
       ),
     );
   }
@@ -746,12 +749,7 @@ class _TrailingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Transform.flip(
-      flipX: true,
-      child: Icon(
-        Icons.arrow_outward,
-      ),
-    );
+    return Transform.flip(flipX: true, child: Icon(Icons.arrow_outward));
   }
 }
 
@@ -762,12 +760,7 @@ class _PaddedRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: kPx,
-      child: Row(
-        children: children,
-      ),
-    );
+    return Padding(padding: kPx, child: Row(children: children));
   }
 }
 
