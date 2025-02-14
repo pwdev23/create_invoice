@@ -43,6 +43,8 @@ class IsarService {
       store.locale = editedStore.locale;
       store.symbol = editedStore.symbol;
       store.color = editedStore.color;
+      store.address = editedStore.address;
+      store.phoneNumber = editedStore.phoneNumber;
       await db.stores.put(store);
     });
   }
@@ -108,10 +110,11 @@ class IsarService {
   Future<void> savePurchaseItem(PurchaseItem purchaseItem) async {
     final db = await isarDb;
 
-    final itemsToCompare = await db.purchaseItems
-        .filter()
-        .item((v) => v.idEqualTo(purchaseItem.item.value!.id))
-        .findAll();
+    final itemsToCompare =
+        await db.purchaseItems
+            .filter()
+            .item((v) => v.idEqualTo(purchaseItem.item.value!.id))
+            .findAll();
 
     final count = itemsToCompare.length;
 
@@ -199,7 +202,7 @@ class IsarService {
         InvoiceSchema,
         ItemSchema,
         PurchaseItemSchema,
-        RecipientSchema
+        RecipientSchema,
       ];
 
       return await Isar.open(schemas, directory: dir.path, inspector: true);

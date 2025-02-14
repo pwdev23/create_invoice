@@ -45,7 +45,9 @@ class _AuthPageState extends State<AuthPage> {
         ..thankNote = ''
         ..locale = ''
         ..symbol = ''
-        ..color = 'white';
+        ..color = 'white'
+        ..address = ''
+        ..phoneNumber = '';
       await _db.saveStore(store);
     } else {
       _store = stores[0];

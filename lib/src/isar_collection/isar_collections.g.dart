@@ -27,48 +27,58 @@ const StoreSchema = CollectionSchema(
       name: r'accountNumber',
       type: IsarType.string,
     ),
-    r'bankName': PropertySchema(
+    r'address': PropertySchema(
       id: 2,
+      name: r'address',
+      type: IsarType.string,
+    ),
+    r'bankName': PropertySchema(
+      id: 3,
       name: r'bankName',
       type: IsarType.string,
     ),
     r'color': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'color',
       type: IsarType.string,
     ),
     r'email': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'email',
       type: IsarType.string,
     ),
     r'locale': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'locale',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'name',
       type: IsarType.string,
     ),
+    r'phoneNumber': PropertySchema(
+      id: 8,
+      name: r'phoneNumber',
+      type: IsarType.string,
+    ),
     r'swiftCode': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'swiftCode',
       type: IsarType.string,
     ),
     r'symbol': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'tax': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'tax',
       type: IsarType.double,
     ),
     r'thankNote': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'thankNote',
       type: IsarType.string,
     )
@@ -106,6 +116,12 @@ int _storeEstimateSize(
     }
   }
   {
+    final value = object.address;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.bankName;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -131,6 +147,12 @@ int _storeEstimateSize(
   }
   {
     final value = object.name;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.phoneNumber;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -164,15 +186,17 @@ void _storeSerialize(
 ) {
   writer.writeString(offsets[0], object.accountHolderName);
   writer.writeString(offsets[1], object.accountNumber);
-  writer.writeString(offsets[2], object.bankName);
-  writer.writeString(offsets[3], object.color);
-  writer.writeString(offsets[4], object.email);
-  writer.writeString(offsets[5], object.locale);
-  writer.writeString(offsets[6], object.name);
-  writer.writeString(offsets[7], object.swiftCode);
-  writer.writeString(offsets[8], object.symbol);
-  writer.writeDouble(offsets[9], object.tax);
-  writer.writeString(offsets[10], object.thankNote);
+  writer.writeString(offsets[2], object.address);
+  writer.writeString(offsets[3], object.bankName);
+  writer.writeString(offsets[4], object.color);
+  writer.writeString(offsets[5], object.email);
+  writer.writeString(offsets[6], object.locale);
+  writer.writeString(offsets[7], object.name);
+  writer.writeString(offsets[8], object.phoneNumber);
+  writer.writeString(offsets[9], object.swiftCode);
+  writer.writeString(offsets[10], object.symbol);
+  writer.writeDouble(offsets[11], object.tax);
+  writer.writeString(offsets[12], object.thankNote);
 }
 
 Store _storeDeserialize(
@@ -184,16 +208,18 @@ Store _storeDeserialize(
   final object = Store();
   object.accountHolderName = reader.readStringOrNull(offsets[0]);
   object.accountNumber = reader.readStringOrNull(offsets[1]);
-  object.bankName = reader.readStringOrNull(offsets[2]);
-  object.color = reader.readStringOrNull(offsets[3]);
-  object.email = reader.readStringOrNull(offsets[4]);
+  object.address = reader.readStringOrNull(offsets[2]);
+  object.bankName = reader.readStringOrNull(offsets[3]);
+  object.color = reader.readStringOrNull(offsets[4]);
+  object.email = reader.readStringOrNull(offsets[5]);
   object.id = id;
-  object.locale = reader.readStringOrNull(offsets[5]);
-  object.name = reader.readStringOrNull(offsets[6]);
-  object.swiftCode = reader.readStringOrNull(offsets[7]);
-  object.symbol = reader.readStringOrNull(offsets[8]);
-  object.tax = reader.readDoubleOrNull(offsets[9]);
-  object.thankNote = reader.readStringOrNull(offsets[10]);
+  object.locale = reader.readStringOrNull(offsets[6]);
+  object.name = reader.readStringOrNull(offsets[7]);
+  object.phoneNumber = reader.readStringOrNull(offsets[8]);
+  object.swiftCode = reader.readStringOrNull(offsets[9]);
+  object.symbol = reader.readStringOrNull(offsets[10]);
+  object.tax = reader.readDoubleOrNull(offsets[11]);
+  object.thankNote = reader.readStringOrNull(offsets[12]);
   return object;
 }
 
@@ -223,8 +249,12 @@ P _storeDeserializeProp<P>(
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readStringOrNull(offset)) as P;
+    case 11:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -609,6 +639,152 @@ extension StoreQueryFilter on QueryBuilder<Store, Store, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'accountNumber',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'address',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'address',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'address',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'address',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'address',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'address',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> addressIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'address',
         value: '',
       ));
     });
@@ -1389,6 +1565,152 @@ extension StoreQueryFilter on QueryBuilder<Store, Store, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'phoneNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'phoneNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'phoneNumber',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'phoneNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'phoneNumber',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phoneNumber',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterFilterCondition> phoneNumberIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'phoneNumber',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterFilterCondition> swiftCodeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1934,6 +2256,18 @@ extension StoreQuerySortBy on QueryBuilder<Store, Store, QSortBy> {
     });
   }
 
+  QueryBuilder<Store, Store, QAfterSortBy> sortByAddress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> sortByAddressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> sortByBankName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bankName', Sort.asc);
@@ -1991,6 +2325,18 @@ extension StoreQuerySortBy on QueryBuilder<Store, Store, QSortBy> {
   QueryBuilder<Store, Store, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> sortByPhoneNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phoneNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> sortByPhoneNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phoneNumber', Sort.desc);
     });
   }
 
@@ -2068,6 +2414,18 @@ extension StoreQuerySortThenBy on QueryBuilder<Store, Store, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Store, Store, QAfterSortBy> thenByAddress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> thenByAddressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> thenByBankName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bankName', Sort.asc);
@@ -2140,6 +2498,18 @@ extension StoreQuerySortThenBy on QueryBuilder<Store, Store, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Store, Store, QAfterSortBy> thenByPhoneNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phoneNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Store, Store, QAfterSortBy> thenByPhoneNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phoneNumber', Sort.desc);
+    });
+  }
+
   QueryBuilder<Store, Store, QAfterSortBy> thenBySwiftCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'swiftCode', Sort.asc);
@@ -2206,6 +2576,13 @@ extension StoreQueryWhereDistinct on QueryBuilder<Store, Store, QDistinct> {
     });
   }
 
+  QueryBuilder<Store, Store, QDistinct> distinctByAddress(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'address', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Store, Store, QDistinct> distinctByBankName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2238,6 +2615,13 @@ extension StoreQueryWhereDistinct on QueryBuilder<Store, Store, QDistinct> {
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Store, Store, QDistinct> distinctByPhoneNumber(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'phoneNumber', caseSensitive: caseSensitive);
     });
   }
 
@@ -2288,6 +2672,12 @@ extension StoreQueryProperty on QueryBuilder<Store, Store, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Store, String?, QQueryOperations> addressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'address');
+    });
+  }
+
   QueryBuilder<Store, String?, QQueryOperations> bankNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bankName');
@@ -2315,6 +2705,12 @@ extension StoreQueryProperty on QueryBuilder<Store, Store, QQueryProperty> {
   QueryBuilder<Store, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Store, String?, QQueryOperations> phoneNumberProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'phoneNumber');
     });
   }
 

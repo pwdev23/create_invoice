@@ -29,6 +29,8 @@ class _EditStorePageState extends State<EditStorePage> {
   final _email = TextEditingController();
   final _name = TextEditingController();
   final _note = TextEditingController();
+  final _addr = TextEditingController();
+  final _phone = TextEditingController();
   late Currency _curr;
   var _action = LogoAction.update;
 
@@ -61,14 +63,13 @@ class _EditStorePageState extends State<EditStorePage> {
     final colors = Theme.of(context).colorScheme;
     final disabledColor = Theme.of(context).disabledColor;
     final textTheme = Theme.of(context).textTheme;
-    final alertStyle =
-        textTheme.bodySmall!.copyWith(color: colors.onTertiaryContainer);
+    final alertStyle = textTheme.bodySmall!.copyWith(
+      color: colors.onTertiaryContainer,
+    );
     final textBold = TextStyle(fontWeight: FontWeight.bold);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.editStore),
-      ),
+      appBar: AppBar(title: Text(l10n.editStore)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -79,26 +80,28 @@ class _EditStorePageState extends State<EditStorePage> {
               child: _CompanyLogoButton(
                 bytes: _imageBytes,
                 name: widget.store.name!,
-                action: _imageBytes != null
-                    ? PopupMenuButton<LogoAction>(
-                        initialValue: _action,
-                        onSelected: (v) => _onSelected(v),
-                        iconColor: colors.primary,
-                        itemBuilder: (context) => <PopupMenuEntry<LogoAction>>[
-                          PopupMenuItem<LogoAction>(
-                            value: LogoAction.update,
-                            child: Text(l10n.update),
-                          ),
-                          PopupMenuItem<LogoAction>(
-                            value: LogoAction.delete,
-                            child: Text(l10n.remove),
-                          ),
-                        ],
-                      )
-                    : IconButton(
-                        onPressed: () => _onPickImage(),
-                        icon: Icon(Icons.edit, color: colors.primary),
-                      ),
+                action:
+                    _imageBytes != null
+                        ? PopupMenuButton<LogoAction>(
+                          initialValue: _action,
+                          onSelected: (v) => _onSelected(v),
+                          iconColor: colors.primary,
+                          itemBuilder:
+                              (context) => <PopupMenuEntry<LogoAction>>[
+                                PopupMenuItem<LogoAction>(
+                                  value: LogoAction.update,
+                                  child: Text(l10n.update),
+                                ),
+                                PopupMenuItem<LogoAction>(
+                                  value: LogoAction.delete,
+                                  child: Text(l10n.remove),
+                                ),
+                              ],
+                        )
+                        : IconButton(
+                          onPressed: () => _onPickImage(),
+                          icon: Icon(Icons.edit, color: colors.primary),
+                        ),
               ),
             ),
             _AlertTextBox(
@@ -144,6 +147,34 @@ class _EditStorePageState extends State<EditStorePage> {
               ),
             ),
             const SizedBox(height: 16.0),
+            Padding(
+              padding: kPx,
+              child: TextFormField(
+                controller: _phone,
+                decoration: InputDecoration(
+                  hintText: '+1 234 567 890',
+                  label: Text('Phone number'),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (v) => setState(() {}),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: kPx,
+              child: TextFormField(
+                controller: _addr,
+                decoration: InputDecoration(
+                  hintText: 'Planet earth',
+                  label: Text(l10n.address),
+                ),
+                keyboardType: TextInputType.text,
+                minLines: 2,
+                maxLines: 8,
+                onChanged: (v) => setState(() {}),
+              ),
+            ),
+            const SizedBox(height: 16.0),
             _CurrencyButton(
               title: getName(_curr),
               onPressed: () => _onEditCurrency(),
@@ -153,9 +184,7 @@ class _EditStorePageState extends State<EditStorePage> {
               padding: kPx,
               child: TextFormField(
                 controller: _note,
-                decoration: InputDecoration(
-                  hintText: l10n.hintThankNote,
-                ),
+                decoration: InputDecoration(hintText: l10n.hintThankNote),
                 keyboardType: TextInputType.text,
                 maxLines: 8,
                 minLines: 2,
@@ -167,16 +196,19 @@ class _EditStorePageState extends State<EditStorePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _name.text.isEmpty || _email.text.isEmpty
-            ? null
-            : () => _onSave(l10n.thankNote),
+        onPressed:
+            _name.text.isEmpty || _email.text.isEmpty
+                ? null
+                : () => _onSave(l10n.thankNote),
         disabledElevation: 0,
-        backgroundColor: _name.text.isEmpty || _email.text.isEmpty
-            ? disabledColor
-            : colors.primaryContainer,
-        foregroundColor: _name.text.isEmpty || _email.text.isEmpty
-            ? disabledColor
-            : colors.onPrimaryContainer,
+        backgroundColor:
+            _name.text.isEmpty || _email.text.isEmpty
+                ? disabledColor
+                : colors.primaryContainer,
+        foregroundColor:
+            _name.text.isEmpty || _email.text.isEmpty
+                ? disabledColor
+                : colors.onPrimaryContainer,
         label: Text(l10n.save),
         icon: Icon(Icons.done),
       ),
@@ -190,6 +222,8 @@ class _EditStorePageState extends State<EditStorePage> {
     _editedStore.locale = getLocale(_curr);
     _editedStore.symbol = getSymbol(_curr);
     _editedStore.thankNote = _note.text.isEmpty ? fallback : _note.text.trim();
+    _editedStore.address = _addr.text.isEmpty ? '' : _addr.text.trim();
+    _editedStore.phoneNumber = _phone.text.isEmpty ? '' : _phone.text.trim();
     await _db.updateStore(_editedStore);
     nav.pushNamedAndRemoveUntil('/', (_) => false);
   }
@@ -212,7 +246,7 @@ class _EditStorePageState extends State<EditStorePage> {
                 subtitle: Text(getSymbol(Currency.values[i])),
                 onTap: () => _onSelectCurrency(Currency.values[i]),
               ),
-            )
+            ),
           ],
         );
       },
@@ -327,23 +361,22 @@ class _CompanyLogoButton extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                  image: bytes != null
-                      ? DecorationImage(image: MemoryImage(bytes!))
-                      : null,
+                  image:
+                      bytes != null
+                          ? DecorationImage(image: MemoryImage(bytes!))
+                          : null,
                 ),
-                child: bytes != null
-                    ? null
-                    : Text(
-                        getTextLogo(name),
-                        style: textTheme.displaySmall,
-                      ),
+                child:
+                    bytes != null
+                        ? null
+                        : Text(
+                          getTextLogo(name),
+                          style: textTheme.displaySmall,
+                        ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: action,
-          ),
+          Padding(padding: const EdgeInsets.all(8.0), child: action),
         ],
       ),
     );
@@ -397,10 +430,7 @@ class _AlertTextBox extends StatelessWidget {
       child: Row(
         spacing: 12.0,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor),
-          Expanded(child: child),
-        ],
+        children: [Icon(icon, color: iconColor), Expanded(child: child)],
       ),
     );
   }

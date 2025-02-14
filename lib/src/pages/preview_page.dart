@@ -93,15 +93,18 @@ class _PreviewPageState extends State<PreviewPage> {
                   backgroundColor: colors.primary,
                   iconColor: colors.onPrimary,
                 ),
-                actions: kEnableDownload
-                    ? [
-                        IconButton(
-                          onPressed:
-                              _downloaded ? null : () => _onDownload(_pdfBytes),
-                          icon: Icon(Icons.save_alt),
-                        ),
-                      ]
-                    : null,
+                actions:
+                    kEnableDownload
+                        ? [
+                          IconButton(
+                            onPressed:
+                                _downloaded
+                                    ? null
+                                    : () => _onDownload(_pdfBytes),
+                            icon: Icon(Icons.save_alt),
+                          ),
+                        ]
+                        : null,
                 build: (_) => _doc.save(),
               ),
             ),
@@ -126,13 +129,14 @@ class _PreviewPageState extends State<PreviewPage> {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         header: (context) => _buildProfile(context),
-        build: (context) => [
-          _buildHeader(context),
-          _buildSubheader(context),
-          _buildItemTable(context, items),
-          _buildSummary(context),
-          _buildThankNote(context),
-        ],
+        build:
+            (context) => [
+              _buildHeader(context),
+              _buildSubheader(context),
+              _buildItemTable(context, items),
+              _buildSummary(context),
+              _buildThankNote(context),
+            ],
       ),
     );
 
@@ -181,7 +185,7 @@ class _PreviewPageState extends State<PreviewPage> {
               ),
             ],
           ),
-        ]
+        ],
       ],
     );
   }
@@ -211,7 +215,7 @@ class _PreviewPageState extends State<PreviewPage> {
           pw.Text(
             '${l10n.date}: $now\n${l10n.dueDate}: $_dueDate',
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
-          )
+          ),
         ],
       ),
     );
@@ -257,7 +261,7 @@ class _PreviewPageState extends State<PreviewPage> {
                 ['${l10n.paid}:', formatted.format(widget.paid)],
                 [
                   '${l10n.leftOver}:',
-                  formatted.format(_gT + _tax - widget.paid)
+                  formatted.format(_gT + _tax - widget.paid),
                 ],
               ],
             ),
@@ -268,12 +272,10 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   pw.Widget _buildPaymentDetails(pw.Context pwContext) {
-    final l10n = AppLocalizations.of(context)!;
-
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       child: pw.Text(
-        '${l10n.bank}: ${widget.store.bankName}\n${l10n.accountHolderName}: ${widget.store.accountHolderName}\n${l10n.accountNumber}: ${widget.store.accountNumber}\n${l10n.swiftCode}: ${widget.store.swiftCode}',
+        _getPaymentDetails(),
         style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
       ),
     );
@@ -282,9 +284,7 @@ class _PreviewPageState extends State<PreviewPage> {
   pw.Widget _buildThankNote(pw.Context pwContext) {
     return pw.Container(
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(width: .5),
-      ),
+      decoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
       child: pw.Text(
         widget.store.thankNote!,
         style: pw.TextStyle(lineSpacing: 8, fontSize: 8.0),
@@ -311,27 +311,26 @@ class _PreviewPageState extends State<PreviewPage> {
             height: 128.0,
             decoration: pw.BoxDecoration(
               border: pw.Border(
-                right: pw.BorderSide(
-                  style: pw.BorderStyle.dashed,
-                  width: .5,
-                ),
+                right: pw.BorderSide(style: pw.BorderStyle.dashed, width: .5),
               ),
-              image: _imgBytes != null
-                  ? pw.DecorationImage(image: pw.MemoryImage(_imgBytes!))
-                  : null,
+              image:
+                  _imgBytes != null
+                      ? pw.DecorationImage(image: pw.MemoryImage(_imgBytes!))
+                      : null,
             ),
-            child: _imgBytes != null
-                ? null
-                : pw.Text(
-                    getTextLogo(widget.store.name!),
-                    style: pw.TextStyle(
-                      fontWeight: pw.FontWeight.bold,
-                      fontSize: 20,
+            child:
+                _imgBytes != null
+                    ? null
+                    : pw.Text(
+                      getTextLogo(widget.store.name!),
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
           ),
           pw.Text(
-            '${widget.store.name}\n${widget.store.email}',
+            _getProfiles(),
             style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
             textAlign: pw.TextAlign.end,
           ),
@@ -341,7 +340,11 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   dynamic _buildItem(
-      pw.Context pwContext, int row, int col, PurchaseItem item) {
+    pw.Context pwContext,
+    int row,
+    int col,
+    PurchaseItem item,
+  ) {
     final i = col - 1;
     final t = item.item.value;
     final formatted = NumberFormat.currency(
@@ -372,7 +375,7 @@ class _PreviewPageState extends State<PreviewPage> {
       l10n.itemName,
       l10n.price,
       l10n.qty,
-      'Total'
+      'Total',
     ];
 
     return pw.TableHelper.fromTextArray(
@@ -400,9 +403,10 @@ class _PreviewPageState extends State<PreviewPage> {
         widget.items.length,
         (row) => List<dynamic>.generate(
           headers.length,
-          (col) => col == 0
-              ? '${row + 1}'
-              : _buildItem(pwContext, row, col, items[row]),
+          (col) =>
+              col == 0
+                  ? '${row + 1}'
+                  : _buildItem(pwContext, row, col, items[row]),
         ),
       ),
     );
@@ -427,6 +431,28 @@ class _PreviewPageState extends State<PreviewPage> {
     final date = DateTime.now().add(dur);
     return DateFormat.yMMMMd(widget.locale).format(date);
   }
+
+  String _getProfiles() {
+    final split = [widget.store.name, widget.store.email];
+    if (widget.store.address!.isNotEmpty) split.add(widget.store.address);
+    if (widget.store.phoneNumber!.isNotEmpty) {
+      split.add(widget.store.phoneNumber);
+    }
+    return split.join('\n');
+  }
+
+  String _getPaymentDetails() {
+    final l10n = AppLocalizations.of(context)!;
+    final split = [
+      '${l10n.bank}: ${widget.store.bankName}',
+      '${l10n.accountHolderName}: ${widget.store.accountHolderName}',
+      '${l10n.accountNumber}: ${widget.store.accountNumber}',
+    ];
+    if (widget.store.swiftCode!.isNotEmpty) {
+      split.add('${l10n.swiftCode}: ${widget.store.swiftCode}');
+    }
+    return split.join('\n');
+  }
 }
 
 class PreviewArgs {
@@ -448,10 +474,7 @@ class PreviewArgs {
 }
 
 class _BackToHomeButton extends StatelessWidget {
-  const _BackToHomeButton({
-    required this.onPressed,
-    required this.title,
-  });
+  const _BackToHomeButton({required this.onPressed, required this.title});
 
   final VoidCallback onPressed;
   final String title;

@@ -51,8 +51,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
             controlAffinity: ListTileControlAffinity.trailing,
             value: curr,
             groupValue: _curr,
-            title: Text(getName(curr)),
-            subtitle: Text(getSymbol(curr)),
+            title: Text('${getName(curr)} (${getSymbol(curr)})'),
             onChanged: (v) => _onChanged(v!),
           );
         },
