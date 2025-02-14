@@ -4,7 +4,6 @@ import '../isar_collection/isar_collections.dart' show Store, Recipient;
 import '../isar_service.dart';
 import '../shared/center_circular.dart';
 import 'edit_currency_page.dart' show EditCurrencyArgs;
-import 'edit_store_state.dart' show kNote;
 import 'invoice_page.dart' show InvoiceArgs;
 
 class AuthPage extends StatefulWidget {
@@ -43,7 +42,7 @@ class _AuthPageState extends State<AuthPage> {
         ..accountHolderName = ''
         ..swiftCode = ''
         ..tax = 0
-        ..thankNote = kNote
+        ..thankNote = ''
         ..locale = ''
         ..symbol = ''
         ..color = 'white';

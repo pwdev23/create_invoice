@@ -6,9 +6,6 @@ import 'package:path_provider/path_provider.dart';
 
 enum LogoAction { update, delete }
 
-const kNote =
-    'Thank you for your business! Please complete the remaining balance by the due date to avoid late fees. If you have any questions, feel free to contact us.';
-
 const kLogoPng = 'logo.png';
 
 Future<File> saveImage(File image) async {

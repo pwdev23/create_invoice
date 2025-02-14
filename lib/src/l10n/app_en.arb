@@ -15,6 +15,42 @@
     "@indonesian": {
         "description": "A title for Indonesian list tile"
     },
+    "german": "German",
+    "@german": {
+        "description": "A title for German list tile"
+    },
+    "spanish": "Spanish",
+    "@spanish": {
+        "description": "A title for Spanish list tile"
+    },
+    "french": "French",
+    "@french": {
+        "description": "A title for French list tile"
+    },
+    "italian": "Italian",
+    "@italian": {
+        "description": "A title for Italian list tile"
+    },
+    "dutch": "Dutch",
+    "@dutch": {
+        "description": "A title for Dutch list tile"
+    },
+    "norwegian": "Norwegian",
+    "@norwegian": {
+        "description": "A title for Norwegian list tile"
+    },
+    "polish": "Polish",
+    "@polish": {
+        "description": "A title for Polish list tile"
+    },
+    "portuguese": "Portuguese",
+    "@portuguese": {
+        "description": "A title for Portuguese list tile"
+    },
+    "turkish": "Turkish",
+    "@turkish": {
+        "description": "A title for Turkish list tile"
+    },
     "addItem": "Add item",
     "@addItem": {
         "description": "A title for add item page"
