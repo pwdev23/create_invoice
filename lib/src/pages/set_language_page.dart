@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common.dart';
 import '../providers.dart';
 
-enum LangOption { en, id }
+enum LangOption { de, en, es, fr, id, it, nl, no, pl, pt, tr }
 
 class SetLanguagePage extends ConsumerStatefulWidget {
   static const routeName = '/languages';
@@ -66,21 +66,32 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
     }
   }
 
-  Locale _getLocale(LangOption opt) {
-    switch (opt) {
-      case LangOption.id:
-        return const Locale('id');
-      default:
-        return const Locale('en');
-    }
-  }
+  Locale _getLocale(LangOption opt) => Locale(opt.name);
 
   String _getName(LangOption opt) {
     final l10n = AppLocalizations.of(context)!;
 
     switch (opt) {
+      case LangOption.de:
+        return l10n.german;
+      case LangOption.es:
+        return l10n.spanish;
+      case LangOption.fr:
+        return l10n.french;
       case LangOption.id:
         return l10n.indonesian;
+      case LangOption.it:
+        return l10n.italian;
+      case LangOption.nl:
+        return l10n.dutch;
+      case LangOption.no:
+        return l10n.norwegian;
+      case LangOption.pl:
+        return l10n.polish;
+      case LangOption.pt:
+        return l10n.portuguese;
+      case LangOption.tr:
+        return l10n.turkish;
       default:
         return l10n.english;
     }
