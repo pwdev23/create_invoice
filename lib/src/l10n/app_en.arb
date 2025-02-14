@@ -288,5 +288,17 @@
                 "format": "compact"
             }
         }
+    },
+    "randomPerson": "John Doe",
+    "@randomPerson": {
+        "description": "Random person name for placeholder"
+    },
+    "randomPhone": "+1 555-123-4567",
+    "@randomPhone": {
+        "description": "Random phone number for placeholder"
+    },
+    "phoneNumber": "Phone number",
+    "@phoneNumber": {
+        "description": "A text label for phone number text field"
     }
 }

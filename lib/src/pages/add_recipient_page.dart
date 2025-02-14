@@ -47,7 +47,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
                 child: TextFormField(
                   controller: _name,
                   decoration: InputDecoration(
-                    hintText: 'Budi Arie',
+                    hintText: l10n.randomPerson,
                     label: Text(l10n.name),
                   ),
                   keyboardType: TextInputType.name,
