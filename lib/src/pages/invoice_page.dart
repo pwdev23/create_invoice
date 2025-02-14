@@ -372,7 +372,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   child: TextFormField(
                     controller: _accName,
                     decoration: InputDecoration(
-                      hintText: 'Joe Taslim',
+                      hintText: l10n.randomPerson,
                       label: Text(l10n.accountHolderName),
                     ),
                     keyboardType: TextInputType.name,

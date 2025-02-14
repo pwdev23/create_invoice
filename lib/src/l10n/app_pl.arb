@@ -77,5 +77,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "randomPerson": "Jan Kowalski",
+    "randomPhone": "+48 600 123 456",
+    "phoneNumber": "Numer telefonu"
 }

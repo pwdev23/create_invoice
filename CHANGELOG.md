@@ -1,3 +1,11 @@
+## 0.1.0
+
+* feat(l10n): add langauges support by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/32
+* Feature/upgrade to flutter 3.29.0 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/33
+* feat(store): add phone and address support by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/34
+* refactor: applied code formatter by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/35
+* chore: update android config by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/36
+
 ## 0.0.4
 
 * feat(invoice): add l10n on date format by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/28

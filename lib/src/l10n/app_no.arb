@@ -77,5 +77,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "randomPerson": "Ola Nordmann",
+    "randomPhone": "+47 912 34 567",
+    "phoneNumber": "Telefonnummer"
 }

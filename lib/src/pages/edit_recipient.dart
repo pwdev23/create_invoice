@@ -57,7 +57,7 @@ class _EditRecipientState extends State<EditRecipient> {
                 child: TextFormField(
                   controller: _name,
                   decoration: InputDecoration(
-                    hintText: 'Budi Arie',
+                    hintText: l10n.randomPerson,
                     label: Text(l10n.name),
                   ),
                   keyboardType: TextInputType.name,

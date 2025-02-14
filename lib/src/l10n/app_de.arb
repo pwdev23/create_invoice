@@ -77,5 +77,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "randomPerson": "Max Mustermann",
+    "randomPhone": "+49 151 23456789",
+    "phoneNumber": "Telefonnummer"
 }

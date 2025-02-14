@@ -77,5 +77,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "randomPerson": "João Silva",
+    "randomPhone": "+351 912 345 678",
+    "phoneNumber": "Número de telefone"
 }

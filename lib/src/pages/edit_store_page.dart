@@ -152,10 +152,10 @@ class _EditStorePageState extends State<EditStorePage> {
               child: TextFormField(
                 controller: _phone,
                 decoration: InputDecoration(
-                  hintText: '+1 234 567 890',
-                  label: Text('Phone number'),
+                  hintText: l10n.randomPhone,
+                  label: Text(l10n.phoneNumber),
                 ),
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.phone,
                 onChanged: (v) => setState(() {}),
               ),
             ),
