@@ -16,6 +16,8 @@ class Store {
   String? locale;
   String? symbol;
   String? color;
+  String? address;
+  String? phoneNumber;
 }
 
 @collection
