@@ -176,7 +176,7 @@ class _EditStorePageState extends State<EditStorePage> {
             ),
             const SizedBox(height: 16.0),
             _CurrencyButton(
-              title: _curr.name.toUpperCase(),
+              title: _curr.name.replaceAll('_', '').toUpperCase(),
               onPressed: () => _onEditCurrency(),
             ),
             _DividerText(text: l10n.leadingThankNote),
@@ -236,17 +236,26 @@ class _EditStorePageState extends State<EditStorePage> {
       clipBehavior: Clip.antiAlias,
       context: context,
       builder: (context) {
-        return Column(
+        return Stack(
+          alignment: Alignment.topCenter,
           children: [
-            BottomSheetScrollHeader(),
-            ...List.generate(
-              Currency.values.length,
-              (i) => ListTile(
-                title: Text(Currency.values[i].name.toUpperCase()),
-                subtitle: Text(symbols[Currency.values[i]]!),
-                onTap: () => _onSelectCurrency(Currency.values[i]),
-              ),
+            ListView.separated(
+              padding: const EdgeInsets.only(top: kToolbarHeight),
+              itemBuilder: (context, i) {
+                final curr = Currency.values[i];
+                final name = curr.name.replaceAll('_', '');
+                final title = '${name.toUpperCase()} (${symbols[curr]})';
+
+                return ListTile(
+                  tileColor: colors.surface,
+                  title: Text(title),
+                  onTap: () => _onSelectCurrency(curr),
+                );
+              },
+              separatorBuilder: (_, __) => const Divider(height: 0.0),
+              itemCount: Currency.values.length,
             ),
+            BottomSheetScrollHeader(),
           ],
         );
       },

@@ -45,7 +45,8 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
         itemBuilder: (context, i) {
           final curr = Currency.values[i];
           final symbol = symbols[curr];
-          final title = '${curr.name.toUpperCase()} ($symbol)';
+          final name = curr.name.replaceAll('_', '');
+          final title = '${name.toUpperCase()} ($symbol)';
 
           return RadioListTile.adaptive(
             controlAffinity: ListTileControlAffinity.trailing,
