@@ -145,9 +145,11 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildHeader(pw.Context pwContext) {
     final l10n = AppLocalizations.of(context)!;
+    final missing = missingSymbols.contains(widget.store.locale);
+    final symbol = missing ? null : widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
-      symbol: widget.store.symbol,
+      symbol: symbol,
     );
     final color = widget.store.color!;
 
@@ -223,9 +225,11 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildSummary(pw.Context pwContext) {
     final l10n = AppLocalizations.of(context)!;
+    final missing = missingSymbols.contains(widget.store.locale);
+    final symbol = missing ? null : widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
-      symbol: widget.store.symbol,
+      symbol: symbol,
     );
 
     return pw.Container(
@@ -347,9 +351,11 @@ class _PreviewPageState extends State<PreviewPage> {
   ) {
     final i = col - 1;
     final t = item.item.value;
+    final missing = missingSymbols.contains(widget.store.locale);
+    final symbol = missing ? null : widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
-      symbol: widget.store.symbol,
+      symbol: symbol,
     );
 
     switch (i) {
