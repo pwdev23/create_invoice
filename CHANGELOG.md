@@ -1,3 +1,8 @@
+## 0.1.1
+
+* feat(currency): enhance currency support by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/40
+* fix(currency): handle missing symbols by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/41
+
 ## 0.1.0
 
 * feat(l10n): add langauges support by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/32
