@@ -176,7 +176,7 @@ class _EditStorePageState extends State<EditStorePage> {
             ),
             const SizedBox(height: 16.0),
             _CurrencyButton(
-              title: getName(_curr),
+              title: _curr.name.toUpperCase(),
               onPressed: () => _onEditCurrency(),
             ),
             _DividerText(text: l10n.leadingThankNote),
@@ -220,7 +220,7 @@ class _EditStorePageState extends State<EditStorePage> {
     _editedStore.name = _name.text.trim();
     _editedStore.email = _email.text.trim();
     _editedStore.locale = getLocale(_curr);
-    _editedStore.symbol = getSymbol(_curr);
+    _editedStore.symbol = symbols[_curr];
     _editedStore.thankNote = _note.text.isEmpty ? fallback : _note.text.trim();
     _editedStore.address = _addr.text.isEmpty ? '' : _addr.text.trim();
     _editedStore.phoneNumber = _phone.text.isEmpty ? '' : _phone.text.trim();
@@ -242,8 +242,8 @@ class _EditStorePageState extends State<EditStorePage> {
             ...List.generate(
               Currency.values.length,
               (i) => ListTile(
-                title: Text(getName(Currency.values[i])),
-                subtitle: Text(getSymbol(Currency.values[i])),
+                title: Text(Currency.values[i].name.toUpperCase()),
+                subtitle: Text(symbols[Currency.values[i]]!),
                 onTap: () => _onSelectCurrency(Currency.values[i]),
               ),
             ),

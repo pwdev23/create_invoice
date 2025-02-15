@@ -44,12 +44,14 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
       body: ListView.separated(
         itemBuilder: (context, i) {
           final curr = Currency.values[i];
+          final symbol = symbols[curr];
+          final title = '${curr.name.toUpperCase()} ($symbol)';
 
           return RadioListTile.adaptive(
             controlAffinity: ListTileControlAffinity.trailing,
             value: curr,
             groupValue: _curr,
-            title: Text('${getName(curr)} (${getSymbol(curr)})'),
+            title: Text(title),
             onChanged: (v) => _onChanged(v!),
           );
         },
@@ -76,7 +78,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
   Future<void> _onChanged(Currency currency) async {
     setState(() => _curr = currency);
     _store.locale = getLocale(currency);
-    _store.symbol = getSymbol(currency);
+    _store.symbol = symbols[currency];
     await _db.updateStore(_store);
   }
 }
