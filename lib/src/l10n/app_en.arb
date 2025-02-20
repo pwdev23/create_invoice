@@ -300,5 +300,9 @@
     "phoneNumber": "Phone number",
     "@phoneNumber": {
         "description": "A text label for phone number text field"
+    },
+    "edit": "Edit",
+    "@edit": {
+        "description": "A text for edit button"
     }
 }

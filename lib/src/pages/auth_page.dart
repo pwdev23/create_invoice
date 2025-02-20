@@ -27,7 +27,11 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Material(child: CenterCircular());
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Material(color: colors.surface, child: CenterCircular());
+  }
 
   Future<void> _initStore() async {
     final stores = await _db.findAllStores();

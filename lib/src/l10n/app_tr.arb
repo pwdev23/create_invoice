@@ -80,5 +80,6 @@
     },
     "randomPerson": "Ali Yılmaz",
     "randomPhone": "+90 532 123 45 67",
-    "phoneNumber": "Telefon numarası"
+    "phoneNumber": "Telefon numarası",
+    "edit": "Düzenle"
 }

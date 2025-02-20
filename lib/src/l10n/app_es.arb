@@ -80,5 +80,6 @@
     },
     "randomPerson": "Juan Pérez",
     "randomPhone": "+34 600 123 456",
-    "phoneNumber": "Número de teléfono"
+    "phoneNumber": "Número de teléfono",
+    "edit": "Editar"
 }

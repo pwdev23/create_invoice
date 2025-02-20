@@ -80,5 +80,6 @@
     },
     "randomPerson": "Ola Nordmann",
     "randomPhone": "+47 912 34 567",
-    "phoneNumber": "Telefonnummer"
+    "phoneNumber": "Telefonnummer",
+    "edit": "Rediger"
 }
