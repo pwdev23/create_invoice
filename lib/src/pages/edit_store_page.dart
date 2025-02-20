@@ -98,9 +98,9 @@ class _EditStorePageState extends State<EditStorePage> {
                                 ),
                               ],
                         )
-                        : IconButton(
+                        : TextButton(
                           onPressed: () => _onPickImage(),
-                          icon: Icon(Icons.edit, color: colors.primary),
+                          child: Text(l10n.edit),
                         ),
               ),
             ),

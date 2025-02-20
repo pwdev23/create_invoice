@@ -80,5 +80,6 @@
     },
     "randomPerson": "Mario Rossi",
     "randomPhone": "+39 320 123 4567",
-    "phoneNumber": "Numero di telefono"
+    "phoneNumber": "Numero di telefono",
+    "edit": "Modifica"
 }
