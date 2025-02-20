@@ -21,6 +21,7 @@ class PreviewPage extends StatefulWidget {
     required this.paid,
     required this.daysRange,
     required this.locale,
+    required this.fileName,
   });
 
   final Store store;
@@ -29,6 +30,7 @@ class PreviewPage extends StatefulWidget {
   final double paid;
   final int daysRange;
   final String locale;
+  final String fileName;
 
   @override
   State<PreviewPage> createState() => _PreviewPageState();
@@ -71,21 +73,26 @@ class _PreviewPageState extends State<PreviewPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
-    final dateFormat = DateFormat(kDateFormat, widget.locale);
-    final fName = 'INV_${dateFormat.format(DateTime.now())}.pdf';
+    final textTheme = Theme.of(context).textTheme;
 
     return PopScope(
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text(l10n.preview),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.preview, style: textTheme.bodySmall),
+              Text(widget.fileName, style: textTheme.titleLarge),
+            ],
+          ),
         ),
         body: Column(
           children: [
             Flexible(
               child: PdfPreview(
-                pdfFileName: fName,
+                pdfFileName: '${widget.fileName}.pdf',
                 canChangeOrientation: false,
                 canChangePageFormat: false,
                 canDebug: false,
@@ -423,6 +430,7 @@ class _PreviewPageState extends State<PreviewPage> {
     final msg = ScaffoldMessenger.of(context);
     final saved = l10n.successfullyDownloaded;
     await downloadPdf(
+      widget.fileName,
       pdfBytes,
       (_) => msg.showSnackBar(SnackBar(content: Text(l10n.permissionDenied))),
       (_) {
@@ -469,6 +477,7 @@ class PreviewArgs {
     this.paid,
     this.daysRange,
     this.locale,
+    this.fileName,
   );
 
   final Store store;
@@ -477,6 +486,7 @@ class PreviewArgs {
   final double paid;
   final int daysRange;
   final String locale;
+  final String fileName;
 }
 
 class _BackToHomeButton extends StatelessWidget {

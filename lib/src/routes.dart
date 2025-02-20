@@ -27,6 +27,7 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
               paid: args.paid,
               daysRange: args.daysRange,
               locale: args.locale,
+              fileName: args.fileName,
             ),
       );
     case '/edit-currency':

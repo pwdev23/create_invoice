@@ -9,6 +9,7 @@ import '../utils.dart';
 import 'edit_store_page.dart' show EditStoreArgs;
 import 'invoice_state.dart';
 import 'preview_page.dart' show PreviewArgs;
+import 'preview_state.dart' show kDateFormat;
 import 'set_language_page.dart' show SetLanguageArgs;
 import 'item_page.dart' show ItemArgs;
 
@@ -277,6 +278,8 @@ class _InvoicePageState extends State<InvoicePage> {
     final l10n = AppLocalizations.of(context)!;
     final nav = Navigator.of(context);
     final locale = Localizations.localeOf(context).languageCode;
+    final dateFormat = DateFormat(kDateFormat, locale);
+    final f = 'INV_${dateFormat.format(DateTime.now())}';
     final n = _paid.text.isEmpty ? 0.0 : double.parse(_paid.text);
     _editedStore.bankName = _bank.text.trim();
     _editedStore.accountNumber = _accNum.text.trim();
@@ -290,7 +293,7 @@ class _InvoicePageState extends State<InvoicePage> {
       _editedStore.thankNote = l10n.thankNote;
     }
     await _db.updateStore(_editedStore);
-    final args = PreviewArgs(_editedStore, _to, items, n, range, locale);
+    final args = PreviewArgs(_editedStore, _to, items, n, range, locale, f);
     nav.pushNamed('/preview', arguments: args);
   }
 
