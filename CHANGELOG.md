@@ -1,3 +1,8 @@
+## 0.1.2
+
+* feat(preview): predefined file name by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/43
+* chore: customize theme by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/44
+
 ## 0.1.1
 
 * feat(currency): enhance currency support by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/40
