@@ -72,7 +72,8 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
 
   void _onContinue() {
     final nav = Navigator.of(context);
-    final args = InvoiceArgs(widget.store, widget.recipient);
+    if (_store.locale == '') _store.locale = getLocale(_curr);
+    final args = InvoiceArgs(_store, widget.recipient);
     nav.pushReplacementNamed('/invoice', arguments: args);
   }
 

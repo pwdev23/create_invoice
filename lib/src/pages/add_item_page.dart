@@ -19,7 +19,7 @@ class _AddItemPageState extends State<AddItemPage> {
   final _nameCon = TextEditingController();
   final _priceCon = TextEditingController();
   final _discCon = TextEditingController();
-  bool _isPercent = false;
+  bool _isPercent = true;
 
   @override
   void dispose() {
@@ -38,67 +38,70 @@ class _AddItemPageState extends State<AddItemPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.addItem)),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 16.0,
-            children: [
-              SizedBox.shrink(),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _nameCon,
-                  keyboardType: TextInputType.name,
-                  decoration: InputDecoration(
-                    labelText: l10n.itemName,
-                    hintText: l10n.itemName,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.only(bottom: kToolbarHeight * 2),
+          color: colors.surface,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: 16.0,
+              children: [
+                SizedBox.shrink(),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _nameCon,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      labelText: l10n.itemName,
+                      hintText: l10n.itemName,
+                    ),
+                    onChanged: (v) => setState(() {}),
                   ),
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _skuCon,
-                  decoration: InputDecoration(
-                    hintText: 'SKU',
-                    labelText: 'SKU',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _skuCon,
+                    decoration: InputDecoration(
+                      hintText: 'SKU',
+                      labelText: 'SKU',
+                    ),
+                    onChanged: (v) => setState(() {}),
                   ),
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _priceCon,
-                  decoration: InputDecoration(
-                    labelText: l10n.price,
-                    hintText: '5.0',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _priceCon,
+                    decoration: InputDecoration(
+                      labelText: l10n.price,
+                      hintText: '5.0',
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _discCon,
-                  decoration: InputDecoration(
-                    labelText: l10n.discount,
-                    hintText: '0.0',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _discCon,
+                    decoration: InputDecoration(
+                      labelText: l10n.discount,
+                      hintText: '0.0',
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              SwitchListTile.adaptive(
-                title: Text(l10n.usePercentage),
-                value: _isPercent,
-                onChanged: (v) => setState(() => _isPercent = v),
-              ),
-              const SizedBox(height: kToolbarHeight * 2),
-            ],
+                SwitchListTile.adaptive(
+                  title: Text(l10n.usePercentage),
+                  value: _isPercent,
+                  onChanged: (v) => setState(() => _isPercent = v),
+                ),
+              ],
+            ),
           ),
         ),
       ),
