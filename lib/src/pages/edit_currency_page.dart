@@ -70,10 +70,12 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
     );
   }
 
-  void _onContinue() {
+  Future<void> _onContinue() async {
     final nav = Navigator.of(context);
+    final shouldUpdateStore = _store.locale == '' || _store.symbol == '';
     if (_store.locale == '') _store.locale = getLocale(_curr);
     if (_store.symbol == '') _store.symbol = symbols[_curr];
+    if (shouldUpdateStore) await _db.updateStore(_store);
     final args = InvoiceArgs(_store, widget.recipient);
     nav.pushReplacementNamed('/invoice', arguments: args);
   }
