@@ -1,3 +1,8 @@
+## 0.1.3
+
+* fix(locale-null): fix locale null and improved UI by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/46
+* fix(edit-currency): set default symbol if not provided by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/47
+
 ## 0.1.2
 
 * feat(preview): predefined file name by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/43
