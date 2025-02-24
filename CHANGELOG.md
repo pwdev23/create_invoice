@@ -1,3 +1,7 @@
+## 0.1.4
+
+* fix(edit-currency): missing update store by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/49
+
 ## 0.1.3
 
 * fix(locale-null): fix locale null and improved UI by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/46
