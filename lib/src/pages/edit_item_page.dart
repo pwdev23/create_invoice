@@ -49,85 +49,83 @@ class _EditItemPageState extends State<EditItemPage> {
     final l10n = AppLocalizations.of(context)!;
     final disabledColor = Theme.of(context).disabledColor;
     final colors = Theme.of(context).colorScheme;
+    final valid = _isValid(_formKey) && _nameCon.text.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.editItem)),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 16.0,
-            children: [
-              SizedBox.shrink(),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _nameCon,
-                  keyboardType: TextInputType.name,
-                  decoration: InputDecoration(
-                    labelText: l10n.itemName,
-                    hintText: l10n.itemName,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.only(bottom: kToolbarHeight * 2),
+          color: colors.surface,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: 16.0,
+              children: [
+                SizedBox.shrink(),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _nameCon,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      labelText: l10n.itemName,
+                      hintText: l10n.itemName,
+                    ),
+                    onChanged: (v) => setState(() {}),
                   ),
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _skuCon,
-                  decoration: InputDecoration(
-                    hintText: 'SKU',
-                    labelText: 'SKU',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _skuCon,
+                    decoration: InputDecoration(
+                      hintText: 'SKU',
+                      labelText: 'SKU',
+                    ),
+                    onChanged: (v) => setState(() {}),
                   ),
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _priceCon,
-                  decoration: InputDecoration(
-                    labelText: l10n.price,
-                    hintText: '5.0',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _priceCon,
+                    decoration: InputDecoration(
+                      labelText: l10n.price,
+                      hintText: '5.0',
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _discCon,
-                  decoration: InputDecoration(
-                    labelText: l10n.discount,
-                    hintText: '0.0',
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _discCon,
+                    decoration: InputDecoration(
+                      labelText: l10n.discount,
+                      hintText: '0.0',
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              SwitchListTile.adaptive(
-                title: Text(l10n.usePercentage),
-                value: _isPercent,
-                onChanged: (v) => setState(() => _isPercent = v),
-              ),
-              const SizedBox(height: kToolbarHeight * 2),
-            ],
+                SwitchListTile.adaptive(
+                  title: Text(l10n.usePercentage),
+                  value: _isPercent,
+                  onChanged: (v) => setState(() => _isPercent = v),
+                ),
+                const SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            _isValid(_formKey) && _nameCon.text.isNotEmpty
-                ? () => _onEditItem()
-                : null,
+        onPressed: valid ? () => _onEditItem() : null,
         disabledElevation: 0,
-        backgroundColor:
-            _nameCon.text.isNotEmpty ? colors.primaryContainer : disabledColor,
-        foregroundColor:
-            _nameCon.text.isNotEmpty
-                ? colors.onPrimaryContainer
-                : disabledColor,
+        backgroundColor: valid ? colors.primaryContainer : disabledColor,
+        foregroundColor: valid ? colors.onPrimaryContainer : disabledColor,
         icon: Icon(Icons.done),
         label: Text(l10n.save),
       ),
