@@ -33,40 +33,44 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.addRecipient)),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 16.0,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox.shrink(),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _name,
-                  decoration: InputDecoration(
-                    hintText: l10n.randomPerson,
-                    label: Text(l10n.name),
+      body: SingleChildScrollView(
+        child: Container(
+          color: colors.surface,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: 16.0,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox.shrink(),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      hintText: l10n.randomPerson,
+                      label: Text(l10n.name),
+                    ),
+                    keyboardType: TextInputType.name,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.name,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-              Padding(
-                padding: kPx,
-                child: TextFormField(
-                  controller: _addr,
-                  decoration: InputDecoration(
-                    hintText: 'Planet earth',
-                    label: Text(l10n.address),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _addr,
+                    decoration: InputDecoration(
+                      hintText: 'Planet earth',
+                      label: Text(l10n.address),
+                    ),
+                    keyboardType: TextInputType.streetAddress,
+                    onChanged: (v) => setState(() {}),
                   ),
-                  keyboardType: TextInputType.streetAddress,
-                  onChanged: (v) => setState(() {}),
                 ),
-              ),
-            ],
+                const SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       ),

@@ -70,129 +70,136 @@ class _EditStorePageState extends State<EditStorePage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.editStore)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            _DividerText(text: l10n.logo),
-            Padding(
-              padding: kPx,
-              child: _CompanyLogoButton(
-                bytes: _imageBytes,
-                name: widget.store.name!,
-                action:
-                    _imageBytes != null
-                        ? PopupMenuButton<LogoAction>(
-                          initialValue: _action,
-                          onSelected: (v) => _onSelected(v),
-                          iconColor: colors.primary,
-                          itemBuilder:
-                              (context) => <PopupMenuEntry<LogoAction>>[
-                                PopupMenuItem<LogoAction>(
-                                  value: LogoAction.update,
-                                  child: Text(l10n.update),
-                                ),
-                                PopupMenuItem<LogoAction>(
-                                  value: LogoAction.delete,
-                                  child: Text(l10n.remove),
-                                ),
-                              ],
-                        )
-                        : TextButton(
-                          onPressed: () => _onPickImage(),
-                          child: Text(l10n.edit),
-                        ),
-              ),
-            ),
-            _AlertTextBox(
-              margin: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
-              backgroundColor: colors.tertiaryContainer,
-              iconColor: colors.onTertiaryContainer,
-              icon: Icons.info_outline,
-              child: Text.rich(
-                style: alertStyle,
-                TextSpan(
-                  text: l10n.logoHelp1,
-                  children: [
-                    TextSpan(text: l10n.logoHelp2, style: textBold),
-                    TextSpan(text: l10n.logoHelp3),
-                  ],
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.only(bottom: kToolbarHeight * 2),
+          color: colors.surface,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _DividerText(text: l10n.logo),
+                Padding(
+                  padding: kPx,
+                  child: _CompanyLogoButton(
+                    bytes: _imageBytes,
+                    name: widget.store.name!,
+                    action:
+                        _imageBytes != null
+                            ? PopupMenuButton<LogoAction>(
+                              initialValue: _action,
+                              onSelected: (v) => _onSelected(v),
+                              iconColor: colors.primary,
+                              itemBuilder:
+                                  (context) => <PopupMenuEntry<LogoAction>>[
+                                    PopupMenuItem<LogoAction>(
+                                      value: LogoAction.update,
+                                      child: Text(l10n.update),
+                                    ),
+                                    PopupMenuItem<LogoAction>(
+                                      value: LogoAction.delete,
+                                      child: Text(l10n.remove),
+                                    ),
+                                  ],
+                            )
+                            : TextButton(
+                              onPressed: () => _onPickImage(),
+                              child: Text(l10n.edit),
+                            ),
+                  ),
                 ),
-              ),
-            ),
-            _DividerText(text: l10n.main),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _name,
-                decoration: InputDecoration(
-                  hintText: 'My store name',
-                  label: Text(l10n.storeName),
+                _AlertTextBox(
+                  margin: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
+                  backgroundColor: colors.tertiaryContainer,
+                  iconColor: colors.onTertiaryContainer,
+                  icon: Icons.info_outline,
+                  child: Text.rich(
+                    style: alertStyle,
+                    TextSpan(
+                      text: l10n.logoHelp1,
+                      children: [
+                        TextSpan(text: l10n.logoHelp2, style: textBold),
+                        TextSpan(text: l10n.logoHelp3),
+                      ],
+                    ),
+                  ),
                 ),
-                keyboardType: TextInputType.name,
-                onChanged: (v) => setState(() {}),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _email,
-                decoration: InputDecoration(
-                  hintText: 'info@mystore.com',
-                  label: Text('Email'),
+                _DividerText(text: l10n.main),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      hintText: 'My store name',
+                      label: Text(l10n.storeName),
+                    ),
+                    keyboardType: TextInputType.name,
+                    onChanged: (v) => setState(() {}),
+                  ),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (v) => setState(() {}),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _phone,
-                decoration: InputDecoration(
-                  hintText: l10n.randomPhone,
-                  label: Text(l10n.phoneNumber),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _email,
+                    decoration: InputDecoration(
+                      hintText: 'info@mystore.com',
+                      label: Text('Email'),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (v) => setState(() {}),
+                  ),
                 ),
-                keyboardType: TextInputType.phone,
-                onChanged: (v) => setState(() {}),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _addr,
-                decoration: InputDecoration(
-                  hintText: 'Planet earth',
-                  label: Text(l10n.address),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _phone,
+                    decoration: InputDecoration(
+                      hintText: l10n.randomPhone,
+                      label: Text(l10n.phoneNumber),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    onChanged: (v) => setState(() {}),
+                  ),
                 ),
-                keyboardType: TextInputType.text,
-                minLines: 2,
-                maxLines: 8,
-                onChanged: (v) => setState(() {}),
-              ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _addr,
+                    decoration: InputDecoration(
+                      hintText: 'Planet earth',
+                      label: Text(l10n.address),
+                    ),
+                    keyboardType: TextInputType.text,
+                    minLines: 2,
+                    maxLines: 8,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                _CurrencyButton(
+                  title: _curr.name.replaceAll('_', '').toUpperCase(),
+                  onPressed: () => _onEditCurrency(),
+                ),
+                _DividerText(text: l10n.leadingThankNote),
+                Padding(
+                  padding: kPx,
+                  child: TextFormField(
+                    controller: _note,
+                    decoration: InputDecoration(hintText: l10n.hintThankNote),
+                    keyboardType: TextInputType.text,
+                    maxLines: 8,
+                    minLines: 2,
+                    onChanged: (v) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
             ),
-            const SizedBox(height: 16.0),
-            _CurrencyButton(
-              title: _curr.name.replaceAll('_', '').toUpperCase(),
-              onPressed: () => _onEditCurrency(),
-            ),
-            _DividerText(text: l10n.leadingThankNote),
-            Padding(
-              padding: kPx,
-              child: TextFormField(
-                controller: _note,
-                decoration: InputDecoration(hintText: l10n.hintThankNote),
-                keyboardType: TextInputType.text,
-                maxLines: 8,
-                minLines: 2,
-                onChanged: (v) => setState(() {}),
-              ),
-            ),
-            SizedBox(height: kToolbarHeight * 2),
-          ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
