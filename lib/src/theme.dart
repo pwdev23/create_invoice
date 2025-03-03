@@ -9,6 +9,13 @@ final inputDecorationTheme = InputDecorationTheme(
   ),
 );
 
+final pageTransitionsTheme = PageTransitionsTheme(
+  builders: {
+    TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+  },
+);
+
 final theme = ThemeData.light().copyWith(
   colorScheme: ColorScheme.fromSeed(
     seedColor: kSeedColor,
@@ -27,6 +34,7 @@ final theme = ThemeData.light().copyWith(
   inputDecorationTheme: inputDecorationTheme,
   listTileTheme: ListTileThemeData(tileColor: Color(0xffffffff)),
   bottomSheetTheme: BottomSheetThemeData(backgroundColor: Color(0xffffffff)),
+  pageTransitionsTheme: pageTransitionsTheme,
 );
 
 final darkTheme = ThemeData.dark().copyWith(
@@ -47,4 +55,5 @@ final darkTheme = ThemeData.dark().copyWith(
   bottomSheetTheme: BottomSheetThemeData(
     backgroundColor: Color.fromRGBO(13, 17, 22, 1),
   ),
+  pageTransitionsTheme: pageTransitionsTheme,
 );
