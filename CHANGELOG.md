@@ -1,3 +1,7 @@
+## 0.1.5
+
+* feat(theme): add page transitions by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/51
+
 ## 0.1.4
 
 * fix(edit-currency): missing update store by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/49
