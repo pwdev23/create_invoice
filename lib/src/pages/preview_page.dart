@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:intl/intl.dart';
@@ -159,6 +160,8 @@ class _PreviewPageState extends State<PreviewPage> {
       symbol: symbol,
     );
     final color = widget.store.color!;
+    final n = _gT + _tax - widget.paid;
+    final gT = max(0, n);
 
     return pw.TableHelper.fromTextArray(
       headerDecoration: pw.BoxDecoration(color: getColor(widget.store.color!)),
@@ -185,7 +188,7 @@ class _PreviewPageState extends State<PreviewPage> {
               ),
               pw.SizedBox(height: 4.0),
               pw.Text(
-                formatted.format(_gT + _tax - widget.paid),
+                formatted.format(gT),
                 style: pw.TextStyle(
                   fontSize: 20,
                   color: getTitleColor(color),
@@ -238,6 +241,8 @@ class _PreviewPageState extends State<PreviewPage> {
       locale: widget.store.locale,
       symbol: symbol,
     );
+    final n = _gT + _tax - widget.paid;
+    final leftOver = max(0, n);
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -270,10 +275,7 @@ class _PreviewPageState extends State<PreviewPage> {
                 ['${l10n.tax}:', formatted.format(_tax)],
                 ['${l10n.grandTotal}:', formatted.format(_gT + _tax)],
                 ['${l10n.paid}:', formatted.format(widget.paid)],
-                [
-                  '${l10n.leftOver}:',
-                  formatted.format(_gT + _tax - widget.paid),
-                ],
+                ['${l10n.leftOver}:', formatted.format(leftOver)],
               ],
             ),
           ),
