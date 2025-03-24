@@ -81,5 +81,7 @@
     "randomPerson": "Jan Kowalski",
     "randomPhone": "+48 600 123 456",
     "phoneNumber": "Numer telefonu",
-    "edit": "Edytuj"
+    "edit": "Edytuj",
+    "version": "Wersja",
+    "build": "Build"
 }

@@ -18,7 +18,7 @@ void main() {
 
     test('getVersionText should return correct version text', () {
       const kVersion = '0.0.2+2';
-      final str = getVersionText(kVersion);
+      final str = getVersionText(kVersion, 'Version', 'Build');
       expect(str, 'Version 0.0.2 Build(2)');
     });
   });

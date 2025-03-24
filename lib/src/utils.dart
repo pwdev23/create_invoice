@@ -10,7 +10,11 @@ void push(BuildContext context, String routeName, bool isPop) {
   }
 }
 
-String getVersionText(String version) {
+String getVersionText(
+  String version,
+  String versionLeadingText,
+  String buildLeadingText,
+) {
   final s = version.split('+');
-  return 'Version ${s[0]} Build(${s[1]})';
+  return '$versionLeadingText ${s[0]} $buildLeadingText(${s[1]})';
 }
