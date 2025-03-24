@@ -304,5 +304,13 @@
     "edit": "Edit",
     "@edit": {
         "description": "A text for edit button"
+    },
+    "version": "Version",
+    "@version": {
+        "description": "A leading text for version number"
+    },
+    "build": "Build",
+    "@build": {
+        "description": "A leading text for build number"
     }
 }

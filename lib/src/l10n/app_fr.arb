@@ -81,5 +81,7 @@
     "randomPerson": "Jean Dupont",
     "randomPhone": "+33 6 12 34 56 78",
     "phoneNumber": "Numéro de téléphone",
-    "edit": "Modifier"
+    "edit": "Modifier",
+    "version": "Version",
+    "build": "Build"
 }

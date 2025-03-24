@@ -73,5 +73,7 @@
     "randomPerson": "Wawan Setiawan",
     "randomPhone": "+62 812-3456-7890",
     "phoneNumber": "Nomor telepon",
-    "edit": "Edit"
+    "edit": "Edit",
+    "version": "Versi",
+    "build": "Build"
 }

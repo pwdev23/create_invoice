@@ -81,5 +81,7 @@
     "randomPerson": "Jan Jansen",
     "randomPhone": "+31 6 12345678",
     "phoneNumber": "Telefoonnummer",
-    "edit": "Bewerken"
+    "edit": "Bewerken",
+    "version": "Versie",
+    "build": "Build"
 }
