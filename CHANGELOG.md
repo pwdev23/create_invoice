@@ -1,3 +1,7 @@
+## 0.1.7
+
+* chore: localise version text by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/56
+
 ## 0.1.6
 
 * fix(preview-page): add maximum leftover by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/54
