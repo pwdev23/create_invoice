@@ -56,12 +56,16 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
   }
 
   LangOption _getLangOption(String code) {
-    switch (code) {
-      case 'id':
-        return LangOption.id;
-      default:
-        return LangOption.en;
+    var opt = LangOption.en;
+
+    for (var e in LangOption.values) {
+      if (e.name == code) {
+        opt = e;
+        break;
+      }
     }
+
+    return opt;
   }
 
   Locale _getLocale(LangOption opt) => Locale(opt.name);
