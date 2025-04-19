@@ -167,7 +167,6 @@ class _PreviewPageState extends State<PreviewPage> {
       headerDecoration: pw.BoxDecoration(color: getColor(widget.store.color!)),
       border: pw.TableBorder.all(width: .5),
       cellHeight: 75,
-      columnWidths: {0: pw.FlexColumnWidth(2), 1: pw.FlexColumnWidth(1)},
       cellAlignments: {0: pw.Alignment.centerLeft, 1: pw.Alignment.center},
       data: <List<dynamic>>[
         [
