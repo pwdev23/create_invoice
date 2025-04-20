@@ -83,5 +83,6 @@
     "phoneNumber": "Telefon numarası",
     "edit": "Düzenle",
     "version": "Sürüm",
-    "build": "Derleme"
+    "build": "Derleme",
+    "privacyPolicy": "Gizlilik politikası"
 }

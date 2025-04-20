@@ -312,5 +312,9 @@
     "build": "Build",
     "@build": {
         "description": "A leading text for build number"
+    },
+    "privacyPolicy": "Privacy policy",
+    "@privacyPolicy": {
+        "description": "A title for privacy policy list tile"
     }
 }

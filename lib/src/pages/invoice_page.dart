@@ -119,7 +119,6 @@ class _InvoicePageState extends State<InvoicePage> {
                   title: Text(l10n.manageStore),
                   leading: Icon(Icons.store),
                 ),
-                const Divider(height: 0.0),
                 ListTile(
                   tileColor: colors.surface,
                   style: ListTileStyle.drawer,
@@ -127,7 +126,6 @@ class _InvoicePageState extends State<InvoicePage> {
                   title: Text(l10n.nItem(0)),
                   leading: Icon(Icons.inbox),
                 ),
-                const Divider(height: 0.0),
                 ListTile(
                   tileColor: colors.surface,
                   style: ListTileStyle.drawer,
@@ -135,13 +133,20 @@ class _InvoicePageState extends State<InvoicePage> {
                   title: Text(l10n.recipient),
                   leading: Icon(Icons.people),
                 ),
-                const Divider(height: 0.0),
                 ListTile(
                   tileColor: colors.surface,
                   style: ListTileStyle.drawer,
                   onTap: () => _onSettingLanguage(locale),
                   title: Text(l10n.languageSettings),
                   leading: Icon(Icons.translate),
+                ),
+                const Divider(height: 0.0),
+                ListTile(
+                  tileColor: colors.surface,
+                  style: ListTileStyle.drawer,
+                  onTap: () => onLaunchUrl(kPrivacy),
+                  title: Text(l10n.privacyPolicy),
+                  trailing: Icon(Icons.open_in_new),
                 ),
               ],
             ),

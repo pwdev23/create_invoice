@@ -83,5 +83,6 @@
     "phoneNumber": "Telefonnummer",
     "edit": "Bearbeiten",
     "version": "Version",
-    "build": "Build"
+    "build": "Build",
+    "privacyPolicy": "Datenschutzrichtlinie"
 }
