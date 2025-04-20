@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' show Color, Colors;
+import 'package:url_launcher/url_launcher.dart';
 
 enum InvoiceColor {
   white,
@@ -70,5 +71,11 @@ Color? getInvoiceColor(InvoiceColor color) {
       return Colors.red[300];
     default:
       return Colors.white;
+  }
+}
+
+Future<void> onLaunchUrl(String url) async {
+  if (!await launchUrl(Uri.parse(url))) {
+    throw Exception('Failed to launch $url');
   }
 }

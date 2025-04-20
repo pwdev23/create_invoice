@@ -83,5 +83,6 @@
     "phoneNumber": "Numer telefonu",
     "edit": "Edytuj",
     "version": "Wersja",
-    "build": "Build"
+    "build": "Build",
+    "privacyPolicy": "Polityka prywatności"
 }

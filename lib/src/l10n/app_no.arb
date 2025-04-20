@@ -83,5 +83,6 @@
     "phoneNumber": "Telefonnummer",
     "edit": "Rediger",
     "version": "Versjon",
-    "build": "Bygg"
+    "build": "Bygg",
+    "privacyPolicy": "Personvernerklæring"
 }

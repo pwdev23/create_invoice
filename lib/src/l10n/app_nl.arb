@@ -83,5 +83,6 @@
     "phoneNumber": "Telefoonnummer",
     "edit": "Bewerken",
     "version": "Versie",
-    "build": "Build"
+    "build": "Build",
+    "privacyPolicy": "Privacybeleid"
 }
