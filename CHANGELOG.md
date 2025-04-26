@@ -1,3 +1,7 @@
+## 0.1.10
+
+* chore(url): update privacy url by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/65
+
 ## 0.1.9
 
 * chore(sdk): update sdk by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/60
