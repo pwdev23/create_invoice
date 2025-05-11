@@ -1,3 +1,7 @@
+## 0.1.11
+
+* feat(AndroidManifest): add compatible screen by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/67
+
 ## 0.1.10
 
 * chore(url): update privacy url by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/65
