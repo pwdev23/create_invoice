@@ -1,15 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="false"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="false" />
     <application
         android:label="Invoice"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <supports-screens
-            android:anyDensity="true"
-            android:largeScreens="false"
-            android:normalScreens="true"
-            android:resizeable="true"
-            android:smallScreens="true"
-            android:xlargeScreens="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
