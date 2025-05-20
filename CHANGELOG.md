@@ -1,3 +1,7 @@
+## 0.1.12
+
+* feat: Refactor screen compatibility to <supports-screens> by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/69
+
 ## 0.1.11
 
 * feat(AndroidManifest): add compatible screen by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/67
