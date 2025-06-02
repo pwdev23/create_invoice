@@ -148,8 +148,8 @@ class _EditItemPageState extends State<EditItemPage> {
   bool _isValid(GlobalKey<FormState> key) {
     return key.currentState != null
         ? key.currentState!.validate()
-            ? true
-            : false
+              ? true
+              : false
         : false;
   }
 }

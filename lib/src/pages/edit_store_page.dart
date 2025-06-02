@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import '../common.dart';
 import '../constants.dart';
+import '../enumerations.dart';
 import '../isar_collection/isar_collections.dart' show Store;
 import '../isar_service.dart';
 import '../shared/bottom_sheet_scroll_header.dart';
@@ -85,28 +86,27 @@ class _EditStorePageState extends State<EditStorePage> {
                   child: _CompanyLogoButton(
                     bytes: _imageBytes,
                     name: widget.store.name!,
-                    action:
-                        _imageBytes != null
-                            ? PopupMenuButton<LogoAction>(
-                              initialValue: _action,
-                              onSelected: (v) => _onSelected(v),
-                              iconColor: colors.primary,
-                              itemBuilder:
-                                  (context) => <PopupMenuEntry<LogoAction>>[
-                                    PopupMenuItem<LogoAction>(
-                                      value: LogoAction.update,
-                                      child: Text(l10n.update),
-                                    ),
-                                    PopupMenuItem<LogoAction>(
-                                      value: LogoAction.delete,
-                                      child: Text(l10n.remove),
-                                    ),
-                                  ],
-                            )
-                            : TextButton(
-                              onPressed: () => _onPickImage(),
-                              child: Text(l10n.edit),
-                            ),
+                    action: _imageBytes != null
+                        ? PopupMenuButton<LogoAction>(
+                            initialValue: _action,
+                            onSelected: (v) => _onSelected(v),
+                            iconColor: colors.primary,
+                            itemBuilder: (context) =>
+                                <PopupMenuEntry<LogoAction>>[
+                                  PopupMenuItem<LogoAction>(
+                                    value: LogoAction.update,
+                                    child: Text(l10n.update),
+                                  ),
+                                  PopupMenuItem<LogoAction>(
+                                    value: LogoAction.delete,
+                                    child: Text(l10n.remove),
+                                  ),
+                                ],
+                          )
+                        : TextButton(
+                            onPressed: () => _onPickImage(),
+                            child: Text(l10n.edit),
+                          ),
                   ),
                 ),
                 _AlertTextBox(
@@ -203,19 +203,16 @@ class _EditStorePageState extends State<EditStorePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            _name.text.isEmpty || _email.text.isEmpty
-                ? null
-                : () => _onSave(l10n.thankNote),
+        onPressed: _name.text.isEmpty || _email.text.isEmpty
+            ? null
+            : () => _onSave(l10n.thankNote),
         disabledElevation: 0,
-        backgroundColor:
-            _name.text.isEmpty || _email.text.isEmpty
-                ? disabledColor
-                : colors.primaryContainer,
-        foregroundColor:
-            _name.text.isEmpty || _email.text.isEmpty
-                ? disabledColor
-                : colors.onPrimaryContainer,
+        backgroundColor: _name.text.isEmpty || _email.text.isEmpty
+            ? disabledColor
+            : colors.primaryContainer,
+        foregroundColor: _name.text.isEmpty || _email.text.isEmpty
+            ? disabledColor
+            : colors.onPrimaryContainer,
         label: Text(l10n.save),
         icon: Icon(Icons.done),
       ),
@@ -377,18 +374,13 @@ class _CompanyLogoButton extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                  image:
-                      bytes != null
-                          ? DecorationImage(image: MemoryImage(bytes!))
-                          : null,
+                  image: bytes != null
+                      ? DecorationImage(image: MemoryImage(bytes!))
+                      : null,
                 ),
-                child:
-                    bytes != null
-                        ? null
-                        : Text(
-                          getTextLogo(name),
-                          style: textTheme.displaySmall,
-                        ),
+                child: bytes != null
+                    ? null
+                    : Text(getTextLogo(name), style: textTheme.displaySmall),
               ),
             ),
           ),
@@ -446,7 +438,10 @@ class _AlertTextBox extends StatelessWidget {
       child: Row(
         spacing: 12.0,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Icon(icon, color: iconColor), Expanded(child: child)],
+        children: [
+          Icon(icon, color: iconColor),
+          Expanded(child: child),
+        ],
       ),
     );
   }

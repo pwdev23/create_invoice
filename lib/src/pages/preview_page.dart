@@ -101,18 +101,16 @@ class _PreviewPageState extends State<PreviewPage> {
                   backgroundColor: colors.primary,
                   iconColor: colors.onPrimary,
                 ),
-                actions:
-                    kEnableDownload
-                        ? [
-                          IconButton(
-                            onPressed:
-                                _downloaded
-                                    ? null
-                                    : () => _onDownload(_pdfBytes),
-                            icon: Icon(Icons.save_alt),
-                          ),
-                        ]
-                        : null,
+                actions: kEnableDownload
+                    ? [
+                        IconButton(
+                          onPressed: _downloaded
+                              ? null
+                              : () => _onDownload(_pdfBytes),
+                          icon: Icon(Icons.save_alt),
+                        ),
+                      ]
+                    : null,
                 build: (_) => _doc.save(),
               ),
             ),
@@ -137,14 +135,13 @@ class _PreviewPageState extends State<PreviewPage> {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         header: (context) => _buildProfile(context),
-        build:
-            (context) => [
-              _buildHeader(context),
-              _buildSubheader(context),
-              _buildItemTable(context, items),
-              _buildSummary(context),
-              _buildThankNote(context),
-            ],
+        build: (context) => [
+          _buildHeader(context),
+          _buildSubheader(context),
+          _buildItemTable(context, items),
+          _buildSummary(context),
+          _buildThankNote(context),
+        ],
       ),
     );
 
@@ -325,21 +322,19 @@ class _PreviewPageState extends State<PreviewPage> {
               border: pw.Border(
                 right: pw.BorderSide(style: pw.BorderStyle.dashed, width: .5),
               ),
-              image:
-                  _imgBytes != null
-                      ? pw.DecorationImage(image: pw.MemoryImage(_imgBytes!))
-                      : null,
+              image: _imgBytes != null
+                  ? pw.DecorationImage(image: pw.MemoryImage(_imgBytes!))
+                  : null,
             ),
-            child:
-                _imgBytes != null
-                    ? null
-                    : pw.Text(
-                      getTextLogo(widget.store.name!),
-                      style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold,
-                        fontSize: 20,
-                      ),
+            child: _imgBytes != null
+                ? null
+                : pw.Text(
+                    getTextLogo(widget.store.name!),
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 20,
                     ),
+                  ),
           ),
           pw.Text(
             _getProfiles(),
@@ -417,10 +412,9 @@ class _PreviewPageState extends State<PreviewPage> {
         widget.items.length,
         (row) => List<dynamic>.generate(
           headers.length,
-          (col) =>
-              col == 0
-                  ? '${row + 1}'
-                  : _buildItem(pwContext, row, col, items[row]),
+          (col) => col == 0
+              ? '${row + 1}'
+              : _buildItem(pwContext, row, col, items[row]),
         ),
       ),
     );

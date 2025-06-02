@@ -38,21 +38,20 @@ class _AuthPageState extends State<AuthPage> {
     final count = stores.length;
     if (count == 0) {
       _store = null;
-      final store =
-          Store()
-            ..email = 'info@store.com'
-            ..name = 'My store'
-            ..bankName = ''
-            ..accountNumber = ''
-            ..accountHolderName = ''
-            ..swiftCode = ''
-            ..tax = 0
-            ..thankNote = ''
-            ..locale = ''
-            ..symbol = ''
-            ..color = 'white'
-            ..address = ''
-            ..phoneNumber = '';
+      final store = Store()
+        ..email = 'info@store.com'
+        ..name = 'My store'
+        ..bankName = ''
+        ..accountNumber = ''
+        ..accountHolderName = ''
+        ..swiftCode = ''
+        ..tax = 0
+        ..thankNote = ''
+        ..locale = ''
+        ..symbol = ''
+        ..color = 'white'
+        ..address = ''
+        ..phoneNumber = '';
       await _db.saveStore(store);
     } else {
       _store = stores[0];
@@ -64,11 +63,10 @@ class _AuthPageState extends State<AuthPage> {
     if (count == 0) {
       _recipient = null;
       for (var i = 0; i < 2; i++) {
-        final recipient =
-            Recipient()
-              ..name = 'My customer ${i + 1}'
-              ..address = 'Planet earth'
-              ..pinned = true;
+        final recipient = Recipient()
+          ..name = 'My customer ${i + 1}'
+          ..address = 'Planet earth'
+          ..pinned = true;
         await _db.saveRecipient(recipient);
       }
     } else {

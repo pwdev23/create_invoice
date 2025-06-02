@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum LogoAction { update, delete }
-
 const kLogoPng = 'logo.png';
 
 Future<File> saveImage(File image) async {

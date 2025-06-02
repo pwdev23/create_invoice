@@ -1,4 +1,5 @@
 import '../common.dart';
+import '../enumerations.dart';
 import '../isar_collection/isar_collections.dart' show Store, Recipient;
 import '../isar_service.dart';
 import 'edit_currency_state.dart';
@@ -59,14 +60,13 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
         separatorBuilder: (_, __) => Divider(height: 0.0),
         itemCount: Currency.values.length,
       ),
-      floatingActionButton:
-          widget.isInitial
-              ? FloatingActionButton.extended(
-                onPressed: () => _onContinue(),
-                label: Text(l10n.cont),
-                icon: Icon(Icons.arrow_forward),
-              )
-              : null,
+      floatingActionButton: widget.isInitial
+          ? FloatingActionButton.extended(
+              onPressed: () => _onContinue(),
+              label: Text(l10n.cont),
+              icon: Icon(Icons.arrow_forward),
+            )
+          : null,
     );
   }
 

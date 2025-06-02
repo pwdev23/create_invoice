@@ -48,16 +48,16 @@ class _ItemPageState extends State<ItemPage> {
         actions: [
           _ids.isEmpty
               ? TextButton.icon(
-                onPressed: () => _onAddItem(),
-                label: Text(l10n.addItem),
-                icon: Icon(Icons.add),
-              )
+                  onPressed: () => _onAddItem(),
+                  label: Text(l10n.addItem),
+                  icon: Icon(Icons.add),
+                )
               : TextButton.icon(
-                onPressed: () => _onDelete(_ids),
-                label: Text(l10n.delete),
-                icon: Icon(Icons.delete, color: colors.error),
-                style: TextButton.styleFrom(foregroundColor: colors.error),
-              ),
+                  onPressed: () => _onDelete(_ids),
+                  label: Text(l10n.delete),
+                  icon: Icon(Icons.delete, color: colors.error),
+                  style: TextButton.styleFrom(foregroundColor: colors.error),
+                ),
         ],
       ),
       body: StreamBuilder<List<Item>>(
@@ -82,21 +82,19 @@ class _ItemPageState extends State<ItemPage> {
                 return ListTile(
                   title: Text(title!, style: ellipsis),
                   isThreeLine: t.discount! > 0,
-                  subtitle:
-                      t.discount == 0
-                          ? Text(formatted.format(t.price))
-                          : PriceTexts(
-                            item: t,
-                            locale: widget.locale,
-                            symbol: widget.symbol,
-                          ),
+                  subtitle: t.discount == 0
+                      ? Text(formatted.format(t.price))
+                      : PriceTexts(
+                          item: t,
+                          locale: widget.locale,
+                          symbol: widget.symbol,
+                        ),
                   trailing: _TrailingIcon(),
                   onTap: () => _onTap(t),
                   onLongPress: () => _onLongPressed(id),
-                  tileColor:
-                      _ids.contains(id)
-                          ? colors.primaryContainer
-                          : colors.surface,
+                  tileColor: _ids.contains(id)
+                      ? colors.primaryContainer
+                      : colors.surface,
                 );
               },
               separatorBuilder: (context, _) => Divider(height: 0),
