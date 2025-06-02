@@ -1,4 +1,4 @@
-import 'package:create_invoice/src/pages/invoice_state.dart' show InvoiceColor;
+import 'package:create_invoice/src/enumerations.dart';
 import 'package:create_invoice/src/pages/preview_state.dart' show getColor;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pdf/pdf.dart' show PdfColors;

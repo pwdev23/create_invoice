@@ -1,4 +1,4 @@
-enum Currency { eur, usd, gbp, idr, nok, pln, try_ }
+import '../enumerations.dart';
 
 Currency getCurrency(String locale) {
   switch (locale) {

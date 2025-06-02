@@ -69,7 +69,15 @@
     "logoHelp1": "Untuk hasil yang sempurna, pilih gambar ",
     "logoHelp2": "persegi (1:1 rasio)",
     "logoHelp3": ".",
-    "nItem": "Item",
+    "nItem": "{count, plural, =0{Item} =1{1 Item} other{{count} Item}}",
+    "@nItem": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "compact"
+            }
+        }
+    },
     "randomPerson": "Wawan Setiawan",
     "randomPhone": "+62 812-3456-7890",
     "phoneNumber": "Nomor telepon",

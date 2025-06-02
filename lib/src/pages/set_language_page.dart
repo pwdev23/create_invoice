@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../common.dart';
+import '../enumerations.dart';
 import '../providers.dart';
-
-enum LangOption { de, en, es, fr, id, it, nl, no, pl, pt, tr }
 
 class SetLanguagePage extends ConsumerStatefulWidget {
   static const routeName = '/languages';

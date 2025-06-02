@@ -1,28 +1,7 @@
 import 'package:flutter/material.dart' show Color, Colors;
 import 'package:url_launcher/url_launcher.dart';
 
-enum InvoiceColor {
-  white,
-  blueGrey,
-  grey,
-  brown,
-  pink,
-  purple,
-  deepPurple,
-  indigo,
-  blue,
-  lightBlue,
-  cyan,
-  teal,
-  green,
-  lightGreen,
-  lime,
-  yellow,
-  amber,
-  orange,
-  deepOrange,
-  red,
-}
+import '../enumerations.dart';
 
 int extractNumbers(String input) {
   String numbers = input.replaceAll(RegExp(r'\D'), '');

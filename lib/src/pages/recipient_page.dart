@@ -30,16 +30,16 @@ class _RecipientPageState extends State<RecipientPage> {
         actions: [
           _ids.isEmpty
               ? TextButton.icon(
-                onPressed: () => nav.pushNamed('/add-recipient'),
-                label: Text(l10n.addRecipient),
-                icon: Icon(Icons.add),
-              )
+                  onPressed: () => nav.pushNamed('/add-recipient'),
+                  label: Text(l10n.addRecipient),
+                  icon: Icon(Icons.add),
+                )
               : TextButton.icon(
-                onPressed: () => _onDelete(_ids),
-                label: Text(l10n.delete),
-                icon: Icon(Icons.delete, color: colors.error),
-                style: TextButton.styleFrom(foregroundColor: colors.error),
-              ),
+                  onPressed: () => _onDelete(_ids),
+                  label: Text(l10n.delete),
+                  icon: Icon(Icons.delete, color: colors.error),
+                  style: TextButton.styleFrom(foregroundColor: colors.error),
+                ),
         ],
       ),
       body: StreamBuilder<List<Recipient>>(
@@ -65,10 +65,9 @@ class _RecipientPageState extends State<RecipientPage> {
                   onTap: () => _onTap(t),
                   onLongPress: () => _onLongPressed(t.id),
                   trailing: Icon(Icons.edit),
-                  tileColor:
-                      _ids.contains(t.id)
-                          ? colors.primaryContainer
-                          : colors.surface,
+                  tileColor: _ids.contains(t.id)
+                      ? colors.primaryContainer
+                      : colors.surface,
                 );
               },
               separatorBuilder: (_, __) => Divider(height: 0.0),
