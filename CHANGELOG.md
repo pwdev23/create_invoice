@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Feat/load font by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/75
+
 ## 0.2.0
 
 * feat: update SDK to 3.8.1 and applied formatter by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/72
