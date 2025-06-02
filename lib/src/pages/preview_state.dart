@@ -9,8 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../isar_collection/isar_collections.dart' show PurchaseItem;
 
-const missingSymbols = ['pl_PL', 'tr_TR'];
-
 const kEnableDownload = false;
 
 const kDateFormat = 'yyyyMMdd-HHmmss';

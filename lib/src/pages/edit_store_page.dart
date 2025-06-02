@@ -179,10 +179,10 @@ class _EditStorePageState extends State<EditStorePage> {
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                _CurrencyButton(
+                _DividerText(text: l10n.currency),
+                _ExpandMoreButton(
                   title: _curr.name.replaceAll('_', '').toUpperCase(),
-                  onPressed: () => _onEditCurrency(),
+                  onPressed: () => _onExpandCurrency(),
                 ),
                 _DividerText(text: l10n.leadingThankNote),
                 Padding(
@@ -232,7 +232,7 @@ class _EditStorePageState extends State<EditStorePage> {
     nav.pushNamedAndRemoveUntil('/', (_) => false);
   }
 
-  void _onEditCurrency() {
+  void _onExpandCurrency() {
     final colors = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
@@ -298,8 +298,8 @@ class EditStoreArgs {
   final Store store;
 }
 
-class _CurrencyButton extends StatelessWidget {
-  const _CurrencyButton({required this.title, required this.onPressed});
+class _ExpandMoreButton extends StatelessWidget {
+  const _ExpandMoreButton({required this.title, required this.onPressed});
 
   final String title;
   final VoidCallback onPressed;

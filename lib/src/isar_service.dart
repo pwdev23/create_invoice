@@ -110,11 +110,10 @@ class IsarService {
   Future<void> savePurchaseItem(PurchaseItem purchaseItem) async {
     final db = await isarDb;
 
-    final itemsToCompare =
-        await db.purchaseItems
-            .filter()
-            .item((v) => v.idEqualTo(purchaseItem.item.value!.id))
-            .findAll();
+    final itemsToCompare = await db.purchaseItems
+        .filter()
+        .item((v) => v.idEqualTo(purchaseItem.item.value!.id))
+        .findAll();
 
     final count = itemsToCompare.length;
 
