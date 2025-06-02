@@ -12,6 +12,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get appTitle => 'Buat faktur';
 
   @override
+  String get currency => 'Mata uang';
+
+  @override
   String get languageSettings => 'Pengaturan bahasa';
 
   @override

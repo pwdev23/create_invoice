@@ -3,6 +3,10 @@
     "@appTitle": {
         "description": "App title for the root app"
     },
+    "currency": "Currency",
+    "@currency": {
+        "description": "A text for currency section label"
+    },
     "languageSettings": "Language settings",
     "@languageSettings": {
         "description": "A title for language settings page"

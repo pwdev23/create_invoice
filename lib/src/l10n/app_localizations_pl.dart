@@ -12,6 +12,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get appTitle => 'Utwórz fakturę';
 
   @override
+  String get currency => 'Waluta';
+
+  @override
   String get languageSettings => 'Ustawienia języka';
 
   @override

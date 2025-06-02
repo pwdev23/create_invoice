@@ -12,6 +12,9 @@ class AppLocalizationsNo extends AppLocalizations {
   String get appTitle => 'Opprett faktura';
 
   @override
+  String get currency => 'Valuta';
+
+  @override
   String get languageSettings => 'Språkinnstillinger';
 
   @override

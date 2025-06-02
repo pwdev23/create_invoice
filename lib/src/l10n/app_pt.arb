@@ -1,5 +1,6 @@
 {
     "appTitle": "Criar fatura",
+    "currency": "Moeda",
     "languageSettings": "Configurações de idioma",
     "english": "Inglês",
     "indonesian": "Indonésio",

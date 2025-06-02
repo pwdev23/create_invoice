@@ -12,6 +12,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appTitle => 'Factuur maken';
 
   @override
+  String get currency => 'Valuta';
+
+  @override
   String get languageSettings => 'Taalinstellingen';
 
   @override

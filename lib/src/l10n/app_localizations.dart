@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Create invoice'**
   String get appTitle;
 
+  /// A text for currency section label
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
   /// A title for language settings page
   ///
   /// In en, this message translates to:

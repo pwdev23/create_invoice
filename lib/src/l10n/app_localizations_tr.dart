@@ -12,6 +12,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appTitle => 'Fatura oluştur';
 
   @override
+  String get currency => 'Para birimi';
+
+  @override
   String get languageSettings => 'Dil ayarları';
 
   @override
