@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Create invoice';
 
   @override
+  String get currency => 'Currency';
+
+  @override
   String get languageSettings => 'Language settings';
 
   @override

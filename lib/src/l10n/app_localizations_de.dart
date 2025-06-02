@@ -12,6 +12,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appTitle => 'Rechnung erstellen';
 
   @override
+  String get currency => 'Währung';
+
+  @override
   String get languageSettings => 'Spracheinstellungen';
 
   @override

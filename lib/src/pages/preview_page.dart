@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -39,6 +39,7 @@ class PreviewPage extends StatefulWidget {
 
 class _PreviewPageState extends State<PreviewPage> {
   bool _downloaded = false;
+  ByteData? fontData;
   Uint8List? _imgBytes;
   late Uint8List _pdfBytes;
   final _doc = pw.Document();
@@ -49,6 +50,7 @@ class _PreviewPageState extends State<PreviewPage> {
   double _gT = 0;
 
   Future<void> _onInit() async {
+    fontData = await rootBundle.load('fonts/Roboto-Regular.ttf');
     await loadImage((v) => setState(() => _imgBytes = v));
     _dueDate = _getDueDate(widget.daysRange);
     _tD = calcTotalDiscount(widget.items);
@@ -150,8 +152,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildHeader(pw.Context pwContext) {
     final l10n = AppLocalizations.of(context)!;
-    final missing = missingSymbols.contains(widget.store.locale);
-    final symbol = missing ? null : widget.store.symbol!;
+    final symbol = widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: symbol,
@@ -171,7 +172,11 @@ class _PreviewPageState extends State<PreviewPage> {
             padding: const pw.EdgeInsets.only(left: 20),
             child: pw.Text(
               l10n.invoice.toUpperCase(),
-              style: pw.TextStyle(fontSize: 40, color: getTitleColor(color)),
+              style: pw.TextStyle(
+                fontSize: 40,
+                color: getTitleColor(color),
+                font: pw.Font.ttf(fontData!),
+              ),
             ),
           ),
           pw.Column(
@@ -180,7 +185,10 @@ class _PreviewPageState extends State<PreviewPage> {
             children: [
               pw.Text(
                 '${l10n.amount}:',
-                style: pw.TextStyle(color: getTitleColor(color)),
+                style: pw.TextStyle(
+                  color: getTitleColor(color),
+                  font: pw.Font.ttf(fontData!),
+                ),
               ),
               pw.SizedBox(height: 4.0),
               pw.Text(
@@ -189,6 +197,7 @@ class _PreviewPageState extends State<PreviewPage> {
                   fontSize: 20,
                   color: getTitleColor(color),
                   fontWeight: pw.FontWeight.bold,
+                  font: pw.Font.ttf(fontData!),
                 ),
               ),
             ],
@@ -218,11 +227,19 @@ class _PreviewPageState extends State<PreviewPage> {
         children: [
           pw.Text(
             '${l10n.billedTo}: $name\n$addr',
-            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+            style: pw.TextStyle(
+              lineSpacing: 8,
+              fontSize: 10,
+              font: pw.Font.ttf(fontData!),
+            ),
           ),
           pw.Text(
             '${l10n.date}: $now\n${l10n.dueDate}: $_dueDate',
-            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+            style: pw.TextStyle(
+              lineSpacing: 8,
+              fontSize: 10,
+              font: pw.Font.ttf(fontData!),
+            ),
           ),
         ],
       ),
@@ -231,8 +248,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   pw.Widget _buildSummary(pw.Context pwContext) {
     final l10n = AppLocalizations.of(context)!;
-    final missing = missingSymbols.contains(widget.store.locale);
-    final symbol = missing ? null : widget.store.symbol!;
+    final symbol = widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: symbol,
@@ -259,8 +275,14 @@ class _PreviewPageState extends State<PreviewPage> {
                 horizontalInside: pw.BorderSide(width: .5),
               ),
               cellHeight: 20,
-              cellStyle: const pw.TextStyle(fontSize: 10),
-              headerStyle: const pw.TextStyle(fontSize: 10),
+              cellStyle: pw.TextStyle(
+                fontSize: 10,
+                font: pw.Font.ttf(fontData!),
+              ),
+              headerStyle: pw.TextStyle(
+                fontSize: 10,
+                font: pw.Font.ttf(fontData!),
+              ),
               cellAlignments: {
                 0: pw.Alignment.centerRight,
                 1: pw.Alignment.centerRight,
@@ -285,7 +307,11 @@ class _PreviewPageState extends State<PreviewPage> {
       padding: pw.EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       child: pw.Text(
         _getPaymentDetails(),
-        style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+        style: pw.TextStyle(
+          lineSpacing: 8,
+          fontSize: 10,
+          font: pw.Font.ttf(fontData!),
+        ),
       ),
     );
   }
@@ -296,7 +322,11 @@ class _PreviewPageState extends State<PreviewPage> {
       decoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
       child: pw.Text(
         widget.store.thankNote!,
-        style: pw.TextStyle(lineSpacing: 8, fontSize: 8.0),
+        style: pw.TextStyle(
+          lineSpacing: 8,
+          fontSize: 8.0,
+          font: pw.Font.ttf(fontData!),
+        ),
       ),
     );
   }
@@ -333,12 +363,17 @@ class _PreviewPageState extends State<PreviewPage> {
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
                       fontSize: 20,
+                      font: pw.Font.ttf(fontData!),
                     ),
                   ),
           ),
           pw.Text(
             _getProfiles(),
-            style: pw.TextStyle(lineSpacing: 8, fontSize: 10),
+            style: pw.TextStyle(
+              lineSpacing: 8,
+              fontSize: 10,
+              font: pw.Font.ttf(fontData!),
+            ),
             textAlign: pw.TextAlign.end,
           ),
         ],
@@ -354,8 +389,7 @@ class _PreviewPageState extends State<PreviewPage> {
   ) {
     final i = col - 1;
     final t = item.item.value;
-    final missing = missingSymbols.contains(widget.store.locale);
-    final symbol = missing ? null : widget.store.symbol!;
+    final symbol = widget.store.symbol!;
     final formatted = NumberFormat.currency(
       locale: widget.store.locale,
       symbol: symbol,
@@ -405,8 +439,9 @@ class _PreviewPageState extends State<PreviewPage> {
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
         color: getTitleColor(color!),
+        font: pw.Font.ttf(fontData!),
       ),
-      cellStyle: const pw.TextStyle(fontSize: 10),
+      cellStyle: pw.TextStyle(fontSize: 10, font: pw.Font.ttf(fontData!)),
       headers: List<String>.generate(headers.length, (col) => headers[col]),
       data: List<List<dynamic>>.generate(
         widget.items.length,

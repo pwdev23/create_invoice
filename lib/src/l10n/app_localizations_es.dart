@@ -12,6 +12,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Crear factura';
 
   @override
+  String get currency => 'Moneda';
+
+  @override
   String get languageSettings => 'Configuración de idioma';
 
   @override
