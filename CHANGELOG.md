@@ -1,3 +1,7 @@
+## 0.2.0
+
+* feat: update SDK to 3.8.1 and applied formatter by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/72
+
 ## 0.1.12
 
 * feat: Refactor screen compatibility to <supports-screens> by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/69
