@@ -6,6 +6,7 @@ import '../constants.dart';
 import '../enumerations.dart';
 import '../isar_collection/isar_collections.dart';
 import '../isar_service.dart';
+import '../shared/empty_indicator.dart';
 import '../shared/shared.dart';
 import '../utils.dart';
 import 'edit_store_page.dart' show EditStoreArgs;
@@ -168,7 +169,7 @@ class _InvoicePageState extends State<InvoicePage> {
           if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
 
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return CenterText(text: l10n.noData);
+            return EmptyIndicator(message: l10n.noData);
           } else {
             return ListView.separated(
               itemBuilder: (context, i) {
