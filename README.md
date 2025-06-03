@@ -2,7 +2,7 @@
 
 ![workflow](https://github.com/pwdev23/create_invoice/actions/workflows/test.yml/badge.svg)
 
-A minimalist yet elegantly designed Flutter app for creating invoices.
+A minimalist Flutter app for creating invoices.
 
 ## Getting Started
 
