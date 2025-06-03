@@ -189,10 +189,11 @@ class _InvoicePageState extends State<InvoicePage> {
                     onTap: () => _openQtyControl(snapshot.data![i]),
                     onLongPress: () => setState(() => _ids.add(id)),
                     title: Text(title),
+                    titleAlignment: ListTileTitleAlignment.center,
                     trailing: _ids.isEmpty
                         ? qty! > 1
                               ? _Qty(qty: qty)
-                              : const SizedBox.shrink()
+                              : Icon(Icons.add, color: colors.primary)
                         : Checkbox.adaptive(
                             value: _ids.contains(id),
                             onChanged: (_) {},
