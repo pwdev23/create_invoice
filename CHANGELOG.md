@@ -1,3 +1,9 @@
+## 0.2.2
+
+* Fix/missing font by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/76
+* feat(rive): add rive animations by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/77
+* feat(svg): replaced riv with svg by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/78
+
 ## 0.2.1
 
 * Feat/load font by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/75
