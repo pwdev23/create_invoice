@@ -78,153 +78,167 @@ class _InvoicePageState extends State<InvoicePage> {
       symbol: widget.store.symbol,
     );
 
-    return Scaffold(
-      key: _key,
-      appBar: AppBar(
-        title: _RecipientButton(
-          leadingText: l10n.billedTo,
-          recipientName: _to.name!,
-          onPressed: () => _onRecipient(),
-        ),
-        actions: [
-          if (_ids.isNotEmpty)
-            IconButton(
-              onPressed: () => _onDelete(
-                _db,
-                _ids,
-              ).then((_) => setState(() => _ids.clear())),
-              icon: Icon(Icons.delete, color: colors.error),
-              tooltip: l10n.delete,
-              style: IconButton.styleFrom(foregroundColor: colors.error),
-            ),
-        ],
-      ),
-      drawer: Drawer(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            ListView(
-              children: [
-                _StoreInfo(
-                  name: widget.store.name!,
-                  email: widget.store.email!,
-                ),
-                ListTile(
-                  tileColor: colors.surface,
-                  style: ListTileStyle.drawer,
-                  onTap: () => _onManageStore(),
-                  title: Text(l10n.manageStore),
-                  leading: Icon(Icons.store),
-                ),
-                ListTile(
-                  tileColor: colors.surface,
-                  style: ListTileStyle.drawer,
-                  onTap: () => _onManageItem(),
-                  title: Text(l10n.nItem(0)),
-                  leading: Icon(Icons.inbox),
-                ),
-                ListTile(
-                  tileColor: colors.surface,
-                  style: ListTileStyle.drawer,
-                  onTap: () => push(context, '/recipient', true),
-                  title: Text(l10n.recipient),
-                  leading: Icon(Icons.people),
-                ),
-                ListTile(
-                  tileColor: colors.surface,
-                  style: ListTileStyle.drawer,
-                  onTap: () => _onSettingLanguage(locale),
-                  title: Text(l10n.languageSettings),
-                  leading: Icon(Icons.translate),
-                ),
-                const Divider(height: 0.0),
-                ListTile(
-                  tileColor: colors.surface,
-                  style: ListTileStyle.drawer,
-                  onTap: () => onLaunchUrl(kPrivacy),
-                  title: Text(l10n.privacyPolicy),
-                  trailing: Icon(Icons.open_in_new),
-                ),
-              ],
-            ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20.0),
-              color: colors.surface,
-              child: Text(
-                getVersionText(kVersion, l10n.version, l10n.build),
-                textAlign: TextAlign.center,
-                style: textTheme.bodySmall,
+    return PopScope(
+      canPop: _ids.isEmpty,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        setState(() => _ids.clear());
+      },
+      child: Scaffold(
+        key: _key,
+        appBar: AppBar(
+          title: _RecipientButton(
+            leadingText: l10n.billedTo,
+            recipientName: _to.name!,
+            onPressed: () => _onRecipient(),
+          ),
+          actions: [
+            if (_ids.isNotEmpty)
+              IconButton(
+                onPressed: () => _onDelete(
+                  _db,
+                  _ids,
+                ).then((_) => setState(() => _ids.clear())),
+                icon: Icon(Icons.delete, color: colors.error),
+                tooltip: l10n.delete,
+                style: IconButton.styleFrom(foregroundColor: colors.error),
               ),
+          ],
+        ),
+        drawer: Drawer(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              ListView(
+                children: [
+                  _StoreInfo(
+                    name: widget.store.name!,
+                    email: widget.store.email!,
+                  ),
+                  ListTile(
+                    tileColor: colors.surface,
+                    style: ListTileStyle.drawer,
+                    onTap: () => _onManageStore(),
+                    title: Text(l10n.manageStore),
+                    leading: Icon(Icons.store),
+                  ),
+                  ListTile(
+                    tileColor: colors.surface,
+                    style: ListTileStyle.drawer,
+                    onTap: () => _onManageItem(),
+                    title: Text(l10n.nItem(0)),
+                    leading: Icon(Icons.inbox),
+                  ),
+                  ListTile(
+                    tileColor: colors.surface,
+                    style: ListTileStyle.drawer,
+                    onTap: () => push(context, '/recipient', true),
+                    title: Text(l10n.recipient),
+                    leading: Icon(Icons.people),
+                  ),
+                  ListTile(
+                    tileColor: colors.surface,
+                    style: ListTileStyle.drawer,
+                    onTap: () => _onSettingLanguage(locale),
+                    title: Text(l10n.languageSettings),
+                    leading: Icon(Icons.translate),
+                  ),
+                  const Divider(height: 0.0),
+                  ListTile(
+                    tileColor: colors.surface,
+                    style: ListTileStyle.drawer,
+                    onTap: () => onLaunchUrl(kPrivacy),
+                    title: Text(l10n.privacyPolicy),
+                    trailing: Icon(Icons.open_in_new),
+                  ),
+                ],
+              ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20.0),
+                color: colors.surface,
+                child: Text(
+                  getVersionText(kVersion, l10n.version, l10n.build),
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: StreamBuilder<List<PurchaseItem>>(
+          stream: _db.streamPurchaseItems(),
+          builder: (context, snapshot) {
+            final waiting = snapshot.connectionState == ConnectionState.waiting;
+            if (!_skipLoading && waiting) return CenterCircular();
+
+            if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
+
+            if (snapshot.hasData && snapshot.data!.isEmpty) {
+              return EmptyIndicator(message: l10n.noData);
+            } else {
+              return ListView.separated(
+                itemBuilder: (context, i) {
+                  if (!_skipLoading) _skipLoading = true;
+                  final title = snapshot.data![i].item.value!.name!;
+                  final qty = snapshot.data![i].qty;
+                  final id = snapshot.data![i].id;
+                  final item = snapshot.data![i].item.value;
+
+                  return ListTile(
+                    onTap: () => _openQtyControl(snapshot.data![i]),
+                    onLongPress: () => setState(() => _ids.add(id)),
+                    title: Text(title),
+                    trailing: _ids.isEmpty
+                        ? qty! > 1
+                              ? _Qty(qty: qty)
+                              : const SizedBox.shrink()
+                        : Checkbox.adaptive(
+                            value: _ids.contains(id),
+                            onChanged: (_) {},
+                          ),
+                    tileColor: _ids.contains(id)
+                        ? colors.primaryContainer
+                        : colors.surface,
+                    isThreeLine: item!.discount! > 0,
+                    subtitle: item.discount == 0
+                        ? Text(formatted.format(item.price))
+                        : PriceTexts(
+                            item: item,
+                            locale: widget.store.locale!,
+                            symbol: widget.store.symbol!,
+                          ),
+                  );
+                },
+                separatorBuilder: (_, _) => Divider(height: 0),
+                itemCount: snapshot.data!.length,
+              );
+            }
+          },
+        ),
+        floatingActionButton: SpeedDial(
+          icon: Icons.add,
+          activeIcon: Icons.close,
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          childMarginTop: 16,
+          tooltip: 'Actions',
+          heroTag: 'speed-dial-actions-hero-tag',
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.add),
+              onTap: () => _oAddItem(),
+              label: l10n.addItem,
+              shape: const CircleBorder(),
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.edit_note_outlined),
+              onTap: () => _onProceed(),
+              label: l10n.fillInvoiceDetails,
+              shape: const CircleBorder(),
             ),
           ],
         ),
-      ),
-      body: StreamBuilder<List<PurchaseItem>>(
-        stream: _db.streamPurchaseItems(),
-        builder: (context, snapshot) {
-          final waiting = snapshot.connectionState == ConnectionState.waiting;
-          if (!_skipLoading && waiting) return CenterCircular();
-
-          if (snapshot.hasError) return CenterText(text: l10n.failedToLoad);
-
-          if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return EmptyIndicator(message: l10n.noData);
-          } else {
-            return ListView.separated(
-              itemBuilder: (context, i) {
-                if (!_skipLoading) _skipLoading = true;
-                final title = snapshot.data![i].item.value!.name!;
-                final qty = snapshot.data![i].qty;
-                final id = snapshot.data![i].id;
-                final item = snapshot.data![i].item.value;
-
-                return ListTile(
-                  onTap: () => _openQtyControl(snapshot.data![i]),
-                  onLongPress: () => setState(() => _ids.add(id)),
-                  title: Text(title),
-                  trailing: _Qty(qty: qty!),
-                  tileColor: _ids.contains(id)
-                      ? colors.primaryContainer
-                      : colors.surface,
-                  isThreeLine: item!.discount! > 0,
-                  subtitle: item.discount == 0
-                      ? Text(formatted.format(item.price))
-                      : PriceTexts(
-                          item: item,
-                          locale: widget.store.locale!,
-                          symbol: widget.store.symbol!,
-                        ),
-                );
-              },
-              separatorBuilder: (_, __) => Divider(height: 0),
-              itemCount: snapshot.data!.length,
-            );
-          }
-        },
-      ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        backgroundColor: colors.primary,
-        foregroundColor: colors.onPrimary,
-        childMarginTop: 16,
-        tooltip: 'Actions',
-        heroTag: 'speed-dial-actions-hero-tag',
-        children: [
-          SpeedDialChild(
-            child: Icon(Icons.add),
-            onTap: () => _oAddItem(),
-            label: l10n.addItem,
-            shape: const CircleBorder(),
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.edit_note_outlined),
-            onTap: () => _onProceed(),
-            label: l10n.fillInvoiceDetails,
-            shape: const CircleBorder(),
-          ),
-        ],
       ),
     );
   }
@@ -262,7 +276,7 @@ class _InvoicePageState extends State<InvoicePage> {
           children: [
             ListView.separated(
               padding: EdgeInsets.only(top: kToolbarHeight),
-              itemBuilder: (context, i) {
+              itemBuilder: (_, i) {
                 final title = items[i].name!;
                 final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
 
@@ -272,7 +286,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   onTap: () => _onAddPurchaseItem(_db, items[i]),
                 );
               },
-              separatorBuilder: (context, _) => Divider(height: 0),
+              separatorBuilder: (_, _) => Divider(height: 0),
               itemCount: items.length,
             ),
             BottomSheetScrollHeader(),
@@ -570,7 +584,7 @@ class _InvoicePageState extends State<InvoicePage> {
           children: [
             ListView.separated(
               padding: EdgeInsets.only(top: kToolbarHeight),
-              itemBuilder: (context, i) {
+              itemBuilder: (_, i) {
                 final title = recipients[i].name!;
                 final subtitle = recipients[i].address!;
                 final ellipsis = TextStyle(overflow: TextOverflow.ellipsis);
@@ -582,7 +596,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   onTap: () => _onPinRecipient(recipients[i]),
                 );
               },
-              separatorBuilder: (context, _) => Divider(height: 0),
+              separatorBuilder: (_, _) => Divider(height: 0),
               itemCount: recipients.length,
             ),
             BottomSheetScrollHeader(),

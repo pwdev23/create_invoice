@@ -43,7 +43,7 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
             onChanged: (v) => _onChanged(v, locale),
           );
         },
-        separatorBuilder: (_, __) => const Divider(height: 0.0),
+        separatorBuilder: (_, _) => const Divider(height: 0.0),
         itemCount: LangOption.values.length,
       ),
     );

@@ -57,7 +57,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
             onChanged: (v) => _onChanged(v!),
           );
         },
-        separatorBuilder: (_, __) => Divider(height: 0.0),
+        separatorBuilder: (_, _) => Divider(height: 0.0),
         itemCount: Currency.values.length,
       ),
       floatingActionButton: widget.isInitial
