@@ -98,7 +98,7 @@ class _ItemPageState extends State<ItemPage> {
                       : colors.surface,
                 );
               },
-              separatorBuilder: (context, _) => Divider(height: 0),
+              separatorBuilder: (_, _) => Divider(height: 0),
               itemCount: snapshot.data!.length,
             );
           }

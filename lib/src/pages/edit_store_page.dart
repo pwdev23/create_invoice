@@ -256,7 +256,7 @@ class _EditStorePageState extends State<EditStorePage> {
                   onTap: () => _onSelectCurrency(curr),
                 );
               },
-              separatorBuilder: (_, __) => const Divider(height: 0.0),
+              separatorBuilder: (_, _) => const Divider(height: 0.0),
               itemCount: Currency.values.length,
             ),
             BottomSheetScrollHeader(),

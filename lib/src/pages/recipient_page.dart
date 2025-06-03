@@ -71,7 +71,7 @@ class _RecipientPageState extends State<RecipientPage> {
                       : colors.surface,
                 );
               },
-              separatorBuilder: (_, __) => Divider(height: 0.0),
+              separatorBuilder: (_, _) => Divider(height: 0.0),
               itemCount: snapshot.data!.length,
             );
           }
