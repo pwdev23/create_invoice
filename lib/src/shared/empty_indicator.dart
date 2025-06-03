@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EmptyIndicator extends StatelessWidget {
   const EmptyIndicator({super.key, required this.message});
@@ -9,37 +9,20 @@ class EmptyIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final platformBrightness = MediaQuery.of(context).platformBrightness;
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDark = brightness == Brightness.dark;
+    final asset = isDark ? 'img/inbox-dark-1.svg' : 'img/inbox-light-1.svg';
 
-    return Center(
-      child: Stack(
-        alignment: Alignment.center,
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          platformBrightness == Brightness.dark
-              ? _SizedRiveAnimation(asset: 'img/inbox_dark.riv')
-              : _SizedRiveAnimation(asset: 'img/inbox_light.riv'),
-          Padding(
-            padding: const EdgeInsets.only(top: 150),
-            child: Text(message, style: textTheme.labelSmall),
-          ),
+          SvgPicture.asset(asset, width: 200),
+          Text(message, style: textTheme.labelLarge),
         ],
       ),
-    );
-  }
-}
-
-class _SizedRiveAnimation extends StatelessWidget {
-  const _SizedRiveAnimation({required this.asset});
-
-  final String asset;
-
-  @override
-  Widget build(BuildContext context) {
-    return RiveAnimation.asset(
-      asset,
-      fit: BoxFit.cover,
-      useArtboardSize: true,
-      alignment: Alignment.center,
     );
   }
 }

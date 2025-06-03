@@ -48,7 +48,7 @@ dependencies:
   pdf: ^3.11.3
   open_file: ^3.5.10
   flutter_speed_dial: ^3.0.5
-  rive: ^0.13.20
+  flutter_svg: ^2.1.0
   isar:
     hosted: https://pub.isar-community.dev
     version: ^3.1.8
