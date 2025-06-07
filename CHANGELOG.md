@@ -1,3 +1,9 @@
+## 0.3.0
+
+* feat(invoice): add checkbox and applied formatter by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/80
+* Feat/listtile add icon by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/81
+* feat(res): redo android res with Android Image Asset Studio by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/82
+
 ## 0.2.2
 
 * Fix/missing font by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/76
