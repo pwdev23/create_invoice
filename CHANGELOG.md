@@ -1,3 +1,7 @@
+## 0.3.1
+
+* feat(monochrome): add monochrome by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/84
+
 ## 0.3.0
 
 * feat(invoice): add checkbox and applied formatter by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/80
