@@ -1,3 +1,7 @@
+## 0.3.2
+
+* chore(img): updated inbox SVG by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/86
+
 ## 0.3.1
 
 * feat(monochrome): add monochrome by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/84
