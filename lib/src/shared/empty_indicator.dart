@@ -19,7 +19,7 @@ class EmptyIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(asset, width: 200),
+          SvgPicture.asset(asset, width: 192.0),
           Text(message, style: textTheme.labelLarge),
         ],
       ),
