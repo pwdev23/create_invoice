@@ -1,3 +1,7 @@
+## 0.3.3
+
+* feat(empty_indicator): replace SVG with WEBP by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/88
+
 ## 0.3.2
 
 * chore(img): updated inbox SVG by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/86
