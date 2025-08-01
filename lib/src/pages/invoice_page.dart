@@ -222,7 +222,6 @@ class _InvoicePageState extends State<InvoicePage> {
           activeIcon: Icons.close,
           backgroundColor: colors.primary,
           foregroundColor: colors.onPrimary,
-          childMarginTop: 16,
           tooltip: 'Actions',
           heroTag: 'speed-dial-actions-hero-tag',
           children: [
