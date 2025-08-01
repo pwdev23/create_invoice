@@ -1,3 +1,10 @@
+# CHANGELOG
+
+## 0.3.4
+
+* feat(empty_indicator): revert svg by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/90
+* feat(pubspec): update dependencies by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/91
+
 ## 0.3.3
 
 * feat(empty_indicator): replace SVG with WEBP by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/88
