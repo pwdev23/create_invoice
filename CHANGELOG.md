@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.5
+
+* Fix store info data retention by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/94
+
 ## 0.3.4
 
 * feat(empty_indicator): revert svg by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/90
