@@ -47,6 +47,8 @@ class _EditStorePageState extends State<EditStorePage> {
     _email.text = widget.store.email!;
     _name.text = widget.store.name!;
     _note.text = widget.store.thankNote!;
+    _addr.text = widget.store.address!;
+    _phone.text = widget.store.phoneNumber!;
     _curr = getCurrency(widget.store.locale!);
   }
 
