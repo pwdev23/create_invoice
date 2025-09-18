@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0
+
+* chore(flutter-migration): migrate to flutter 3.35.4 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/96
+* fix(RadioButton): replace deprecated RadioGroup approach by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/97
+
 ## 0.3.5
 
 * Fix store info data retention by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/94
