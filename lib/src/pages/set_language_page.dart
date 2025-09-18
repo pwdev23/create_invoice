@@ -35,12 +35,14 @@ class _SetLanguagePageState extends ConsumerState<SetLanguagePage> {
           var opt = LangOption.values[index];
           var locale = _getLocale(opt);
 
-          return RadioListTile.adaptive(
-            controlAffinity: ListTileControlAffinity.trailing,
-            title: Text(_getName(opt)),
-            value: opt,
+          return RadioGroup<LangOption>(
             groupValue: _opt,
-            onChanged: (v) => _onChanged(v, locale),
+            onChanged: (LangOption? value) => _onChanged(value, locale),
+            child: RadioListTile<LangOption>.adaptive(
+              controlAffinity: ListTileControlAffinity.trailing,
+              title: Text(_getName(opt)),
+              value: opt,
+            ),
           );
         },
         separatorBuilder: (_, _) => const Divider(height: 0.0),

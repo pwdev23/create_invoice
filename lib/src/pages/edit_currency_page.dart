@@ -49,12 +49,14 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
           final name = curr.name.replaceAll('_', '');
           final title = '${name.toUpperCase()} ($symbol)';
 
-          return RadioListTile.adaptive(
-            controlAffinity: ListTileControlAffinity.trailing,
-            value: curr,
-            groupValue: _curr,
-            title: Text(title),
-            onChanged: (v) => _onChanged(v!),
+          return RadioGroup<Currency>(
+            groupValue: curr,
+            onChanged: (Currency? value) => _onChanged(value!),
+            child: RadioListTile<Currency>.adaptive(
+              controlAffinity: ListTileControlAffinity.trailing,
+              value: curr,
+              title: Text(title),
+            ),
           );
         },
         separatorBuilder: (_, _) => Divider(height: 0.0),
