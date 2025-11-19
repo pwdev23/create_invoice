@@ -68,7 +68,7 @@ const StoreSchema = CollectionSchema(
   getId: _storeGetId,
   getLinks: _storeGetLinks,
   attach: _storeAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0',
 );
 
 int _storeEstimateSize(
@@ -2987,7 +2987,7 @@ const ItemSchema = CollectionSchema(
   getId: _itemGetId,
   getLinks: _itemGetLinks,
   attach: _itemAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0',
 );
 
 int _itemEstimateSize(
@@ -3988,7 +3988,7 @@ const PurchaseItemSchema = CollectionSchema(
   getId: _purchaseItemGetId,
   getLinks: _purchaseItemGetLinks,
   attach: _purchaseItemAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0',
 );
 
 int _purchaseItemEstimateSize(
@@ -4404,7 +4404,7 @@ const InvoiceSchema = CollectionSchema(
   getId: _invoiceGetId,
   getLinks: _invoiceGetLinks,
   attach: _invoiceAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0',
 );
 
 int _invoiceEstimateSize(
@@ -5471,7 +5471,7 @@ const RecipientSchema = CollectionSchema(
   getId: _recipientGetId,
   getLinks: _recipientGetLinks,
   attach: _recipientAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0',
 );
 
 int _recipientEstimateSize(
