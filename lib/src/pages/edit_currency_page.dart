@@ -50,7 +50,7 @@ class _EditCurrencyPageState extends State<EditCurrencyPage> {
           final title = '${name.toUpperCase()} ($symbol)';
 
           return RadioGroup<Currency>(
-            groupValue: curr,
+            groupValue: _curr,
             onChanged: (Currency? value) => _onChanged(value!),
             child: RadioListTile<Currency>.adaptive(
               controlAffinity: ListTileControlAffinity.trailing,
