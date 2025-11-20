@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.5.0
+
+* chore: bump up to flutter 3.38.2 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/99
+* fix(EditCurrencyPage): correct groupValue by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/101
+
 ## 0.4.0
 
 * chore(flutter-migration): migrate to flutter 3.35.4 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/96
