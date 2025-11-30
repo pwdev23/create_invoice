@@ -50,8 +50,8 @@ class _EditRecipientState extends State<EditRecipient> {
             key: _formKey,
             child: Column(
               spacing: 16.0,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: .stretch,
+              mainAxisSize: .min,
               children: [
                 SizedBox(),
                 Padding(

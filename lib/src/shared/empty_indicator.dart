@@ -16,8 +16,8 @@ class EmptyIndicator extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: .center,
+        crossAxisAlignment: .center,
         children: [
           SvgPicture.asset(asset, width: 192.0),
           Text(message, style: textTheme.labelLarge),

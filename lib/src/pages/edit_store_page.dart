@@ -80,7 +80,7 @@ class _EditStorePageState extends State<EditStorePage> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: .stretch,
               children: [
                 _DividerText(text: l10n.logo),
                 Padding(
@@ -320,7 +320,7 @@ class _ExpandMoreButton extends StatelessWidget {
           side: BorderSide(color: colors.outline),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -358,8 +358,8 @@ class _CompanyLogoButton extends StatelessWidget {
 
     return Card(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: .start,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -439,7 +439,7 @@ class _AlertTextBox extends StatelessWidget {
       ),
       child: Row(
         spacing: 12.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Icon(icon, color: iconColor),
           Expanded(child: child),

@@ -499,10 +499,10 @@ class _InvoicePageState extends State<InvoicePage> {
             final colors = Theme.of(context).colorScheme;
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: .spaceBetween,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: .end,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 12.0, right: 16.0),
@@ -515,7 +515,7 @@ class _InvoicePageState extends State<InvoicePage> {
                 ),
                 Text('$_qty', style: textTheme.displayMedium),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: .spaceEvenly,
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
@@ -665,10 +665,10 @@ class _RecipientButton extends StatelessWidget {
         child: ConstrainedBox(
           constraints: minMax,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: .min,
                 spacing: 4.0,
                 children: [
                   Text(
@@ -709,7 +709,7 @@ class _Qty extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         Material(
           color: colors.primaryContainer,
@@ -768,8 +768,8 @@ class _ScrollableFormWithPadding extends StatelessWidget {
         child: Form(
           child: Column(
             spacing: 0,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
             children: children,
           ),
         ),
