@@ -67,7 +67,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   padding: kPx,
                   child: TextFormField(
                     controller: _nameCon,
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     decoration: InputDecoration(
                       labelText: l10n.itemName,
                       hintText: l10n.itemName,
@@ -94,7 +94,7 @@ class _EditItemPageState extends State<EditItemPage> {
                       labelText: l10n.price,
                       hintText: '5.0',
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -106,7 +106,7 @@ class _EditItemPageState extends State<EditItemPage> {
                       labelText: l10n.discount,
                       hintText: '0.0',
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
