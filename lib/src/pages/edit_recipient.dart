@@ -50,8 +50,8 @@ class _EditRecipientState extends State<EditRecipient> {
             key: _formKey,
             child: Column(
               spacing: 16.0,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: .stretch,
+              mainAxisSize: .min,
               children: [
                 SizedBox(),
                 Padding(
@@ -62,7 +62,7 @@ class _EditRecipientState extends State<EditRecipient> {
                       hintText: l10n.randomPerson,
                       label: Text(l10n.name),
                     ),
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -74,7 +74,7 @@ class _EditRecipientState extends State<EditRecipient> {
                       hintText: 'Planet earth',
                       label: Text(l10n.address),
                     ),
-                    keyboardType: TextInputType.streetAddress,
+                    keyboardType: .streetAddress,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),

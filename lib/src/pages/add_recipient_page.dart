@@ -40,8 +40,8 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
             key: _formKey,
             child: Column(
               spacing: 16.0,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: .stretch,
+              mainAxisSize: .min,
               children: [
                 SizedBox.shrink(),
                 Padding(
@@ -52,7 +52,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
                       hintText: l10n.randomPerson,
                       label: Text(l10n.name),
                     ),
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -64,7 +64,7 @@ class _AddRecipientPageState extends State<AddRecipientPage> {
                       hintText: 'Planet earth',
                       label: Text(l10n.address),
                     ),
-                    keyboardType: TextInputType.streetAddress,
+                    keyboardType: .streetAddress,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),

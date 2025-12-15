@@ -52,7 +52,7 @@ class _AddItemPageState extends State<AddItemPage> {
                   padding: kPx,
                   child: TextFormField(
                     controller: _nameCon,
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     decoration: InputDecoration(
                       labelText: l10n.itemName,
                       hintText: l10n.itemName,
@@ -79,7 +79,7 @@ class _AddItemPageState extends State<AddItemPage> {
                       labelText: l10n.price,
                       hintText: '5.0',
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -91,7 +91,7 @@ class _AddItemPageState extends State<AddItemPage> {
                       labelText: l10n.discount,
                       hintText: '0.0',
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),

@@ -353,7 +353,7 @@ class _InvoicePageState extends State<InvoicePage> {
                           hintText: '0',
                           label: Text(l10n.paid),
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: .number,
                         onChanged: (v) => setState(() {}),
                       ),
                     ),
@@ -366,7 +366,7 @@ class _InvoicePageState extends State<InvoicePage> {
                           label: Text(l10n.dueDateRange),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: .number,
                         onChanged: (v) => setState(() {}),
                       ),
                     ),
@@ -381,7 +381,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       hintText: 'My money bank',
                       label: Text(l10n.bank),
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: .text,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -394,7 +394,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       hintText: '1231231231',
                       label: Text(l10n.accountNumber),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -407,7 +407,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       hintText: l10n.randomPerson,
                       label: Text(l10n.accountHolderName),
                     ),
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -420,7 +420,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       hintText: 'ABCDEFGH',
                       label: Text(l10n.swiftCode),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -430,7 +430,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   child: TextFormField(
                     controller: _tax,
                     decoration: InputDecoration(hintText: '0'),
-                    keyboardType: TextInputType.number,
+                    keyboardType: .number,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -499,10 +499,10 @@ class _InvoicePageState extends State<InvoicePage> {
             final colors = Theme.of(context).colorScheme;
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: .spaceBetween,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: .end,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 12.0, right: 16.0),
@@ -515,7 +515,7 @@ class _InvoicePageState extends State<InvoicePage> {
                 ),
                 Text('$_qty', style: textTheme.displayMedium),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: .spaceEvenly,
                   children: [
                     IconButton(
                       style: IconButton.styleFrom(
@@ -665,10 +665,10 @@ class _RecipientButton extends StatelessWidget {
         child: ConstrainedBox(
           constraints: minMax,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: .min,
                 spacing: 4.0,
                 children: [
                   Text(
@@ -709,7 +709,7 @@ class _Qty extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         Material(
           color: colors.primaryContainer,
@@ -768,8 +768,8 @@ class _ScrollableFormWithPadding extends StatelessWidget {
         child: Form(
           child: Column(
             spacing: 0,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
             children: children,
           ),
         ),

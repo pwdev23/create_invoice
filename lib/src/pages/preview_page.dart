@@ -84,7 +84,7 @@ class _PreviewPageState extends State<PreviewPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Text(l10n.preview, style: textTheme.bodySmall),
               Text(widget.fileName, style: textTheme.titleLarge),

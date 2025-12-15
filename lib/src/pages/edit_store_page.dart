@@ -80,7 +80,7 @@ class _EditStorePageState extends State<EditStorePage> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: .stretch,
               children: [
                 _DividerText(text: l10n.logo),
                 Padding(
@@ -136,7 +136,7 @@ class _EditStorePageState extends State<EditStorePage> {
                       hintText: 'My store name',
                       label: Text(l10n.storeName),
                     ),
-                    keyboardType: TextInputType.name,
+                    keyboardType: .name,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -149,7 +149,7 @@ class _EditStorePageState extends State<EditStorePage> {
                       hintText: 'info@mystore.com',
                       label: Text('Email'),
                     ),
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: .emailAddress,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -162,7 +162,7 @@ class _EditStorePageState extends State<EditStorePage> {
                       hintText: l10n.randomPhone,
                       label: Text(l10n.phoneNumber),
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: .phone,
                     onChanged: (v) => setState(() {}),
                   ),
                 ),
@@ -175,7 +175,7 @@ class _EditStorePageState extends State<EditStorePage> {
                       hintText: 'Planet earth',
                       label: Text(l10n.address),
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: .text,
                     minLines: 2,
                     maxLines: 8,
                     onChanged: (v) => setState(() {}),
@@ -192,7 +192,7 @@ class _EditStorePageState extends State<EditStorePage> {
                   child: TextFormField(
                     controller: _note,
                     decoration: InputDecoration(hintText: l10n.hintThankNote),
-                    keyboardType: TextInputType.text,
+                    keyboardType: .text,
                     maxLines: 8,
                     minLines: 2,
                     onChanged: (v) => setState(() {}),
@@ -320,7 +320,7 @@ class _ExpandMoreButton extends StatelessWidget {
           side: BorderSide(color: colors.outline),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -358,8 +358,8 @@ class _CompanyLogoButton extends StatelessWidget {
 
     return Card(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: .start,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -439,7 +439,7 @@ class _AlertTextBox extends StatelessWidget {
       ),
       child: Row(
         spacing: 12.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Icon(icon, color: iconColor),
           Expanded(child: child),
