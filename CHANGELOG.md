@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.5.1
+
+* Chore/dot shorthands by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/103
+* chore: update Flutter SDK version to 3.10.8 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/104
+
 ## 0.5.0
 
 * chore: bump up to flutter 3.38.2 by @mirhasalh in https://github.com/pwdev23/create_invoice/pull/99
